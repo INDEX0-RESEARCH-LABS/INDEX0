@@ -64,11 +64,13 @@ TESTS: Verify Gateway metric serialization and Dashboard component render.
 
 ## 3. Daily End-of-Day (EOD) Integration Ceremony
 
-### Timeline
-- **16:30**: Code Freeze on `feature/day-07-telemetry` and `feature/day-07-dashboard-metrics`.
-- **17:00**: Branch rebase onto `integration/day-07`.
-- **17:30**: Automated testing and live telemetry integration scenario.
-- **18:00**: Senior Tech Lead sign-off & checkpoint tagging.
+### Timeline (Standard Evening Session: 5:30 PM – 12:00 AM Midnight)
+- **17:30 (5:30 PM)**: Kickoff, telemetry contracts & prompt dispatch.
+- **18:00 (6:00 PM)**: Parallel agentic implementation (ClickHouse telemetry & dashboard metrics).
+- **22:30 (10:30 PM)**: Code Freeze on `feature/day-07-telemetry` and `feature/day-07-dashboard-metrics`.
+- **23:00 (11:00 PM)**: Rebase & merge onto `integration/day-07`.
+- **23:30 (11:30 PM)**: Automated testing and live telemetry integration scenario.
+- **00:00 (12:00 AM Midnight)**: Senior Tech Lead sign-off & checkpoint tagging (`checkpoint/day-07`).
 
 ### Automated Verification Script
 ```bash

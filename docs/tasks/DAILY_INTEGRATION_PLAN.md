@@ -35,33 +35,78 @@ The team operates in three coordinated work streams. Rather than manual ad-hoc c
 
 ---
 
-## 2. Daily Workflow Rhythm
+## 2. Operating Schedules & Daily Workflow Rhythm
 
-Each 24-hour development cycle follows a 5-stage synchronous heartbeat:
+The project operates under two execution schedules:
+1. **Intensive Build Marathon (First 3 Days: Days 1, 2 & 3)**: Running from **10:00 AM to 12:00 AM (Midnight)** for accelerated bootstrap, sandbox manager, IDE workbench, and deep cross-service convergence.
+2. **Standard Evening Rhythm (Days 4–8)**: Running from **5:30 PM (17:30) to 12:00 AM (00:00 Midnight)** for sustained engineering progress.
+
+---
+
+### Schedule A: Intensive Build Marathon (First 3 Days: Days 1, 2 & 3: 10:00 AM – 12:00 AM Midnight)
 
 ```text
-09:00 ─── Morning Contract Alignment & Task Board Dispatch
+10:00 ─── Morning Contract Alignment & Task Board Dispatch
   │       • Senior Tech Lead defines/updates @index0/contracts/v1
   │       • Agent prompt contexts prepared with strict task bounds
   │
-09:30 ─── Parallel Agentic Implementation
+10:30 ─── Marathon Sprint Block 1: Core Foundation & Feature Services
+  │       • Stream 2: Platform Agent bootstraps database schemas & microservices
+  │       • Stream 3: DevEx Agent sets up monorepo tooling, IDE & MCP host
+  │       • Continuous unit tests and contract validation
+  │
+14:00 ─── Midday Checkpoint & Rebase Sync
+  │       • Intermediate contract conformance verification
+  │       • Local branches rebased against latest updates
+  │
+15:00 ─── Marathon Sprint Block 2: Deep Feature Implementation
+  │       • Full cross-service integration, event streaming & state wiring
+  │       • End-to-end component testing
+  │
+22:30 ─── Code Freeze & Pre-Integration Check (T - 90m)
+  │       • Feature branches frozen; zero new feature code accepted
+  │       • Verify no contract drift against @index0/contracts
+  │
+23:00 ─── Convergence & Monorepo Build (T - 60m)
+  │       • Merge Stream 2 & Stream 3 branches into daily integration branch
+  │       • Execute full monorepo typecheck, lint, and unit test suites
+  │
+23:30 ─── Live Integration Scenario & Smoke Testing (T - 30m)
+  │       • Boot backing infrastructure via Docker Compose
+  │       • Run end-to-end integration scenario through API Gateway
+  │
+00:00 ─── Merge Gate Sign-Off & Checkpoint Tagging (12:00 AM Midnight)
+          • Senior Tech Lead sign-off & fast-forward merge into main
+          • Immutable milestone tag created (checkpoint/day-XX)
+```
+
+---
+
+### Schedule B: Standard Evening Rhythm (Days 4–8: 5:30 PM – 12:00 AM Midnight)
+
+```text
+17:30 ─── Evening Contract Alignment & Task Board Dispatch (5:30 PM)
+  │       • Senior Tech Lead defines/updates @index0/contracts/v1
+  │       • Agent prompt contexts prepared with strict task bounds
+  │
+18:00 ─── Parallel Agentic Implementation (6:00 PM)
   │       • Stream 2: Platform Agent executes backend service scope
   │       • Stream 3: DevEx Agent executes client/MCP tooling scope
   │       • Continuous unit and contract conformance testing
   │
-16:30 ─── Code Freeze & Pre-Integration Check (T - 90m)
+22:30 ─── Code Freeze & Pre-Integration Check (10:30 PM / T - 90m)
   │       • All agent branches stop accepting new features
   │       • Run contract validation and check for forbidden edits
   │
-17:00 ─── Daily Convergence & Rebase (T - 60m)
+23:00 ─── Daily Convergence & Rebase (11:00 PM / T - 60m)
   │       • Rebase feature branches onto daily integration branch
   │       • Execute cross-service automated test suite
   │
-17:30 ─── Live Integration Scenario & Smoke Testing (T - 30m)
+23:30 ─── Live Integration Scenario & Smoke Testing (11:30 PM / T - 30m)
   │       • Boot backing infrastructure via Docker Compose
   │       • Run live end-to-end integration scenario through Gateway
   │
-18:00 ─── Merge Gate Sign-Off & Checkpoint Commit
+00:00 ─── Merge Gate Sign-Off & Checkpoint Commit (12:00 AM Midnight)
           • Senior Tech Lead verifies zero contract violations
           • Clean staging commit and daily milestone tag created
 ```
@@ -70,7 +115,9 @@ Each 24-hour development cycle follows a 5-stage synchronous heartbeat:
 
 ## 3. Detailed Step-by-Step EOD Integration Protocol
 
-### Step 1: Pre-Integration Contract Verification (16:30)
+The convergence protocol executes identically during the final 90 minutes of both schedules (22:30 – 00:00):
+
+### Step 1: Pre-Integration Contract Verification (22:30 / T - 90m)
 Before any code is merged, verify that neither Stream 2 nor Stream 3 introduced unauthorized contract alterations:
 ```bash
 # Verify no unstaged or modified files exist in packages/contracts
@@ -83,7 +130,7 @@ pnpm --filter @index0/contracts typecheck
 
 ---
 
-### Step 2: Branch Convergence & Workspace Build (17:00)
+### Step 2: Branch Convergence & Workspace Build (23:00 / T - 60m)
 Both agents submit pull requests targeting the daily integration branch `integration/day-XX`:
 ```bash
 # Create and check out daily integration branch
@@ -98,7 +145,7 @@ git merge --no-ff feature/stream-3-devex
 
 ---
 
-### Step 3: Full Monorepo Automated Verification Suite (17:15)
+### Step 3: Full Monorepo Automated Verification Suite (23:15 / T - 45m)
 Run the automated verification suite across all packages:
 ```bash
 # 1. Deterministic dependency verification
@@ -123,7 +170,7 @@ pnpm build
 
 ---
 
-### Step 4: Live Backing Stack & Smoke Verification (17:30)
+### Step 4: Live Backing Stack & Smoke Verification (23:30 / T - 30m)
 Boot containerized backing services and execute the daily integration smoke test:
 ```bash
 # 1. Validate Docker Compose configuration
@@ -138,7 +185,7 @@ curl -f http://localhost:8080/health || true
 
 ---
 
-### Step 5: Merge Authority Sign-Off & Checkpoint Tagging (18:00)
+### Step 5: Merge Authority Sign-Off & Checkpoint Tagging (00:00 / 12:00 AM Midnight)
 The Senior Tech Lead verifies:
 1. All automated checks pass cleanly with 0 errors.
 2. No credentials, tokens, or private keys are present in Git diff (`git diff origin/main | grep -E "(API_KEY|SECRET|PASSWORD)"`).

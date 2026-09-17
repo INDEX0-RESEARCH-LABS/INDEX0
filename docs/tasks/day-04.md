@@ -63,11 +63,13 @@ TESTS: Unit test token storage and auth header interceptor.
 
 ## 3. Daily End-of-Day (EOD) Integration Ceremony
 
-### Timeline
-- **16:30**: Code Freeze on `feature/day-04-gateway` and `feature/day-04-client-auth`.
-- **17:00**: Branch rebase onto `integration/day-04`.
-- **17:30**: Cross-service verification and live Gateway auth smoke test.
-- **18:00**: Senior Tech Lead sign-off & checkpoint tagging.
+### Timeline (Standard Evening Session: 5:30 PM – 12:00 AM Midnight)
+- **17:30 (5:30 PM)**: Kickoff, gateway contracts & prompt dispatch.
+- **18:00 (6:00 PM)**: Parallel agentic implementation (Go Gateway & Zitadel auth).
+- **22:30 (10:30 PM)**: Code Freeze on `feature/day-04-gateway` and `feature/day-04-client-auth`.
+- **23:00 (11:00 PM)**: Rebase & merge onto `integration/day-04`.
+- **23:30 (11:30 PM)**: Cross-service verification and live Gateway auth smoke test.
+- **00:00 (12:00 AM Midnight)**: Senior Tech Lead sign-off & checkpoint tagging (`checkpoint/day-04`).
 
 ### Automated Verification Script
 ```bash

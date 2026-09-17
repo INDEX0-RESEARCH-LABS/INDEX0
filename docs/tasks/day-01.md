@@ -62,11 +62,15 @@ TESTS: Run `pnpm install` and verify turbo graph resolution.
 
 ## 3. Daily End-of-Day (EOD) Integration Ceremony
 
-### Timeline
-- **16:30**: Code Freeze on `feature/day-01-platform` and `feature/day-01-devex`.
-- **17:00**: Rebase onto `integration/day-01`.
-- **17:30**: Execute automated integration verification.
-- **18:00**: Senior Tech Lead sign-off & checkpoint tagging.
+### Timeline (Intensive Marathon: 10:00 AM – 12:00 AM Midnight)
+- **10:00 AM**: Alignment, contract definition & prompt dispatch.
+- **10:30 AM**: Sprint Block 1 — Foundation bootstrap & package scaffolding.
+- **14:00 PM**: Midday checkpoint & rebase sync.
+- **15:00 PM**: Sprint Block 2 — Core schemas, configs & tooling setup.
+- **22:30 (10:30 PM)**: Code Freeze on `feature/day-01-platform` and `feature/day-01-devex`.
+- **23:00 (11:00 PM)**: Rebase & merge onto `integration/day-01`.
+- **23:30 (11:30 PM)**: Execute automated integration verification & stack smoke test.
+- **00:00 (12:00 AM Midnight)**: Senior Tech Lead sign-off & checkpoint tagging (`checkpoint/day-01`).
 
 ### Automated Verification Script
 ```bash

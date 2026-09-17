@@ -67,11 +67,15 @@ TESTS: Run `pnpm test` on contract test suite.
 
 ## 3. Daily End-of-Day (EOD) Integration Ceremony
 
-### Timeline
-- **16:30**: Code Freeze on `feature/day-02-sandbox` and `feature/day-02-client-harness`.
-- **17:00**: Branch rebase onto `integration/day-02`.
-- **17:30**: Automated testing & live sandbox integration scenario.
-- **18:00**: Senior Tech Lead sign-off & checkpoint tagging.
+### Timeline (Intensive Marathon: 10:00 AM – 12:00 AM Midnight)
+- **10:00 AM**: Alignment, sandbox contracts & prompt dispatch.
+- **10:30 AM**: Sprint Block 1 — Sandbox manager & client harness setup.
+- **14:00 PM**: Midday checkpoint & rebase sync.
+- **15:00 PM**: Sprint Block 2 — E2B execution, telemetry hooks & timeout handling.
+- **22:30 (10:30 PM)**: Code Freeze on `feature/day-02-sandbox` and `feature/day-02-client-harness`.
+- **23:00 (11:00 PM)**: Rebase & merge onto `integration/day-02`.
+- **23:30 (11:30 PM)**: Automated testing & live sandbox integration scenario.
+- **00:00 (12:00 AM Midnight)**: Senior Tech Lead sign-off & checkpoint tagging (`checkpoint/day-02`).
 
 ### Automated Verification Script
 ```bash

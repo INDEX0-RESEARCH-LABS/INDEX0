@@ -67,11 +67,13 @@ TESTS: Component test with mock EventSource emitting sequential agent events.
 
 ## 3. Daily End-of-Day (EOD) Integration Ceremony
 
-### Timeline
-- **16:30**: Code Freeze on `feature/day-05-agent-host` and `feature/day-05-ide-streaming`.
-- **17:00**: Branch rebase onto `integration/day-05`.
-- **17:30**: Full test suite and live agent streaming integration scenario.
-- **18:00**: Senior Tech Lead sign-off & checkpoint tagging.
+### Timeline (Standard Evening Session: 5:30 PM – 12:00 AM Midnight)
+- **17:30 (5:30 PM)**: Kickoff, agent host contracts & prompt dispatch.
+- **18:00 (6:00 PM)**: Parallel agentic implementation (Agent host runtime & IDE streaming).
+- **22:30 (10:30 PM)**: Code Freeze on `feature/day-05-agent-host` and `feature/day-05-ide-streaming`.
+- **23:00 (11:00 PM)**: Rebase & merge onto `integration/day-05`.
+- **23:30 (11:30 PM)**: Full test suite and live agent streaming integration scenario.
+- **00:00 (12:00 AM Midnight)**: Senior Tech Lead sign-off & checkpoint tagging (`checkpoint/day-05`).
 
 ### Automated Verification Script
 ```bash

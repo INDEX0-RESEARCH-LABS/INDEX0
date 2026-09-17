@@ -66,11 +66,15 @@ TESTS: Run seed script and verify database population.
 
 ## 3. Daily End-of-Day (EOD) Integration Ceremony
 
-### Timeline
-- **16:30**: Code Freeze on `feature/day-03-ide` and `feature/day-03-fixtures`.
-- **17:00**: Branch rebase onto `integration/day-03`.
-- **17:30**: Full test suite and live IDE integration scenario.
-- **18:00**: Senior Tech Lead sign-off & checkpoint tagging.
+### Timeline (Intensive Marathon: 10:00 AM – 12:00 AM Midnight)
+- **10:00 AM**: Alignment, IDE contracts & prompt dispatch.
+- **10:30 AM**: Sprint Block 1 — INDEX0 IDE workbench & mock server fixtures.
+- **14:00 PM**: Midday checkpoint & rebase sync.
+- **15:00 PM**: Sprint Block 2 — Real-time event streams, terminal UI & state machine.
+- **22:30 (10:30 PM)**: Code Freeze on `feature/day-03-ide` and `feature/day-03-fixtures`.
+- **23:00 (11:00 PM)**: Rebase & merge onto `integration/day-03`.
+- **23:30 (11:30 PM)**: Full test suite and live IDE integration scenario.
+- **00:00 (12:00 AM Midnight)**: Senior Tech Lead sign-off & checkpoint tagging (`checkpoint/day-03`).
 
 ### Automated Verification Script
 ```bash
