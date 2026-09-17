@@ -2,39 +2,47 @@
 
 The **BUILD** subsystem encompasses the developer interface, the autonomous agent runtime, safe sandbox execution, and Model Context Protocol (MCP) host tooling.
 
+> **Option A Architecture**: Built using off-the-shelf open-source containers (OpenHands Workbench, local Docker execution sandboxes, Caddy gateway) with zero custom scratch-built microservices.
+
 ---
 
 ## 1. Components
 
 ```text
 ┌─────────────────────────────────────────────────────────────┐
-│                          INDEX0 IDE                         │
-│             (Web Browser / VS Code Extension)               │
+│                          CLIENTS                            │
+│                 (Web Browser / Developers)                  │
 └──────────────────────────────┬──────────────────────────────┘
-                               │ HTTPS / SSE
+                               │ HTTP / WebSocket (Port 8000)
                                ▼
 ┌─────────────────────────────────────────────────────────────┐
 │                         API GATEWAY                         │
+│                  (Caddy Declarative Proxy)                  │
 └──────────────────────────────┬──────────────────────────────┘
-                               │ Private Network
+                               │ Private Network (index0-net)
                                ▼
 ┌─────────────────────────────────────────────────────────────┐
-│                      AGENT HOST SERVICE                     │
-│                  (NestJS + RxJS + OpenHands)                │
+│                    OPENHANDS WORKBENCH                      │
+│             (All-in-One Autonomous Dev Platform)            │
 │                                                             │
 │   ┌─────────────────────┐       ┌──────────────────────┐    │
-│   │  OpenHands Adapter  │◄─────►│ SSE Event Streamer   │    │
+│   │ Integrated Monaco   │◄─────►│ Interactive Bash     │    │
+│   │ Code Editor & Diff  │       │ Terminal Emulator    │    │
+│   └─────────────────────┘       └──────────────────────┘    │
+│   ┌─────────────────────┐       ┌──────────────────────┐    │
+│   │ Stateful Multi-Agent│◄─────►│ File Explorer &      │    │
+│   │ Execution Loop      │       │ Workspace Tree       │    │
 │   └──────────┬──────────┘       └──────────────────────┘    │
 └──────────────┼──────────────────────────────┬───────────────┘
                │                              │
                ▼                              ▼
 ┌─────────────────────────────┐┌──────────────────────────────┐
-│       SANDBOX MANAGER       ││           MCP HOST           │
-│   (Express + E2B MicroVM)   ││   (Go stdio / JSON-RPC)      │
+│   LOCAL DOCKER RUNTIME      ││        STANDARD MCP          │
+│    (Isolated Container)     ││    (Filesystem & Ripgrep)    │
 │                             ││                              │
-│   • MicroVM Provisioning    ││   • ripgrep search           │
-│   • Execution Bounding      ││   • Safe file read           │
-│   • Guaranteed Teardown     ││   • Directory tree walk      │
+│   • Disposable Environments ││   • ripgrep workspace search │
+│   • CPU / Memory Bounded    ││   • Safe file read & edit    │
+│   • Zero Cloud Dependency   ││   • Native bash tooling      │
 └─────────────────────────────┘└──────────────────────────────┘
 ```
 
@@ -42,49 +50,26 @@ The **BUILD** subsystem encompasses the developer interface, the autonomous agen
 
 ## 2. Component Specifications
 
-### 2.1 INDEX0 IDE (`apps/ide`)
-The sovereign IDE provides two presentation tiers:
-1. **Web IDE (`apps/ide/web`)**: Browser-based IDE powered by Monaco editor, custom file explorer, interactive terminal emulator, and unified agent orchestration panel.
-2. **IDE Extension (`apps/ide/extension`)**: VS Code extension enabling developers to connect their existing local editor to the INDEX0 AI sovereign infrastructure.
+### 2.1 API Gateway (`infra/gateway/Caddyfile`)
+Declarative reverse-proxy powered by Caddy on port 8000:
+- Routes requests to OpenHands (`/`), Zitadel auth (`/auth`), Temporal (`/temporal`), and ClickHouse (`/analytics`).
+- Automatic WebSocket and Server-Sent Events (SSE) pass-through.
+- Standard security headers (`X-Frame-Options`, `X-Content-Type-Options`).
+- Zero custom Go gateway code.
 
-**Mandatory Rule**: The IDE communicates exclusively through the API Gateway. Direct cross-talk to `agent-host`, `sandbox-manager`, or databases is prohibited.
+### 2.2 OpenHands Workbench (`infra/compose/docker-compose.yml`)
+The execution core for autonomous programming provided by `ghcr.io/all-hands-ai/openhands`:
+- Pre-built autonomous agent framework with planning, execution, and self-correction loops.
+- Integrated Web UI with code editor, terminal, file tree, and chat panel.
+- Communicates directly with LLMs (Claude, GPT, or local self-hosted Ollama/vLLM models).
+- Binds to host directory `./workspace` for persistent code development.
 
-### 2.2 Agent Host (`services/agent-host`)
-The Agent Host coordinates the autonomous agent lifecycle using NestJS and RxJS:
-- Translates high-level user tasks into planning and execution loops.
-- Integrates with the **OpenHands** autonomous agent framework.
-- Emits real-time progress events using Server-Sent Events (`GET /agents/runs/:id/events`).
-- Supported event types:
-  - `agent.started`
-  - `agent.message`
-  - `tool.called`
-  - `tool.result`
-  - `sandbox.started`
-  - `sandbox.completed`
-  - `agent.completed`
-  - `agent.failed`
+### 2.3 Local Execution Sandboxing
+- Sandboxed micro-execution is powered by the local Docker runtime container (`docker.all-hands.dev/all-hands-ai/runtime:0.18-nikolaik`).
+- Uses host Docker daemon (`/var/run/docker.sock`) to spawn ephemeral execution environments.
+- Self-contained and sovereign: does not require paid external microVM cloud services.
 
-### 2.3 Sandbox Manager (`services/sandbox-manager`)
-The Sandbox Manager wraps the **E2B** software execution engine:
-- Exposes `POST /execute` accepting `ISandboxRequest`:
-  ```typescript
-  export interface ISandboxRequest {
-    id: string;
-    code: string;
-    language: "python" | "typescript" | "bash";
-    timeoutMs: number;
-  }
-  ```
-- **Guaranteed Lifecycle**:
-  ```text
-  create → execute → capture result → emit telemetry → cleanup
-  ```
-- **Cleanup Guarantee**: Code execution is always wrapped in `try/catch/finally`. MicroVM termination and resource deallocation must execute in the `finally` block to prevent orphaned or dangling virtual machines.
-
-### 2.4 MCP Host (`packages/mcp-host`)
-The MCP Host is implemented in Go and communicates over standard input/output (`stdio`) using JSON-RPC according to the Model Context Protocol specification:
-- **`search_text`**: High-performance semantic code search driven by `ripgrep` (`rg --json`), filtering by path, glob, and regex.
-- **`read_file`**: Reads bounded portions of files with line offset and size limits.
-- **`list_directory`**: Enumerates files and subdirectories with depth constraints.
-- **`search_files`**: Finds files matching glob patterns.
-- **Security Sandboxing**: Traversal outside the configured workspace directory (e.g., `../../etc/passwd`) is strictly rejected with a security violation error.
+### 2.4 Model Context Protocol (MCP) & Tooling
+- Built-in OpenHands tools: ripgrep code search, file inspection, directory listing, and bash execution.
+- Extensible via standard MCP servers (e.g. `@modelcontextprotocol/server-filesystem`).
+- Confined to the mounted workspace root to prevent path traversal outside workspace boundaries.

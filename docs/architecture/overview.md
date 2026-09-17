@@ -8,14 +8,15 @@ INDEX0 AI is engineered as a sovereign, multi-agent AI Software Engineering Plat
 
 ```text
                                   CLIENTS
-                      (INDEX0 IDE Web / VS Code Extension / CLI)
+                      (Web Browser / IDE / Developers)
                                      │
                                      │ HTTPS / WSS / gRPC
                                      ▼
                             ┌──────────────────┐
                             │   API GATEWAY    │
-                            │    Go + OIDC     │
-                            │  (Zitadel Auth)  │
+                            │      Caddy       │
+                            │ (Zitadel Auth)   │
+                            │   (Port 8000)    │
                             └────────┬─────────┘
                                      │
           ┌──────────────────────────┼──────────────────────────┐
@@ -25,14 +26,15 @@ INDEX0 AI is engineered as a sovereign, multi-agent AI Software Engineering Plat
      │  BUILD  │                │  SHIP   │                │  SELL   │
      └────┬────┘                └────┬────┘                └────┬────┘
           │                          │                          │
-          ├─ OpenHands Agent Host    ├─ Temporal Workflows      ├─ OpenMeter
-          ├─ E2B Sandbox Manager     ├─ Coolify Deployer        ├─ Lago Billing
-          ├─ Go MCP Host (ripgrep)   ├─ ClickHouse Audit/Logs   ├─ Stripe Rails
-          └─ IDE Server              └─ Artifact Registry       └─ Twenty CRM
-                                                                        
-                                     ▲
-                                     │ Telemetry & Events
-                                ┌────┴────┐
+          ├─ OpenHands Workbench     ├─ Temporal Workflows      ├─ OpenMeter
+          ├─ Local Docker Sandbox    ├─ Coolify Deployer        ├─ Lago Billing
+          ├─ Standard MCP Tools      ├─ ClickHouse Audit/Logs   ├─ Twenty CRM
+          │                          └─ Artifact Registry       │
+          │                                                     │
+          └──────────────────────────┬──────────────────────────┘
+                                     │
+                                     ▼
+                                ┌─────────┐
                                 │  GROW   │
                                 └────┬────┘
                                      │
@@ -45,17 +47,23 @@ INDEX0 AI is engineered as a sovereign, multi-agent AI Software Engineering Plat
 
 ## 2. Core Subsystems
 
-### API Gateway (Go + Zitadel OIDC)
-The API Gateway is the single public entry point for all external traffic. No internal microservice or storage database is exposed directly to the public internet.
+### API Gateway (Caddy + Zitadel OIDC)
+The API Gateway is the single public entry point for all external traffic on port 8000.
+- **Engine**: Caddy 2 declarative reverse-proxy (zero scratch-built Go gateway code).
 - **Protocol**: HTTP/1.1, HTTP/2, Server-Sent Events (SSE), WebSockets.
-- **Authentication**: JWT validation against Zitadel OpenID Connect discovery endpoints.
-- **Cross-Cutting Concerns**: Request ID generation (`X-Request-ID`), structured JSON logging, distributed tracing headers, rate limiting, and reverse-proxy routing to internal services.
+- **Authentication**: Zitadel OpenID Connect discovery endpoints and JWT validation.
+- **Routing**:
+  - `/` -> OpenHands autonomous agent workbench
+  - `/auth/*` -> Zitadel identity server
+  - `/temporal/*` -> Temporal workflow UI
+  - `/analytics/*` -> ClickHouse analytics HTTP interface
+  - `/health` -> Gateway health check
 
 ### BUILD Engine
 The execution core for autonomous programming:
-- **Agent Host (NestJS + RxJS)**: Manages stateful agent loops, translates prompt intents into plan steps, coordinates with OpenHands runtimes, and streams real-time updates via SSE.
-- **Sandbox Manager (Node.js + Express + E2B)**: Orchestrates disposable, isolated microVMs with deterministic CPU/memory limits, code interpreter sandboxes, and guaranteed resource reclamation via `try/catch/finally`.
-- **MCP Host (Go)**: Implements the Model Context Protocol over stdio/JSON-RPC. Provides scoped, secure file reading, directory listing, and ripgrep text search with path traversal prevention.
+- **OpenHands Workbench**: Self-hosted autonomous software engineering workbench providing an all-in-one web editor, integrated terminal emulator, and agent execution loop.
+- **Local Container Sandboxes**: Automated disposable execution containers managed locally via Docker daemon (`/var/run/docker.sock`) with zero external cloud sandbox dependencies.
+- **Model Context Protocol (MCP)**: Off-the-shelf filesystem, ripgrep, and workspace inspection tools.
 
 ### SHIP Engine
 Orchestration, verification, and deployment:

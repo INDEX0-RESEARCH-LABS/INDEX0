@@ -13,7 +13,8 @@ INDEX0 AI provides an integrated, self-hosted, and production-grade operating sy
                              |
                              v
                        API GATEWAY
-                       Go + OIDC
+                    Caddy + Zitadel OIDC
+                        (Port 8000)
                              |
           +------------------+------------------+
           |                  |                  |
@@ -21,18 +22,9 @@ INDEX0 AI provides an integrated, self-hosted, and production-grade operating sy
         BUILD              SHIP               SELL
           |                  |                  |
       OpenHands          Temporal            Lago
-      E2B                 Coolify             OpenMeter
-      MCP                 ClickHouse          Stripe
-      IDE                                      Twenty
-          |
-          v
-      Agent Runtime
-          |
-          v
-       Sandbox
-          |
-          v
-         E2B
+     Workbench            Coolify         OpenMeter
+    (Editor/Terminal)   ClickHouse          Twenty
+    (Docker Sandbox)
 ```
 
 Surrounding Platform Capabilities:
@@ -45,10 +37,9 @@ GROW: PostHog (Analytics) | Postiz (Social Outreach) | Listmonk (Email Campaigns
 ## Core Pillars
 
 ### 1. BUILD
-- **INDEX0 IDE**: Sovereign web and desktop IDE experience tailored for agentic pair-programming.
-- **OpenHands**: Stateful autonomous software development agent runtime.
-- **E2B**: MicroVM sandbox environments with guaranteed cleanup and telemetry.
-- **MCP (Model Context Protocol)**: Sandboxed host tools (ripgrep, file inspection, AST search).
+- **OpenHands Workbench**: Self-hosted autonomous software engineering workbench with integrated Monaco editor, terminal, file explorer, and agent execution loop.
+- **Local Container Sandboxes**: Automated Docker execution containers running locally with zero cloud dependencies.
+- **Model Context Protocol (MCP)**: Off-the-shelf filesystem, ripgrep, and workspace inspection tools.
 
 ### 2. SHIP
 - **Temporal**: Durable, distributed workflow orchestration for long-running agent tasks.
@@ -148,4 +139,4 @@ pnpm build
 ---
 
 ## License
-Proprietary & Sovereign — INDEX0 AI Research Labs.
+Apache 2.0 / Sovereign Open Source — INDEX0 AI Research Labs.

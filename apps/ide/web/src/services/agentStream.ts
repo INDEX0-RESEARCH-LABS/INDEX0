@@ -22,7 +22,7 @@ export interface IAgentStreamState {
 export class AgentEventStreamService {
   private readonly gatewayBaseUrl: string;
 
-  constructor(gatewayBaseUrl: string = 'http://localhost:8080') {
+  constructor(gatewayBaseUrl: string = 'http://localhost:8000') {
     this.gatewayBaseUrl = gatewayBaseUrl;
   }
 
@@ -180,9 +180,11 @@ export class AgentEventStreamService {
   subscribeToRun(
     runId: string,
     onEvent: (event: IAgentEvent) => void,
-    onError?: (error: Error) => void
+    onError?: (error: Error) => void,
+    authToken?: string
   ): () => void {
-    const url = `${this.gatewayBaseUrl}/api/v1/agents/runs/${encodeURIComponent(runId)}/events`;
+    const query = authToken ? `?token=${encodeURIComponent(authToken)}` : '';
+    const url = `${this.gatewayBaseUrl}/api/v1/agents/runs/${encodeURIComponent(runId)}/events${query}`;
 
     if (typeof EventSource !== 'undefined') {
       const es = new EventSource(url);

@@ -94,7 +94,7 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-    command: start-from-init --masterkey "${ZITADEL_MASTERKEY:-MasterkeyNeedsToHave32BytesLen!}" --tlsMode disabled
+    command: start-from-init --config /zitadel/init-config.yaml --masterkey "${ZITADEL_MASTERKEY:-MasterkeyNeedsToHave32BytesLen!}" --tlsMode disabled
     environment:
       ZITADEL_DATABASE_POSTGRES_HOST: postgres
       ZITADEL_DATABASE_POSTGRES_PORT: 5432
@@ -102,10 +102,48 @@ services:
       ZITADEL_DATABASE_POSTGRES_USER_USERNAME: ${POSTGRES_USER:-index0}
       ZITADEL_DATABASE_POSTGRES_USER_PASSWORD: ${POSTGRES_PASSWORD:-index0_secret}
       ZITADEL_DATABASE_POSTGRES_USER_SSL_MODE: disable
-      ZITADEL_EXTERNALSECURE: "false"
-      ZITADEL_EXTERNALPORT: 8085
-      ZITADEL_EXTERNALDOMAIN: localhost
+      ZITADEL_EXTERNALSECURE: "${ZITADEL_EXTERNALSECURE:-false}"
+      ZITADEL_EXTERNALPORT: ${ZITADEL_EXTERNALPORT:-8000}
+      ZITADEL_EXTERNALDOMAIN: ${ZITADEL_EXTERNALDOMAIN:-localhost}
+      ZITADEL_FIRSTINSTANCE_ORG_NAME: ${ZITADEL_FIRSTINSTANCE_ORG_NAME:-Acme Software Labs}
     ports:
       - "8085:8085"
+    volumes:
+      - ../zitadel/init-config.yaml:/zitadel/init-config.yaml:ro
+    networks:
+      - index0-net
+
+  openhands:
+    image: ghcr.io/all-hands-ai/openhands:0.18
+    container_name: index0-openhands
+    restart: unless-stopped
+    environment:
+      - SANDBOX_RUNTIME_CONTAINER_IMAGE=docker.all-hands.dev/all-hands-ai/runtime:0.18-nikolaik
+      - LOG_ALL_EVENTS=true
+      - LLM_MODEL=${LLM_MODEL:-anthropic/claude-3-5-sonnet-20241022}
+      - LLM_API_KEY=${LLM_API_KEY:-}
+      - LLM_BASE_URL=${LLM_BASE_URL:-}
+      - WORKSPACE_BASE=/opt/workspace_base
+    ports:
+      - "3000:3000"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ../../workspace:/opt/workspace_base
+    networks:
+      - index0-net
+
+  gateway:
+    image: caddy:2-alpine
+    container_name: index0-gateway
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    volumes:
+      - ../gateway/Caddyfile:/etc/caddy/Caddyfile:ro
+    depends_on:
+      - zitadel
+      - openhands
     networks:
       - index0-net

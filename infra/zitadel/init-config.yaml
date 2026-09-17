@@ -1,0 +1,52 @@
+# INDEX0 AI — Zitadel OIDC Instance & Client Initialization Configuration
+# Schema Reference: Zitadel v2 Configuration & @index0/contracts/v1/auth
+
+instance:
+  name: "INDEX0 AI Sovereign Platform"
+  externalDomain: "localhost"
+  externalPort: 8000
+  externalSecure: false
+
+defaultOrganization:
+  name: "Acme Software Labs"
+  orgId: "11111111-1111-4111-8111-111111111111"
+  defaultProject: "index0-platform"
+
+projects:
+  - name: "index0-platform"
+    projectId: "project-index0-platform"
+    roles:
+      - key: "admin"
+        displayName: "System Administrator"
+        group: "administrative"
+      - key: "member"
+        displayName: "Organization Member"
+        group: "engineering"
+      - key: "viewer"
+        displayName: "Read-only Viewer"
+        group: "audit"
+      - key: "agent"
+        displayName: "Autonomous Agent Runner"
+        group: "service-accounts"
+    applications:
+      - name: "INDEX0 Web IDE & Gateway"
+        appType: "WEB"
+        authMethodType: "PKCE"
+        clientId: "index0-ide"
+        responseTypes:
+          - "CODE"
+        grantTypes:
+          - "AUTHORIZATION_CODE"
+          - "REFRESH_TOKEN"
+        redirectUris:
+          - "http://localhost:5173/auth/callback"
+          - "http://localhost:8000/auth/callback"
+          - "http://localhost:3000/callback"
+        postLogoutRedirectUris:
+          - "http://localhost:5173/"
+          - "http://localhost:8000/"
+        scopes:
+          - "openid"
+          - "profile"
+          - "email"
+          - "urn:zitadel:iam:org:project:roles"

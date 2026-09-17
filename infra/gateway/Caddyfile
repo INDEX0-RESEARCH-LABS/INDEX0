@@ -1,0 +1,71 @@
+{
+    admin off
+    auto_https off
+}
+
+:8000 {
+    log {
+        output stdout
+        format json
+    }
+
+    # Security, CORS, and tracing headers
+    header {
+        X-Frame-Options "SAMEORIGIN"
+        X-Content-Type-Options "nosniff"
+        X-XSS-Protection "1; mode=block"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        -Server
+        Access-Control-Allow-Origin "http://localhost:5173"
+        Access-Control-Allow-Methods "GET, POST, PUT, PATCH, DELETE, OPTIONS"
+        Access-Control-Allow-Headers "Authorization, Content-Type, X-Request-ID"
+    }
+
+    # Health check endpoint for Gateway
+    handle /health {
+        respond `{"status":"ok","gateway":"caddy","engine":"index0-gateway"}` 200 {
+            header Content-Type "application/json"
+        }
+    }
+
+    # Zitadel Identity Provider
+    handle /auth* {
+        reverse_proxy zitadel:8085 {
+            header_up Host {host}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+            header_up X-Forwarded-Proto {scheme}
+        }
+    }
+
+    # Temporal Workflow Orchestration UI
+    handle /temporal* {
+        reverse_proxy temporal-ui:8233 {
+            header_up Host {host}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+            header_up X-Forwarded-Proto {scheme}
+        }
+    }
+
+    # ClickHouse Analytics HTTP Interface
+    handle /analytics* {
+        reverse_proxy clickhouse:8123 {
+            header_up Host {host}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+            header_up X-Forwarded-Proto {scheme}
+        }
+    }
+
+    # OpenHands All-in-One Autonomous Agent Workbench (UI, Terminal, Editor, Agent Loop)
+    handle {
+        reverse_proxy openhands:3000 {
+            flush_interval -1
+            header_up Host {host}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+            header_up X-Forwarded-Proto {scheme}
+        }
+    }
+}

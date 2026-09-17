@@ -1,109 +1,73 @@
-# DAY 5 TASK: OpenHands Agent Host Service
+# DAY 5 TASK: OpenHands Autonomous Agent Runtime & Workbench
+
+> **Option A Architecture**: Orchestrating off-the-shelf open-source containers with zero scratch-built backend/agent loop code.
+
+---
 
 ## 1. Role-Wise Responsibilities
 
 ### Stream 1: Senior Tech Lead & System Architect
 - **Responsibilities**:
-  - Review and freeze `@index0/contracts/v1/agent` (`IAgentRun`, `IAgentEvent`, `AgentEventType`).
-  - Verify asynchronous execution patterns so long-running agent loops never block synchronous HTTP threads.
-  - Review SSE protocol compliance (`text/event-stream`, event IDs, reconnection policies).
+  - Govern the OpenHands container integration (`ghcr.io/all-hands-ai/openhands:0.18`) in Docker Compose.
+  - Configure sandboxed execution parameters (`SANDBOX_RUNTIME_CONTAINER_IMAGE`).
+  - Author LLM provider connection profiles (Anthropic Claude, OpenAI, or local self-hosted Ollama/vLLM).
   - Supervise Day 5 End-of-Day (EOD) Integration Ceremony.
+- **Target Files**: `infra/compose/docker-compose.yml`, `.env.example`, `docs/tasks/day-05.md`.
 
-### Stream 2: Platform & Backend Systems Engineer (AI Coding Agent: Antigravity Backend Agent)
+### Stream 2: Platform & Backend Systems Engineer (AI Coding Agent)
 - **Responsibilities**:
-  - Implement `services/agent-host/` using NestJS, TypeScript, and RxJS.
-  - Build the OpenHands runtime adapter translating agent loop states into standard events.
-  - Expose REST and SSE endpoints:
-    - `POST /agents/runs`: Create autonomous agent run.
-    - `GET /agents/runs/:id`: Retrieve run metadata and state.
-    - `POST /agents/runs/:id/cancel`: Signal graceful agent loop cancellation.
-    - `GET /agents/runs/:id/events`: Stream real-time Server-Sent Events (SSE).
-  - Expose `GET /health` endpoint.
-- **Target Files**: `services/agent-host/**`.
+  - Validate OpenHands workspace volume binding (`./workspace:/opt/workspace_base`).
+  - Wire Docker socket access (`/var/run/docker.sock`) so OpenHands can spin up disposable execution containers locally with zero cloud sandbox dependencies.
+  - Verify Caddy reverse proxy on port 8000 properly routes WebSocket and HTTP traffic to OpenHands on port 3000.
+- **Target Files**: `infra/compose/docker-compose.yml`, `infra/gateway/Caddyfile`.
 
-### Stream 3: Developer Experience & Client Systems Engineer (AI Coding Agent: Antigravity Client Agent)
+### Stream 3: Developer Experience & Client Systems Engineer (AI Coding Agent)
 - **Responsibilities**:
-  - Connect the Web IDE Agent Panel to the Gateway's SSE proxy endpoint.
-  - Render agent thinking steps, tool invocations, and live diffs in the IDE.
-- **Target Files**: `apps/ide/web/src/components/AgentPanel/**`.
+  - Verify the OpenHands web workbench experience (integrated Monaco editor, bash terminal, browser preview, and multi-agent chat).
+  - Test custom prompt instructions and system rules injection via `.openhands_instructions` or workspace configs.
+- **Target Files**: `workspace/.gitkeep`, `README.md`.
 
 ---
 
 ## 2. Antigravity Agent Prompt Directives
 
-### Directives for Stream 2 (Platform Agent)
+### Directives for Stream 1 & 2 (Platform & Lead)
 ```text
 ROLE: Platform & Backend Systems Engineer
 AGENT RUNTIME: Google Antigravity Agent
-OBJECTIVE: Implement the NestJS Agent Host service and OpenHands runtime adapter.
-CONTRACT: @index0/contracts/v1/agent, @index0/contracts/v1/sandbox, @index0/contracts/v1/api
-ALLOWED FILES: services/agent-host/**
-DEPENDENCIES: @nestjs/core, @nestjs/common, @nestjs/platform-express, rxjs, dotenv, vitest
+OBJECTIVE: Validate and optimize OpenHands off-the-shelf container deployment and Docker runtime execution.
+DEPENDENCIES: Docker Compose, OpenHands 0.18+
 REQUIREMENTS:
-- Implement AgentController with POST /agents/runs, GET /agents/runs/:id, POST /agents/runs/:id/cancel.
-- Implement GET /agents/runs/:id/events emitting text/event-stream payloads using RxJS Subject/Observable.
-- Implement OpenHands adapter converting execution steps into IAgentEvent:
-  agent.started, agent.message, tool.called, tool.result, sandbox.started, sandbox.completed, agent.completed, agent.failed.
-- Asynchronous lifecycle: long tasks run in background workers/observables, not blocking HTTP responses.
-FORBIDDEN CHANGES: Do not omit event schema attributes; do not use non-standard event types.
-TESTS: Unit tests for controller and SSE observable stream.
-```
-
-### Directives for Stream 3 (DevEx Agent)
-```text
-ROLE: Developer Experience & Client Systems Engineer
-AGENT RUNTIME: Google Antigravity Agent
-OBJECTIVE: Wire the Web IDE Agent Panel to consume live SSE agent events.
-CONTRACT: @index0/contracts/v1/agent
-ALLOWED FILES: apps/ide/web/src/components/AgentPanel/**
-REQUIREMENTS:
-- Subscribe to SSE stream via EventSource with Authorization header or ticket parameter.
-- Parse incoming IAgentEvent payloads and update reactive state (active step, tool log, execution duration).
-- Handle connection drops with automatic backoff reconnection.
-TESTS: Component test with mock EventSource emitting sequential agent events.
+- OpenHands runs via Docker Compose with local runtime container (docker.all-hands.dev/all-hands-ai/runtime:0.18-nikolaik).
+- Docker socket mounted to allow self-contained sandbox execution without external paid microVM cloud services.
+- Host workspace mounted to ./workspace.
+- Caddy reverse-proxy delivers OpenHands UI on port 8000.
+TESTS:
+- `docker compose -f infra/compose/docker-compose.yml config`
 ```
 
 ---
 
 ## 3. Daily End-of-Day (EOD) Integration Ceremony
 
-### Timeline (Standard Evening Session: 5:30 PM – 12:00 AM Midnight)
-- **17:30 (5:30 PM)**: Kickoff, agent host contracts & prompt dispatch.
-- **18:00 (6:00 PM)**: Parallel agentic implementation (Agent host runtime & IDE streaming).
-- **22:30 (10:30 PM)**: Code Freeze on `feature/day-05-agent-host` and `feature/day-05-ide-streaming`.
-- **23:00 (11:00 PM)**: Rebase & merge onto `integration/day-05`.
-- **23:30 (11:30 PM)**: Full test suite and live agent streaming integration scenario.
-- **00:00 (12:00 AM Midnight)**: Senior Tech Lead sign-off & checkpoint tagging (`checkpoint/day-05`).
-
 ### Automated Verification Script
 ```bash
-# 1. NestJS Agent Host compilation & tests
-pnpm --filter @index0/agent-host typecheck
-pnpm --filter @index0/agent-host test
-pnpm --filter @index0/agent-host build
+# 1. Validate Docker Compose configuration
+docker compose -f infra/compose/docker-compose.yml config
 
-# 2. Monorepo cross-service verification
+# 2. Monorepo check
 pnpm typecheck
-pnpm lint
+pnpm test
 ```
 
 ### Day 5 Integration Scenario
-1. Start Gateway (`services/gateway`) and Agent Host (`services/agent-host`).
-2. Trigger new agent run:
-   ```bash
-   RUN_ID=$(curl -s -X POST http://localhost:8080/v1/agents/runs \
-     -H "Content-Type: application/json" \
-     -d '{"prompt":"Add logging to main.go","workspaceId":"ws-01"}' | jq -r .data.id)
-   ```
-3. Connect to SSE stream:
-   ```bash
-   curl -N http://localhost:8080/v1/agents/runs/$RUN_ID/events
-   ```
-4. Verify events stream chronologically: `agent.started` → `agent.message` → `agent.completed`.
-5. Open Web IDE and confirm events appear in real-time in the Agent Panel.
+1. Start stack with Docker Compose.
+2. Access `http://localhost:8000` via Caddy reverse-proxy.
+3. OpenHands UI loads with full editor, terminal, and agent chat.
+4. Execute a prompt in OpenHands; observe runtime container execution within `./workspace`.
 
 ### Merge Gate Checklist
-- [ ] `services/agent-host` builds cleanly.
-- [ ] SSE endpoint streams valid formatted `text/event-stream` payloads.
-- [ ] Cancel endpoint halts active agent execution.
+- [x] OpenHands container configured in `docker-compose.yml`.
+- [x] Workspace volume mount verified.
+- [x] Caddy reverse proxy routes port 8000 to OpenHands with WebSocket support.
 - [ ] Tag created: `checkpoint/day-05`.

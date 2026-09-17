@@ -3,12 +3,15 @@ import { Explorer, type IWorkspaceFileNode } from '../components/Explorer.js';
 import { Editor, type IEditorTab } from '../components/Editor.js';
 import { AgentPanel, type IToolInvocation } from '../components/AgentPanel.js';
 import { TerminalViewer, type ITerminalLine } from '../terminal/TerminalViewer.js';
+import { UserNav } from '../components/UserNav.js';
+import { OpenHandsViewer } from '../components/OpenHandsViewer.js';
 import type { IAgentPlanStep, IAgentMessagePayload, AgentRunStatus } from '@index0/contracts';
-import { GitBranch, Layers, ShieldCheck, Play } from 'lucide-react';
+import { GitBranch, Layers, ShieldCheck, Play, Bot, Code2 } from 'lucide-react';
 
 export interface IWorkbenchProps {
   initialFiles?: IWorkspaceFileNode[];
   initialTabs?: IEditorTab[];
+  initialMode?: 'workbench' | 'openhands';
   workspaceId?: string;
   projectName?: string;
   className?: string;
@@ -40,10 +43,12 @@ const DEFAULT_TABS: IEditorTab[] = [
 export const Workbench: React.FC<IWorkbenchProps> = ({
   initialFiles = DEFAULT_FILES,
   initialTabs = DEFAULT_TABS,
+  initialMode = 'workbench',
   workspaceId = 'ws-main-dev',
   projectName = 'index0-core',
   className = ''
 }) => {
+  const [viewMode, setViewMode] = useState<'workbench' | 'openhands'>(initialMode);
   const [files] = useState<IWorkspaceFileNode[]>(initialFiles);
   const [tabs, setTabs] = useState<IEditorTab[]>(initialTabs);
   const [activeTabPath, setActiveTabPath] = useState<string>(initialTabs[0]?.path || '');
@@ -55,7 +60,7 @@ export const Workbench: React.FC<IWorkbenchProps> = ({
       id: 'term-init',
       timestamp: new Date().toLocaleTimeString(),
       command: 'index0 runtime status',
-      output: 'Sovereign E2B MicroVM active on index0-net (Port 4001 via Gateway 8080)'
+      output: 'Sovereign E2B MicroVM active on index0-net (Port 4001 via Gateway 8000)'
     }
   ]);
 
@@ -173,10 +178,52 @@ export const Workbench: React.FC<IWorkbenchProps> = ({
           </span>
         </div>
 
+        {/* View Mode Switcher */}
+        <div style={{ display: 'flex', alignItems: 'center', background: 'rgba(0, 0, 0, 0.3)', borderRadius: '6px', padding: '2px', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
+          <button
+            onClick={() => setViewMode('workbench')}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '5px',
+              padding: '4px 10px',
+              borderRadius: '4px',
+              border: 'none',
+              background: viewMode === 'workbench' ? 'var(--accent-primary, #6366f1)' : 'transparent',
+              color: viewMode === 'workbench' ? '#fff' : '#94a3b8',
+              fontSize: '0.72rem',
+              fontWeight: 600,
+              cursor: 'pointer'
+            }}
+          >
+            <Code2 size={13} />
+            <span>INDEX0 Editor</span>
+          </button>
+          <button
+            onClick={() => setViewMode('openhands')}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '5px',
+              padding: '4px 10px',
+              borderRadius: '4px',
+              border: 'none',
+              background: viewMode === 'openhands' ? 'var(--accent-primary, #6366f1)' : 'transparent',
+              color: viewMode === 'openhands' ? '#fff' : '#94a3b8',
+              fontSize: '0.72rem',
+              fontWeight: 600,
+              cursor: 'pointer'
+            }}
+          >
+            <Bot size={13} />
+            <span>OpenHands Agent</span>
+          </button>
+        </div>
+
         <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.75rem', color: '#34d399' }}>
             <ShieldCheck size={14} />
-            <span>Gateway Connected (8080)</span>
+            <span>Gateway Connected (8000)</span>
           </div>
 
           <button
@@ -197,53 +244,60 @@ export const Workbench: React.FC<IWorkbenchProps> = ({
           >
             <Play size={11} /> Run Agent Task
           </button>
+
+          {/* User Nav and Profile */}
+          <UserNav />
         </div>
       </div>
 
-      {/* Main 3-Pane Body */}
-      <div className="index0-workbench-body">
-        {/* Left Explorer */}
-        <Explorer
-          files={files}
-          activeFilePath={activeTabPath}
-          onSelectFile={handleSelectFile}
-        />
+      {/* Main Viewport: Either OpenHands Embedded Viewer or Native 3-Pane Body */}
+      {viewMode === 'openhands' ? (
+        <OpenHandsViewer gatewayUrl="http://localhost:8000" workspacePath="/opt/workspace_base" />
+      ) : (
+        <div className="index0-workbench-body">
+          {/* Left Explorer */}
+          <Explorer
+            files={files}
+            activeFilePath={activeTabPath}
+            onSelectFile={handleSelectFile}
+          />
 
-        {/* Center Viewport (Editor + Bottom Terminal) */}
-        <div style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-          <div style={{ flex: 1, minHeight: 0 }}>
-            <Editor
-              tabs={tabs}
-              activeTabPath={activeTabPath}
-              onSelectTab={setActiveTabPath}
-              onCloseTab={handleCloseTab}
-              onChangeContent={handleChangeContent}
-              showDiff={showDiff}
-              onToggleDiff={() => setShowDiff(!showDiff)}
-              diffOriginalContent="// Original verified implementation\nexport function add(a, b) { return a + b; }\n"
-            />
+          {/* Center Viewport (Editor + Bottom Terminal) */}
+          <div style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+            <div style={{ flex: 1, minHeight: 0 }}>
+              <Editor
+                tabs={tabs}
+                activeTabPath={activeTabPath}
+                onSelectTab={setActiveTabPath}
+                onCloseTab={handleCloseTab}
+                onChangeContent={handleChangeContent}
+                showDiff={showDiff}
+                onToggleDiff={() => setShowDiff(!showDiff)}
+                diffOriginalContent="// Original verified implementation\nexport function add(a, b) { return a + b; }\n"
+              />
+            </div>
+
+            <div style={{ height: '200px', borderTop: '1px solid var(--border-subtle)' }}>
+              <TerminalViewer
+                title="INDEX0 Agent & Sandbox Terminal"
+                lines={terminalLines}
+                onClear={() => setTerminalLines([])}
+              />
+            </div>
           </div>
 
-          <div style={{ height: '200px', borderTop: '1px solid var(--border-subtle)' }}>
-            <TerminalViewer
-              title="INDEX0 Agent & Sandbox Terminal"
-              lines={terminalLines}
-              onClear={() => setTerminalLines([])}
-            />
-          </div>
+          {/* Right Agent Panel */}
+          <AgentPanel
+            planSteps={planSteps}
+            messages={agentMessages}
+            toolCalls={toolCalls}
+            status={agentStatus}
+            isStreaming={agentStatus === 'running'}
+            onSendMessage={handleSendMessage}
+            onConfirmStep={handleConfirmStep}
+          />
         </div>
-
-        {/* Right Agent Panel */}
-        <AgentPanel
-          planSteps={planSteps}
-          messages={agentMessages}
-          toolCalls={toolCalls}
-          status={agentStatus}
-          isStreaming={agentStatus === 'running'}
-          onSendMessage={handleSendMessage}
-          onConfirmStep={handleConfirmStep}
-        />
-      </div>
+      )}
     </div>
   );
 };
