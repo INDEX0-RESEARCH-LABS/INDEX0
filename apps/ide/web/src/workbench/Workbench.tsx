@@ -5,8 +5,9 @@ import { AgentPanel, type IToolInvocation } from '../components/AgentPanel.js';
 import { TerminalViewer, type ITerminalLine } from '../terminal/TerminalViewer.js';
 import { UserNav } from '../components/UserNav.js';
 import { OpenHandsViewer } from '../components/OpenHandsViewer.js';
+import { MCPToolsPanel } from '../components/MCPToolsPanel.js';
 import type { IAgentPlanStep, IAgentMessagePayload, AgentRunStatus } from '@index0/contracts';
-import { GitBranch, Layers, ShieldCheck, Play, Bot, Code2 } from 'lucide-react';
+import { GitBranch, Layers, ShieldCheck, Play, Bot, Code2, Wrench } from 'lucide-react';
 
 export interface IWorkbenchProps {
   initialFiles?: IWorkspaceFileNode[];
@@ -49,6 +50,7 @@ export const Workbench: React.FC<IWorkbenchProps> = ({
   className = ''
 }) => {
   const [viewMode, setViewMode] = useState<'workbench' | 'openhands'>(initialMode);
+  const [showMcpPanel, setShowMcpPanel] = useState(false);
   const [files] = useState<IWorkspaceFileNode[]>(initialFiles);
   const [tabs, setTabs] = useState<IEditorTab[]>(initialTabs);
   const [activeTabPath, setActiveTabPath] = useState<string>(initialTabs[0]?.path || '');
@@ -227,6 +229,28 @@ export const Workbench: React.FC<IWorkbenchProps> = ({
           </div>
 
           <button
+            onClick={() => setShowMcpPanel(!showMcpPanel)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              background: showMcpPanel ? 'rgba(99, 102, 241, 0.25)' : 'rgba(255, 255, 255, 0.05)',
+              border: showMcpPanel ? '1px solid var(--accent-primary, #6366f1)' : '1px solid rgba(255, 255, 255, 0.1)',
+              color: showMcpPanel ? '#a5b4fc' : '#e2e8f0',
+              borderRadius: '4px',
+              padding: '4px 8px',
+              fontSize: '0.75rem',
+              fontWeight: 600,
+              cursor: 'pointer'
+            }}
+            title="Inspect registered MCP tools & sandbox boundaries"
+            data-testid="mcp-tools-toggle-btn"
+          >
+            <Wrench size={12} color="#818cf8" />
+            <span>MCP Tools</span>
+          </button>
+
+          <button
             onClick={() => handleSendMessage('Run test suite in sandbox')}
             style={{
               display: 'flex',
@@ -296,6 +320,43 @@ export const Workbench: React.FC<IWorkbenchProps> = ({
             onSendMessage={handleSendMessage}
             onConfirmStep={handleConfirmStep}
           />
+        </div>
+      )}
+
+      {/* MCP Tools Modal Overlay */}
+      {showMcpPanel && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0, 0, 0, 0.7)',
+            backdropFilter: 'blur(4px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000
+          }}
+          onClick={() => setShowMcpPanel(false)}
+        >
+          <div
+            style={{
+              width: '780px',
+              maxWidth: '90vw',
+              height: '620px',
+              maxHeight: '90vh',
+              background: '#0a0c14',
+              border: '1px solid rgba(255, 255, 255, 0.15)',
+              borderRadius: '8px',
+              overflow: 'hidden',
+              boxShadow: '0 20px 50px rgba(0, 0, 0, 0.8)'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <MCPToolsPanel onClose={() => setShowMcpPanel(false)} />
+          </div>
         </div>
       )}
     </div>

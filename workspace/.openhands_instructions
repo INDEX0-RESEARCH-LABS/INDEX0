@@ -32,3 +32,11 @@ You are operating within the sovereign **INDEX0 AI** workspace as an autonomous 
 
 ### 6. Small, Atomic Commits
 - Keep changes concise, single-purpose, and reviewable in under 15 minutes.
+
+### 7. MCP Tool Governance
+- All MCP tool invocations must remain within the workspace root (`/opt/workspace_base`).
+- Path traversal attempts outside the workspace root (e.g., `../../`, `/etc`, `/var`, `/root`, `/home`) trigger immediate security faults.
+- Only tools listed in the canonical registry (`infra/mcp/tool-registry.json`) are authorized for use.
+- Custom scratch-built MCP tool servers are forbidden — use only off-the-shelf standard MCP servers (e.g., `@modelcontextprotocol/server-filesystem`) and OpenHands native tools.
+- External MCP servers connect via standard `stdio` or `sse` transport protocols only.
+- Symlink resolution is denied to prevent path traversal outside workspace boundaries.

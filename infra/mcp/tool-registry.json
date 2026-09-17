@@ -1,0 +1,81 @@
+{
+  "version": "1.0",
+  "description": "Canonical MCP tool registry for INDEX0 AI — authorized off-the-shelf servers and native OpenHands tools",
+  "servers": [
+    {
+      "name": "@modelcontextprotocol/server-filesystem",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/opt/workspace_base"],
+      "env": {},
+      "transport": "stdio",
+      "workspaceConfined": true,
+      "description": "Standard MCP filesystem server providing read-only file access confined to workspace root"
+    },
+    {
+      "name": "@modelcontextprotocol/server-brave-search",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-brave-search"],
+      "env": {
+        "BRAVE_API_KEY": "${BRAVE_API_KEY:-}"
+      },
+      "transport": "stdio",
+      "workspaceConfined": false,
+      "description": "Optional standard MCP Brave Search server for web research queries"
+    }
+  ],
+  "nativeTools": [
+    {
+      "name": "openhands_file_search",
+      "description": "Ripgrep-powered workspace code search across all project files",
+      "category": "search",
+      "transport": "native",
+      "sandboxed": true,
+      "isNative": true
+    },
+    {
+      "name": "openhands_file_read",
+      "description": "Read file contents within the workspace boundary",
+      "category": "filesystem",
+      "transport": "native",
+      "sandboxed": true,
+      "isNative": true
+    },
+    {
+      "name": "openhands_file_edit",
+      "description": "Apply edits to workspace files with diff tracking",
+      "category": "filesystem",
+      "transport": "native",
+      "sandboxed": true,
+      "isNative": true
+    },
+    {
+      "name": "openhands_directory_list",
+      "description": "List directory contents within the workspace tree",
+      "category": "inspection",
+      "transport": "native",
+      "sandboxed": true,
+      "isNative": true
+    },
+    {
+      "name": "openhands_bash_execute",
+      "description": "Execute shell commands inside the sandboxed runtime container",
+      "category": "execution",
+      "transport": "native",
+      "sandboxed": true,
+      "isNative": true
+    },
+    {
+      "name": "openhands_browser",
+      "description": "Browser interaction tool for web page navigation and inspection",
+      "category": "inspection",
+      "transport": "native",
+      "sandboxed": true,
+      "isNative": true
+    }
+  ],
+  "boundaryRules": {
+    "workspaceRoot": "/opt/workspace_base",
+    "denyPaths": ["../../", "/etc", "/var", "/root", "/home"],
+    "symlinkResolution": "deny"
+  }
+}
