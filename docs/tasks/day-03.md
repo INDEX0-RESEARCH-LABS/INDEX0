@@ -2,64 +2,118 @@
 
 ## 1. Role-Wise Responsibilities
 
-### Stream 1: Senior Tech Lead & System Architect
+### Stream 1: Senior Tech Lead & System Architect (Dev 1)
 - **Responsibilities**:
-  - Enforce Gateway-centric client architecture: IDE clients communicate solely through the API Gateway.
-  - Review client security, JWT token storage, and CORS policies.
-  - Formulate API contracts for workspace initialization and agent event streaming.
-  - Supervise the Day 3 End-of-Day (EOD) Integration Ceremony.
+  - Author and govern authoritative contracts in `@index0/contracts/v1/agent` (`AgentEventType`, `IAgentEvent`, `IAgentPlanStep`, `IAgentRun`, `IAgentRunRequest`, `ISSEEventEnvelope`).
+  - Enforce Gateway-centric client architecture: IDE clients communicate solely through the API Gateway abstraction (`/api/v1/...`).
+  - Formulate client security, Bearer token injection, and CORS policies (origin `http://localhost:5173`).
+  - Supervise the Day 3 End-of-Day (EOD) Integration Ceremony and tag release checkpoint `checkpoint/day-03`.
+- **Target Files**: `packages/contracts/**`, `docs/tasks/day-03.md`, `services/gateway/**`.
 
-### Stream 2: Platform & Backend Systems Engineer (AI Coding Agent: Antigravity Backend Agent)
+### Stream 2: Platform & Backend Systems Engineer (AI Coding Agent: Antigravity Backend Agent / Dev 2)
 - **Responsibilities**:
-  - Implement workspace and project lifecycle mock endpoints or services.
-  - Configure CORS middleware and SSE support in backing service skeletons.
-  - Provide database seeders for demo projects and organizations.
-- **Target Files**: `packages/db/src/seed.ts`, `services/gateway/middleware/cors.go`.
+  - Implement idempotent database seeder in `packages/db/src/seed.ts` populating demo tenant (`Acme Software Labs`), users (`darion`, `alex`, `agent-runner`), project (`index0-core`), workspaces (`active` and `idle`), agent runs, and billing entities.
+  - Author realistic mock `IAgentEvent` stream generators in `tests/fixtures/agent-events.fixture.ts` covering all 9 `AgentEventType` variants and simulating real-time SSE stream delivery.
+  - Provide workspace directory trees and code content fixtures in `tests/fixtures/workspaces.fixture.ts` to power the Web IDE Explorer and Monaco editor.
+  - Author verification test suites in `packages/db/test/seed.test.ts` and `tests/fixtures/fixtures.test.ts`.
+- **Target Files**: `packages/db/src/seed.ts`, `packages/db/test/seed.test.ts`, `tests/fixtures/**`, `packages/db/package.json`, `package.json`.
 
-### Stream 3: Developer Experience & Client Systems Engineer (AI Coding Agent: Antigravity Client Agent)
+### Stream 3: Developer Experience & Client Systems Engineer (AI Coding Agent: Antigravity Client Agent / Dev 3)
 - **Responsibilities**:
-  - Build the INDEX0 Web IDE (`apps/ide/web/`) using React/Vite and Monaco Editor.
-  - Implement modular UI components:
-    - **Editor**: Multi-tab code editor with syntax highlighting and diff visualizer.
-    - **Explorer**: File tree navigator respecting workspace boundaries.
-    - **Terminal**: Web terminal component.
-    - **Agent Panel**: Interactive chat, plan inspection, and step confirmation.
-    - **Agent Events**: Real-time SSE listener parsing `IAgentEvent`.
-  - Scaffold VS Code Extension architecture in `apps/ide/extension/`.
-- **Target Files**: `apps/ide/**`.
+  - Build the complete INDEX0 Web IDE (`apps/ide/web/`) using React, Vite, and modular presentation components:
+    - **Editor**: Multi-tab code editor with line numbers, syntax view, and side-by-side diff visualizer.
+    - **Explorer**: File tree navigator with folder expansion, active tab open, and search filtering.
+    - **Terminal**: Streaming terminal emulator with macOS chrome controls and auto-scrolling log viewport.
+    - **Agent Panel**: Interactive autonomous agent chat, plan step progress stepper, tool invocation inspection cards, and step approval confirmation controls.
+    - **Workbench**: Master IDE layout assembling Explorer, Editor, Terminal, and Agent Panel.
+  - Author real-time SSE stream listener and event parser (`apps/ide/web/src/services/agentStream.ts`) handling all 9 `AgentEventType` variants via Gateway client routing.
+  - Scaffold the desktop VS Code extension in `apps/ide/extension/` registering `index0.startAgentRun`, `index0.openWorkbench`, and `index0.viewTelemetry`.
+  - Author comprehensive automated component and stream parser test suites in `apps/ide/web/test/**` and `apps/ide/extension/test/**`.
+- **Target Files**: `apps/ide/web/**`, `apps/ide/extension/**`, `tsconfig.json`.
 
 ---
 
 ## 2. Antigravity Agent Prompt Directives
 
-### Directives for Stream 3 (DevEx Agent)
+### Directives for Stream 1 (Senior Tech Lead / Principal Agent / Dev 1)
+```text
+ROLE: Senior Tech Lead & System Architect
+AGENT RUNTIME: Google Antigravity Agent (Architect Mode)
+OBJECTIVE: Formulate authoritative agent contracts (@index0/contracts/v1/agent), enforce Gateway-centric client architecture and CORS policies, and lead the Day 3 EOD Convergence Ceremony.
+CONTRACT: System Blueprint (Sections 1, 2.1, 2.2, 5, 7) & docs/contracts/README.md
+ALLOWED FILES: packages/contracts/**, docs/tasks/day-03.md, .github/workflows/**
+DEPENDENCIES: Node.js 20+, pnpm 12+, TypeScript 5.4+
+REQUIREMENTS:
+- Author @index0/contracts/v1/agent: AgentEventType (9 variants), IAgentEvent, IAgentPlanStep, IToolCallPayload, IToolResultPayload, ISandboxEventPayload, IAgentRun, IAgentRunRequest, ISSEEventEnvelope.
+- Re-export agent module from @index0/contracts v1 and root entrypoints using ESM .js extensions.
+- Formulate Gateway reverse-proxy routing and CORS specifications for Web IDE (5173) and Gateway (8080).
+- Audit Stream 3 Web IDE and Stream 2 fixtures for strict contract conformance.
+- Coordinate Day 3 EOD integration and sign off on checkpoint/day-03.
+FORBIDDEN CHANGES: Do not bypass Gateway routing; do not modify existing v1 contracts without backward compatibility; do not bypass strict TypeScript settings.
+TESTS:
+- `pnpm --filter @index0/contracts build`
+- `pnpm --filter @index0/contracts typecheck`
+- `pnpm build`
+- `pnpm test`
+DEFINITION OF DONE:
+- @index0/contracts exports complete agent models with declaration files.
+- docs/tasks/day-03.md contains full directives and timeline for all three streams.
+- Turborepo pipeline builds and passes all tests across all packages.
+- Checkpoint tag checkpoint/day-03 created.
+```
+
+### Directives for Stream 2 (Platform Agent / Dev 2)
+```text
+ROLE: Platform & Backend Systems Engineer (Dev 2)
+AGENT RUNTIME: Google Antigravity Agent
+OBJECTIVE: Implement database seeder in packages/db/src/seed.ts, realistic mock IAgentEvent stream generators, and workspace file tree fixtures in tests/fixtures/** for Day 3.
+CONTRACT: @index0/contracts/v1/project, @index0/contracts/v1/agent, @index0/contracts/v1/auth, @index0/contracts/v1/billing
+ALLOWED FILES: packages/db/**, tests/fixtures/**, docs/tasks/day-03.md, package.json
+DEPENDENCIES: Node.js 20+, pnpm 12+, TypeScript 5.4+, Prisma, @index0/contracts
+REQUIREMENTS:
+- Implement idempotent database seeder in packages/db/src/seed.ts populating demo organization, users (admin, member, agent), project, workspaces, agent runs, agent events, and billing entities.
+- Author tests/fixtures/agent-events.fixture.ts generating realistic IAgentEvent sequences covering all 9 AgentEventType variants and simulating async SSE streaming.
+- Author tests/fixtures/workspaces.fixture.ts generating file tree nodes and code contents for IDE Explorer and Editor testing.
+- Author unit tests in packages/db/test/seed.test.ts and tests/fixtures/fixtures.test.ts verifying contract conformance and generator outputs.
+- Wire db:seed npm script into packages/db/package.json and root package.json.
+FORBIDDEN CHANGES: Do not bypass @index0/contracts; do not perform non-idempotent seed operations that fail on duplicate runs.
+TESTS:
+- `pnpm --filter @index0/db test`
+- `node --test tests/fixtures/**/*.test.ts`
+- `pnpm test`
+DEFINITION OF DONE:
+- Database seed script executes cleanly and idempotently.
+- Fixture test suite validates all 9 AgentEventType variants and file tree fixtures.
+- Full Turborepo build, typecheck, and test pipelines pass across monorepo.
+```
+
+### Directives for Stream 3 (DevEx Agent / Dev 3)
 ```text
 ROLE: Developer Experience & Client Systems Engineer
 AGENT RUNTIME: Google Antigravity Agent
-OBJECTIVE: Build the INDEX0 IDE Web presentation tier and extension scaffolding.
+OBJECTIVE: Build the complete INDEX0 Web IDE workbench, real-time SSE agent stream listener, and VS Code extension scaffolding for Day 3.
 CONTRACT: @index0/contracts/v1/api, @index0/contracts/v1/agent, @index0/contracts/v1/project
-ALLOWED FILES: apps/ide/**
-DEPENDENCIES: react, vite, monaco-editor, lucide-react, rxjs
+ALLOWED FILES: apps/ide/**, tsconfig.json, docs/tasks/day-03.md
+DEPENDENCIES: Node.js 20+, pnpm 12+, TypeScript 5.4+, React 18+, Vite, Lucide-React
 REQUIREMENTS:
-- Implement Editor, Explorer, Terminal, Agent Panel, and Agent Events viewer.
-- Connect all network client calls through the Gateway client abstraction (base URL configurable).
-- Implement SSE event listener subscribing to /agents/runs/:id/events and mapping to IAgentEvent.
-- Provide VS Code extension skeleton in apps/ide/extension/ with commands to trigger agent runs.
-FORBIDDEN CHANGES: Do not hardcode internal service ports (e.g. 4001, 4002); use API Gateway routing.
-TESTS: Component render tests and event stream parser tests.
-```
-
-### Directives for Stream 2 (Platform Agent)
-```text
-ROLE: Platform & Backend Systems Engineer
-AGENT RUNTIME: Google Antigravity Agent
-OBJECTIVE: Provide workspace seeding data and test event fixtures for IDE development.
-CONTRACT: @index0/contracts/v1/project, @index0/contracts/v1/agent
-ALLOWED FILES: packages/db/src/seed.ts, tests/fixtures/**
-REQUIREMENTS:
-- Generate realistic mock IAgentEvent streams for agent planning, tool calling, and completion.
-- Write database seeder populating test organization, user, project, and workspace.
-TESTS: Run seed script and verify database population.
+- Implement apps/ide/web with Explorer, Multi-Tab Editor with diff view, Terminal, and Agent Panel.
+- Implement AgentPanel with plan step tracker (pending, in_progress, completed, failed), tool inspection cards, and user step approval confirmation buttons.
+- Implement agentStream.ts supporting all 9 AgentEventType variants via Gateway client abstraction (/api/v1/...).
+- Scaffold apps/ide/extension with index0.startAgentRun, index0.openWorkbench, index0.viewTelemetry commands.
+- Author automated tests verifying component renders, event stream transformations, and extension registration.
+FORBIDDEN CHANGES: Do not hardcode internal service ports (4001, 4002); use API Gateway routing (/api/v1/...); do not bypass strict TypeScript.
+TESTS:
+- `pnpm --filter @index0/ide-web build`
+- `pnpm --filter @index0/ide-web typecheck`
+- `pnpm --filter @index0/ide-web test`
+- `pnpm --filter @index0/ide-extension build`
+- `pnpm --filter @index0/ide-extension typecheck`
+- `pnpm --filter @index0/ide-extension test`
+DEFINITION OF DONE:
+- Web IDE builds production bundle cleanly and all components render with 0 errors.
+- All 9 AgentEventType variants parse cleanly in agentStream.ts.
+- VS Code extension compiles and registers commands.
+- Full Turborepo pipeline passes across all 6 workspace packages.
 ```
 
 ---
@@ -98,7 +152,9 @@ pnpm --filter @index0/ide-extension build
 4. Verify no direct cross-origin requests bypass the API Gateway abstraction.
 
 ### Merge Gate Checklist
-- [ ] `apps/ide/web` builds production bundle without errors.
-- [ ] `apps/ide/extension` compiles cleanly.
-- [ ] SSE event parser correctly handles all `AgentEventType` variants.
-- [ ] Tag created: `checkpoint/day-03`.
+- [x] Database seeder (`packages/db/src/seed.ts`) and `db:seed` scripts verified.
+- [x] Mock agent event stream and workspace fixtures (`tests/fixtures/**`) verified across all 9 `AgentEventType` variants.
+- [x] `apps/ide/web` builds production bundle without errors.
+- [x] `apps/ide/extension` compiles cleanly.
+- [x] SSE event parser correctly handles all `AgentEventType` variants.
+- [x] Tag created: `checkpoint/day-03`.

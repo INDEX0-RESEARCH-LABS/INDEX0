@@ -179,6 +179,19 @@ importers:
         specifier: ^5.4.5
         version: 5.9.3
 
+  apps/ide/extension:
+    dependencies:
+      '@index0/contracts':
+        specifier: workspace:*
+        version: link:../../../packages/contracts
+    devDependencies:
+      '@types/node':
+        specifier: ^20.12.0
+        version: 20.19.43
+      typescript:
+        specifier: ^5.4.5
+        version: 5.9.3
+
   apps/ide/web:
     dependencies:
       '@index0/contracts':

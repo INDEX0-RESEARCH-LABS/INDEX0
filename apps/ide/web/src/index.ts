@@ -1,8 +1,13 @@
 /**
  * INDEX0 Web IDE Presentation Tier & Visualizers
- * Exports ExecutionResult, TerminalViewer, and SandboxRunnerDemo components.
+ * Complete workbench component exports and streaming services.
  */
 
 export * from './components/ExecutionResult.js';
 export * from './terminal/TerminalViewer.js';
 export * from './components/SandboxRunnerDemo.js';
+export * from './components/Explorer.js';
+export * from './components/Editor.js';
+export * from './components/AgentPanel.js';
+export * from './workbench/Workbench.js';
+export * from './services/agentStream.js';

@@ -1,0 +1,64 @@
+{
+  "name": "@index0/ide-extension",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "description": "VS Code extension for INDEX0 AI autonomous software engineering platform",
+  "main": "./dist/extension.js",
+  "types": "./dist/extension.d.ts",
+  "publisher": "index0",
+  "engines": {
+    "vscode": "^1.88.0"
+  },
+  "activationEvents": [
+    "onCommand:index0.startAgentRun",
+    "onCommand:index0.openWorkbench",
+    "onCommand:index0.viewTelemetry"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "index0.startAgentRun",
+        "title": "INDEX0: Start Autonomous Agent Run",
+        "category": "INDEX0"
+      },
+      {
+        "command": "index0.openWorkbench",
+        "title": "INDEX0: Open Web IDE Workbench",
+        "category": "INDEX0"
+      },
+      {
+        "command": "index0.viewTelemetry",
+        "title": "INDEX0: View Execution Telemetry",
+        "category": "INDEX0"
+      }
+    ],
+    "configuration": {
+      "title": "INDEX0 AI",
+      "properties": {
+        "index0.gatewayUrl": {
+          "type": "string",
+          "default": "http://localhost:8080",
+          "description": "API Gateway base URL for INDEX0 AI"
+        },
+        "index0.modelPreference": {
+          "type": "string",
+          "default": "claude-3-5-sonnet-20241022",
+          "description": "Preferred AI model for autonomous coding runs"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "test": "tsc --noEmit && node --test test/**/*.test.ts"
+  },
+  "dependencies": {
+    "@index0/contracts": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.0",
+    "typescript": "^5.4.5"
+  }
+}

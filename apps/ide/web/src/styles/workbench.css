@@ -1,0 +1,209 @@
+/* ==============================================================================
+   INDEX0 AI — Web IDE Workbench Layout & Modular Component Styling
+   Sleek Dark Mode Glassmorphism Theme
+   ============================================================================== */
+
+.index0-workbench-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+  background: var(--bg-primary, #0a0c14);
+  color: var(--text-primary, #f8fafc);
+  font-family: var(--font-sans, 'Inter', -apple-system, sans-serif);
+  overflow: hidden;
+}
+
+/* Activity & Status Top Bar */
+.index0-workbench-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 42px;
+  padding: 0 16px;
+  background: rgba(10, 12, 20, 0.85);
+  border-bottom: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
+  backdrop-filter: blur(12px);
+  z-index: 10;
+}
+
+.index0-workbench-breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  color: var(--text-secondary, #94a3b8);
+}
+
+.index0-workbench-breadcrumbs strong {
+  color: #fff;
+}
+
+/* Main 3-Pane Body */
+.index0-workbench-body {
+  display: grid;
+  grid-template-columns: 240px 1fr 340px;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* Left Explorer Sidebar */
+.index0-explorer-panel {
+  background: rgba(14, 17, 29, 0.7);
+  border-right: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.index0-panel-titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-muted, #64748b);
+  border-bottom: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
+}
+
+.index0-tree-node {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  font-size: 0.8rem;
+  color: var(--text-secondary, #94a3b8);
+  cursor: pointer;
+  border-left: 2px solid transparent;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.index0-tree-node:hover {
+  background: rgba(255, 255, 255, 0.04);
+  color: #fff;
+}
+
+.index0-tree-node.active {
+  background: rgba(99, 102, 241, 0.15);
+  color: #fff;
+  border-left-color: var(--accent-primary, #6366f1);
+}
+
+/* Center Editor & Bottom Panel */
+.index0-editor-viewport {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #08090f;
+}
+
+.index0-tab-bar {
+  display: flex;
+  align-items: center;
+  height: 36px;
+  background: rgba(10, 12, 20, 0.9);
+  border-bottom: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
+  overflow-x: auto;
+}
+
+.index0-tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 14px;
+  height: 100%;
+  font-size: 0.75rem;
+  color: var(--text-secondary, #94a3b8);
+  border-right: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
+  cursor: pointer;
+  user-select: none;
+  background: transparent;
+  transition: background 0.15s ease;
+}
+
+.index0-tab:hover {
+  background: rgba(255, 255, 255, 0.03);
+  color: #fff;
+}
+
+.index0-tab.active {
+  background: #08090f;
+  color: #fff;
+  border-top: 2px solid var(--accent-cyan, #06b6d4);
+  font-weight: 600;
+}
+
+.index0-code-container {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  position: relative;
+  font-family: var(--font-mono, 'Fira Code', monospace);
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+
+.index0-gutter {
+  width: 44px;
+  padding: 12px 0;
+  text-align: right;
+  padding-right: 12px;
+  color: #334155;
+  user-select: none;
+  background: rgba(0, 0, 0, 0.2);
+  border-right: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.index0-code-lines {
+  flex: 1;
+  padding: 12px 16px;
+  overflow: auto;
+  color: #e2e8f0;
+  white-space: pre;
+}
+
+/* Right Agent Panel */
+.index0-agent-panel {
+  background: rgba(14, 17, 29, 0.85);
+  border-left: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.index0-plan-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.06));
+  margin-bottom: 8px;
+  font-size: 0.8rem;
+  transition: all 0.2s ease;
+}
+
+.index0-plan-step.in_progress {
+  border-color: var(--accent-cyan, #06b6d4);
+  background: rgba(6, 182, 212, 0.08);
+}
+
+.index0-plan-step.completed {
+  border-color: rgba(16, 185, 129, 0.3);
+  background: rgba(16, 185, 129, 0.05);
+}
+
+.index0-tool-card {
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 0.75rem;
+  margin-bottom: 8px;
+  font-family: var(--font-mono, monospace);
+}

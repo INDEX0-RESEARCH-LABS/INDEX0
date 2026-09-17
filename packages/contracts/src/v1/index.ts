@@ -7,3 +7,4 @@ export * from "./project/index.js";
 export * from "./billing/index.js";
 export * from "./sandbox/index.js";
 export * from "./api/index.js";
+export * from "./agent/index.js";

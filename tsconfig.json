@@ -9,6 +9,7 @@
     { "path": "./packages/contracts" },
     { "path": "./packages/db" },
     { "path": "./packages/client-harness" },
-    { "path": "./apps/ide/web" }
+    { "path": "./apps/ide/web" },
+    { "path": "./apps/ide/extension" }
   ]
 }
