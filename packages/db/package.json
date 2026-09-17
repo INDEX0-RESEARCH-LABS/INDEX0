@@ -1,0 +1,34 @@
+{
+  "name": "@index0/db",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "description": "PostgreSQL database models and Prisma client singleton for INDEX0 AI",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "test": "tsc --noEmit && node --test test/db.test.ts",
+    "db:generate": "prisma generate",
+    "db:validate": "prisma validate",
+    "db:push": "prisma db push"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.14.0",
+    "@index0/contracts": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.0",
+    "prisma": "^5.14.0",
+    "typescript": "^5.4.5"
+  }
+}

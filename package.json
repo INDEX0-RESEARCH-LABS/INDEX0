@@ -1,0 +1,27 @@
+{
+  "name": "index0",
+  "version": "0.1.0",
+  "private": true,
+  "description": "INDEX0 AI — Sovereign Multi-Agent AI Software Engineering Platform",
+  "packageManager": "pnpm@12.4.2",
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "clean": "turbo run clean",
+    "postinstall": "pnpm db:generate",
+    "db:generate": "pnpm --filter @index0/db db:generate",
+    "db:validate": "pnpm --filter @index0/db db:validate",
+    "db:push": "pnpm --filter @index0/db db:push",
+    "infra:up": "docker compose -f infra/compose/docker-compose.yml up -d",
+    "infra:down": "docker compose -f infra/compose/docker-compose.yml down",
+    "infra:config": "docker compose -f infra/compose/docker-compose.yml config"
+  },
+  "devDependencies": {
+    "prettier": "^3.2.5",
+    "turbo": "^2.4.4",
+    "typescript": "^5.4.5"
+  }
+}

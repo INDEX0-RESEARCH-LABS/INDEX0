@@ -1,0 +1,95 @@
+name: CI Quality Gate & Conformance
+
+on:
+  push:
+    branches:
+      - main
+      - 'integration/**'
+  pull_request:
+    branches:
+      - main
+      - 'integration/**'
+
+jobs:
+  monorepo:
+    name: Monorepo Build, Typecheck & Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 12
+
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile || pnpm install
+
+      - name: Build All Packages
+        run: pnpm build
+
+      - name: Typecheck All Packages
+        run: pnpm typecheck
+
+      - name: Run Package Tests
+        run: pnpm test
+
+  contracts:
+    name: Contracts Typecheck & Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 12
+
+      - name: Install Contracts Dependencies
+        working-directory: packages/contracts
+        run: pnpm install --frozen-lockfile || pnpm install
+
+      - name: Compile Contracts & Check Types
+        working-directory: packages/contracts
+        run: |
+          pnpm run build
+          pnpm run typecheck
+
+  infrastructure:
+    name: Infrastructure Configuration Validation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Validate Docker Compose
+        run: docker compose -f infra/compose/docker-compose.yml config
+
+  security-scan:
+    name: Secret & Credential Leak Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Scan Diff for Committed Secrets
+        run: |
+          echo "Scanning for accidental secret leaks..."
+          git diff origin/main | grep -iE "(SECRET_KEY|API_KEY|PRIVATE_KEY|TOKEN)=(?!YOUR_|placeholder|Masterkey)" && {
+            echo "ERROR: Unsanitized credentials detected in git diff!"
+            exit 1
+          } || echo "No exposed credentials detected. Repository clean."

@@ -1,0 +1,264 @@
+// INDEX0 AI — Prisma Database Schema
+// Database: PostgreSQL 16
+// Authoritative Reference: @index0/contracts/v1 (auth, project, billing)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// -----------------------------------------------------------------------------
+// 1. Identity, Authentication & Tenant Context
+// -----------------------------------------------------------------------------
+
+model User {
+  id            String       @id @default(uuid())
+  email         String       @unique
+  name          String
+  avatarUrl     String?
+  emailVerified Boolean      @default(false)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  memberships   Membership[]
+
+  @@index([email])
+  @@map("users")
+}
+
+model Organization {
+  id          String       @id @default(uuid())
+  name        String
+  slug        String       @unique
+  planTier    String       @default("free") // "free" | "pro" | "enterprise"
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  memberships Membership[]
+  projects    Project[]
+  usageEvents UsageEvent[]
+  customer    Customer?
+
+  @@index([slug])
+  @@map("organizations")
+}
+
+model Membership {
+  id             String       @id @default(uuid())
+  userId         String
+  organizationId String
+  role           String       @default("member") // "admin" | "member" | "viewer" | "agent"
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, organizationId])
+  @@index([organizationId])
+  @@index([userId])
+  @@map("memberships")
+}
+
+// -----------------------------------------------------------------------------
+// 2. Projects, Workspaces & Agent Execution
+// -----------------------------------------------------------------------------
+
+model Project {
+  id             String       @id @default(uuid())
+  organizationId String
+  name           String
+  slug           String
+  description    String?
+  defaultBranch  String       @default("main")
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  repositories   Repository[]
+  workspaces     Workspace[]
+
+  @@unique([organizationId, slug])
+  @@index([organizationId])
+  @@map("projects")
+}
+
+model Repository {
+  id            String      @id @default(uuid())
+  projectId     String
+  remoteUrl     String
+  provider      String      @default("github") // "github" | "gitlab" | "custom"
+  defaultBranch String      @default("main")
+  isPrivate     Boolean     @default(true)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  project       Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  workspaces    Workspace[]
+
+  @@index([projectId])
+  @@map("repositories")
+}
+
+model Workspace {
+  id              String      @id @default(uuid())
+  projectId       String
+  repositoryId    String?
+  branch          String      @default("main")
+  status          String      @default("idle") // "idle" | "active" | "error" | "archived"
+  containerId     String?
+  portAllocations Json?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  project         Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  repository      Repository? @relation(fields: [repositoryId], references: [id], onDelete: SetNull)
+  agentRuns       AgentRun[]
+
+  @@index([projectId])
+  @@index([status])
+  @@map("workspaces")
+}
+
+model AgentRun {
+  id                String             @id @default(uuid())
+  workspaceId       String
+  prompt            String             @db.Text
+  status            String             @default("pending") // "pending" | "running" | "completed" | "failed" | "cancelled"
+  model             String
+  durationMs        Int?
+  totalTokens       Int?
+  createdAt         DateTime           @default(now())
+  completedAt       DateTime?
+
+  workspace         Workspace          @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  agentEvents       AgentEvent[]
+  sandboxExecutions SandboxExecution[]
+
+  @@index([workspaceId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("agent_runs")
+}
+
+model AgentEvent {
+  id        String   @id @default(uuid())
+  runId     String
+  type      String   // e.g. "agent.started", "tool.called", "agent.completed"
+  payload   Json
+  timestamp DateTime @default(now())
+
+  agentRun  AgentRun @relation(fields: [runId], references: [id], onDelete: Cascade)
+
+  @@index([runId])
+  @@index([type])
+  @@index([timestamp])
+  @@map("agent_events")
+}
+
+model SandboxExecution {
+  id          String    @id @default(uuid())
+  runId       String?
+  workspaceId String?
+  language    String    // "python" | "typescript" | "bash"
+  code        String    @db.Text
+  exitCode    Int
+  stdout      String    @db.Text
+  stderr      String    @db.Text
+  durationMs  Int
+  error       String?   @db.Text
+  createdAt   DateTime  @default(now())
+
+  agentRun    AgentRun? @relation(fields: [runId], references: [id], onDelete: Cascade)
+
+  @@index([runId])
+  @@index([workspaceId])
+  @@index([createdAt])
+  @@map("sandbox_executions")
+}
+
+// -----------------------------------------------------------------------------
+// 3. Monetization, Subscriptions & Metered Usage
+// -----------------------------------------------------------------------------
+
+model UsageEvent {
+  id             String       @id @default(uuid())
+  organizationId String
+  dimension      String       // e.g. "tokens.total", "sandbox.duration_ms", "agent.run_count"
+  quantity       Float
+  unit           String
+  timestamp      DateTime     @default(now())
+  metadata       Json?
+
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
+  @@index([dimension])
+  @@index([timestamp])
+  @@map("usage_events")
+}
+
+model Customer {
+  id                 String         @id @default(uuid())
+  organizationId     String         @unique
+  externalCustomerId String         @unique
+  email              String
+  name               String?
+  currency           String         @default("USD")
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+
+  organization       Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  subscriptions      Subscription[]
+  invoices           Invoice[]
+
+  @@index([organizationId])
+  @@index([externalCustomerId])
+  @@map("customers")
+}
+
+model Subscription {
+  id                 String       @id @default(uuid())
+  customerId         String
+  planId             String
+  status             String       @default("active") // "active" | "past_due" | "canceled" | "trialing" | "paused"
+  tier               String       @default("free")   // "free" | "pro" | "enterprise"
+  currentPeriodStart DateTime
+  currentPeriodEnd   DateTime
+  cancelAtPeriodEnd  Boolean      @default(false)
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+
+  customer           Customer     @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  invoices           Invoice[]
+
+  @@index([customerId])
+  @@index([status])
+  @@map("subscriptions")
+}
+
+model Invoice {
+  id             String        @id @default(uuid())
+  customerId     String
+  subscriptionId String?
+  amountDue      Int
+  amountPaid     Int           @default(0)
+  currency       String        @default("USD")
+  status         String        @default("draft") // "draft" | "open" | "paid" | "uncollectible" | "void"
+  invoicePdfUrl  String?
+  dueDate        DateTime?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  customer       Customer      @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  subscription   Subscription? @relation(fields: [subscriptionId], references: [id], onDelete: SetNull)
+
+  @@index([customerId])
+  @@index([subscriptionId])
+  @@index([status])
+  @@map("invoices")
+}
