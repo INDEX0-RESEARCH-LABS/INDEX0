@@ -7,6 +7,8 @@
   "include": [],
   "references": [
     { "path": "./packages/contracts" },
-    { "path": "./packages/db" }
+    { "path": "./packages/db" },
+    { "path": "./packages/client-harness" },
+    { "path": "./apps/ide/web" }
   ]
 }

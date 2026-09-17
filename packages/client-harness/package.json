@@ -1,29 +1,31 @@
 {
-  "name": "@index0/contracts",
+  "name": "@index0/client-harness",
   "version": "0.1.0",
   "type": "module",
   "private": true,
-  "description": "Authoritative TypeScript contracts, schemas, and event models for INDEX0 AI",
+  "description": "Developer client harness and execution CLI for INDEX0 AI Sandbox Manager",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "bin": {
+    "index0-sandbox": "./dist/cli.js"
+  },
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "default": "./dist/index.js"
-    },
-    "./v1/*": {
-      "types": "./dist/v1/*/index.d.ts",
-      "import": "./dist/v1/*/index.js",
-      "default": "./dist/v1/*/index.js"
     }
   },
   "scripts": {
     "build": "tsc",
     "typecheck": "tsc --noEmit",
-    "test": "tsc --noEmit"
+    "test": "tsc --noEmit && node --test test/**/*.test.ts"
+  },
+  "dependencies": {
+    "@index0/contracts": "workspace:*"
   },
   "devDependencies": {
+    "@types/node": "^20.12.0",
     "typescript": "^5.4.5"
   }
 }

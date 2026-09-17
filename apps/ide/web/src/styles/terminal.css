@@ -1,0 +1,148 @@
+/* ==============================================================================
+   INDEX0 AI — Terminal & Execution Visualizer Design Tokens & Styles
+   Sleek Dark Mode Glassmorphism Theme
+   ============================================================================== */
+
+:root {
+  --bg-primary: #0a0c14;
+  --bg-secondary: #121524;
+  --bg-tertiary: #191e32;
+  --bg-surface: rgba(22, 27, 46, 0.7);
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-accent: rgba(99, 102, 241, 0.25);
+
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+
+  --accent-primary: #6366f1;
+  --accent-cyan: #06b6d4;
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-danger: #ef4444;
+
+  --font-mono: 'Fira Code', 'SF Mono', 'Courier New', monospace;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  --glass-blur: blur(12px);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.index0-card {
+  background: var(--bg-surface);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  box-shadow: var(--glass-shadow);
+  overflow: hidden;
+  font-family: var(--font-sans);
+  color: var(--text-primary);
+  transition: border-color var(--transition-normal);
+}
+
+.index0-card:hover {
+  border-color: var(--border-accent);
+}
+
+/* Header Bar */
+.index0-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: rgba(10, 12, 20, 0.6);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.index0-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.index0-badge-success {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.index0-badge-error {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.index0-badge-warning {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.index0-badge-neutral {
+  background: rgba(148, 163, 184, 0.12);
+  color: #cbd5e1;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+/* Terminal Console Viewport */
+.index0-console-viewport {
+  background: #07090e;
+  padding: 14px 16px;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: #e2e8f0;
+  max-height: 320px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.index0-console-viewport::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.index0-console-viewport::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+}
+
+/* Chrome Window Controls */
+.index0-window-dots {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.index0-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.index0-dot-red { background: #ff5f56; }
+.index0-dot-yellow { background: #ffbd2e; }
+.index0-dot-green { background: #27c93f; }
+
+/* Interactive Pulse */
+@keyframes pulse-glow {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.92); }
+}
+
+.index0-pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  animation: pulse-glow 2s infinite ease-in-out;
+}

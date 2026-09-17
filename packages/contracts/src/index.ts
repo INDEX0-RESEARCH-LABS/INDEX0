@@ -3,4 +3,4 @@
  * Root entry point for authoritative contracts, interfaces, and schemas.
  */
 
-export * from "./v1";
+export * from "./v1/index.js";
