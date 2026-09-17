@@ -124,6 +124,9 @@ services:
       - LLM_API_KEY=${LLM_API_KEY:-}
       - LLM_BASE_URL=${LLM_BASE_URL:-}
       - WORKSPACE_BASE=/opt/workspace_base
+      - WORKSPACE_MOUNT_PATH=${WORKSPACE_MOUNT_PATH:-}
+      - FILE_STORE=${FILE_STORE:-local}
+      - FILE_STORE_PATH=${FILE_STORE_PATH:-/opt/workspace_base/.openhands-state}
     ports:
       - "3000:3000"
     extra_hosts:
@@ -131,6 +134,12 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ../../workspace:/opt/workspace_base
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:3000/ || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
     networks:
       - index0-net
 

@@ -1,0 +1,34 @@
+# INDEX0 AI — Autonomous Agent Workbench Instructions
+
+You are operating within the sovereign **INDEX0 AI** workspace as an autonomous software engineering agent running via OpenHands.
+
+## Operating Principles & Architectural Guardrails
+
+### 1. Contract First
+- All domain interfaces, event schemas, and API contracts are defined in `@index0/contracts`.
+- Never modify or bypass contracts without explicit approval.
+- Ensure all implementations strictly conform to `@index0/contracts/v1/*`.
+
+### 2. Option A Architecture Compliance
+- The INDEX0 platform orchestrates off-the-shelf open-source containers (Caddy 2, OpenHands 0.18, Zitadel OIDC, Temporal, ClickHouse, PostgreSQL 16).
+- Do not introduce scratch-built custom backend gateway or agent loop code.
+- All client communications route through the Caddy API Gateway on port 8000.
+
+### 3. Execution Sandboxing
+- Code execution runs inside disposable microVMs or OpenHands local runtime containers (`docker.all-hands.dev/all-hands-ai/runtime:0.18-nikolaik`).
+- Never execute untrusted or destructive shell commands on the host operating system.
+
+### 4. Tests Are Mandatory
+- Every new capability or bug fix must include automated test coverage.
+- Before declaring a task complete, run:
+  ```bash
+  pnpm typecheck
+  pnpm test
+  ```
+
+### 5. Zero Secrets in Git
+- Never hardcode or commit credentials, private keys, or API tokens.
+- All secrets must be loaded via environment variables referencing `.env.example`.
+
+### 6. Small, Atomic Commits
+- Keep changes concise, single-purpose, and reviewable in under 15 minutes.

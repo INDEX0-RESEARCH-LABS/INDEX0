@@ -13,5 +13,7 @@ export * from './components/UserNav.js';
 export * from './components/OpenHandsViewer.js';
 export * from './workbench/Workbench.js';
 export * from './services/agentStream.js';
+export * from './services/openhandsClient.js';
 export * from './auth/index.js';
+
 
