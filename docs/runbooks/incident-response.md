@@ -16,9 +16,9 @@ This runbook guides on-call engineers and lead maintainers during critical incid
 
 ## 2. Emergency Escalation & Roles
 
-1. **Incident Commander (IC)**: Senior Tech Lead. Directs the response, authorizes rollbacks, and coordinates communication.
-2. **Operations Lead**: Vibecoder A. Investigates infrastructure, database connections, container status, and logs.
-3. **Application Lead**: Vibecoder B. Investigates code regressions, contract violations, and client errors.
+1. **Incident Commander (IC)**: Senior Tech Lead & System Architect. Directs the response, authorizes rollbacks, and coordinates communication.
+2. **Platform & Operations Lead**: Platform & Backend Systems Engineer (empowered by Antigravity Agent). Investigates infrastructure, database connections, container status, sandbox leaks, and service logs.
+3. **Client & Application Lead**: Developer Experience & Client Systems Engineer (empowered by Antigravity Agent). Investigates code regressions, contract violations, IDE streaming issues, and MCP tool errors.
 
 ---
 

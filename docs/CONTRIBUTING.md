@@ -58,13 +58,21 @@ index0-ai/
 
 ---
 
-## Team Roles & Ownership
+## Team Roles & Agentic Ownership
 
-| Role | Responsibilities | Merge Authority |
-| :--- | :--- | :--- |
-| **Senior Tech Lead** | Architecture, Contracts, Gateway, Infra, Security, Database Schema, CI/CD | All packages & services |
-| **Vibecoder A** | Database Implementation, Sandbox Manager, OpenHands Adapter, Billing Services | `services/sandbox-manager`, `services/agent-host`, `services/billing`, `packages/db` |
-| **Vibecoder B** | INDEX0 IDE, MCP Tools, Developer Tooling, Frontend Integration, Semantic Search | `apps/ide`, `packages/mcp-host`, `apps/dashboard` |
+Engineers on INDEX0 AI operate in partnership with autonomous AI coding agents (such as Google Antigravity, Claude Code, and specialized IDE subagents). Agents write implementations strictly against predefined `@index0/contracts` specifications.
+
+| Stream & Role | Primary Focus | AI Agent Tooling | Assigned Packages & Services | Merge Authority |
+| :--- | :--- | :--- | :--- | :--- |
+| **Stream 1: Senior Tech Lead & System Architect** | Architecture, Contracts, Gateway, Infra, Security, Database Schema, CI/CD, Daily EOD Integration | Antigravity IDE (Architect mode) | All packages, contracts, infrastructure, and gateway | Sovereign merge authority across repository |
+| **Stream 2: Platform & Backend Systems Engineer** | Database Implementation, E2B Sandbox Manager, OpenHands Adapter, Billing, Telemetry | Antigravity AI Agent (Backend stream) | `services/sandbox-manager`, `services/agent-host`, `services/billing`, `services/telemetry`, `packages/db` | Submits PRs to daily integration branch |
+| **Stream 3: Developer Experience & Client Systems Engineer** | INDEX0 IDE (Web & Extension), Go MCP Host, Developer Tooling, Semantic Search, Dashboard | Antigravity AI Agent (Client stream) | `apps/ide`, `packages/mcp-host`, `apps/dashboard`, `apps/marketing` | Submits PRs to daily integration branch |
+
+---
+
+## Daily Integration Ceremony
+
+To ensure parallel agentic workstreams converge without regressions, the team follows the formal [Daily End-of-Day (EOD) Integration Plan](./tasks/DAILY_INTEGRATION_PLAN.md). Every day concludes with contract verification, cross-service automated testing, and a live smoke test before tagging a daily release checkpoint.
 
 ---
 

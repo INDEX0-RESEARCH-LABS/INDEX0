@@ -1,44 +1,100 @@
 # DAY 3 TASK: INDEX0 IDE Foundation
 
-## ROLE
-Vibecoder B
+## 1. Role-Wise Responsibilities
 
-## OBJECTIVE
-Establish the conceptual and presentation foundation for the INDEX0 IDE, comprising the web-based IDE application and VS Code extension architecture.
+### Stream 1: Senior Tech Lead & System Architect
+- **Responsibilities**:
+  - Enforce Gateway-centric client architecture: IDE clients communicate solely through the API Gateway.
+  - Review client security, JWT token storage, and CORS policies.
+  - Formulate API contracts for workspace initialization and agent event streaming.
+  - Supervise the Day 3 End-of-Day (EOD) Integration Ceremony.
 
-## CONTRACT
-- `@index0/contracts/v1/api`
-- `@index0/contracts/v1/agent`
-- `@index0/contracts/v1/project`
+### Stream 2: Platform & Backend Systems Engineer (AI Coding Agent: Antigravity Backend Agent)
+- **Responsibilities**:
+  - Implement workspace and project lifecycle mock endpoints or services.
+  - Configure CORS middleware and SSE support in backing service skeletons.
+  - Provide database seeders for demo projects and organizations.
+- **Target Files**: `packages/db/src/seed.ts`, `services/gateway/middleware/cors.go`.
 
-## ALLOWED FILES
-- `apps/ide/**`
+### Stream 3: Developer Experience & Client Systems Engineer (AI Coding Agent: Antigravity Client Agent)
+- **Responsibilities**:
+  - Build the INDEX0 Web IDE (`apps/ide/web/`) using React/Vite and Monaco Editor.
+  - Implement modular UI components:
+    - **Editor**: Multi-tab code editor with syntax highlighting and diff visualizer.
+    - **Explorer**: File tree navigator respecting workspace boundaries.
+    - **Terminal**: Web terminal component.
+    - **Agent Panel**: Interactive chat, plan inspection, and step confirmation.
+    - **Agent Events**: Real-time SSE listener parsing `IAgentEvent`.
+  - Scaffold VS Code Extension architecture in `apps/ide/extension/`.
+- **Target Files**: `apps/ide/**`.
 
-## DEPENDENCIES
-- React / Next.js or Vite for Web IDE
-- Monaco Editor / VS Code API
-- TypeScript
+---
 
-## REQUIREMENTS
-1. Structure modules for:
-   - **Editor**: Code display, multi-tab buffer management, and syntax highlighting.
-   - **Explorer**: File tree navigation with safe workspace boundaries.
-   - **Terminal**: Interactive shell interface connected to sandbox session.
-   - **Agent Panel**: Interactive chat, plan inspection, and step confirmation.
-   - **Agent Events**: SSE client receiving real-time agent execution stream.
-   - **Execution Results**: Test and build outcome visualizer.
-2. Ensure all external network requests route strictly through the API Gateway. Direct calls to internal microservice ports are forbidden.
-3. Provide VS Code extension skeleton in `apps/ide/extension/`.
+## 2. Antigravity Agent Prompt Directives
 
-## FORBIDDEN CHANGES
-- Do not hardcode internal ports (e.g. `localhost:4001`, `localhost:4002`) into frontend clients.
-- Do not bypass API Gateway authentication headers.
+### Directives for Stream 3 (DevEx Agent)
+```text
+ROLE: Developer Experience & Client Systems Engineer
+AGENT RUNTIME: Google Antigravity Agent
+OBJECTIVE: Build the INDEX0 IDE Web presentation tier and extension scaffolding.
+CONTRACT: @index0/contracts/v1/api, @index0/contracts/v1/agent, @index0/contracts/v1/project
+ALLOWED FILES: apps/ide/**
+DEPENDENCIES: react, vite, monaco-editor, lucide-react, rxjs
+REQUIREMENTS:
+- Implement Editor, Explorer, Terminal, Agent Panel, and Agent Events viewer.
+- Connect all network client calls through the Gateway client abstraction (base URL configurable).
+- Implement SSE event listener subscribing to /agents/runs/:id/events and mapping to IAgentEvent.
+- Provide VS Code extension skeleton in apps/ide/extension/ with commands to trigger agent runs.
+FORBIDDEN CHANGES: Do not hardcode internal service ports (e.g. 4001, 4002); use API Gateway routing.
+TESTS: Component render tests and event stream parser tests.
+```
 
-## TESTS
-- Component render tests for Editor and Agent Panel.
-- SSE event consumer parsing tests.
+### Directives for Stream 2 (Platform Agent)
+```text
+ROLE: Platform & Backend Systems Engineer
+AGENT RUNTIME: Google Antigravity Agent
+OBJECTIVE: Provide workspace seeding data and test event fixtures for IDE development.
+CONTRACT: @index0/contracts/v1/project, @index0/contracts/v1/agent
+ALLOWED FILES: packages/db/src/seed.ts, tests/fixtures/**
+REQUIREMENTS:
+- Generate realistic mock IAgentEvent streams for agent planning, tool calling, and completion.
+- Write database seeder populating test organization, user, project, and workspace.
+TESTS: Run seed script and verify database population.
+```
 
-## DEFINITION OF DONE
-- [ ] `apps/ide/web` builds cleanly.
-- [ ] `apps/ide/extension` packages without syntax or type errors.
-- [ ] Agent panel component renders and parses mock `IAgentEvent` stream.
+---
+
+## 3. Daily End-of-Day (EOD) Integration Ceremony
+
+### Timeline
+- **16:30**: Code Freeze on `feature/day-03-ide` and `feature/day-03-fixtures`.
+- **17:00**: Branch rebase onto `integration/day-03`.
+- **17:30**: Full test suite and live IDE integration scenario.
+- **18:00**: Senior Tech Lead sign-off & checkpoint tagging.
+
+### Automated Verification Script
+```bash
+# 1. Full typecheck across apps and packages
+pnpm typecheck
+
+# 2. Linting
+pnpm lint
+
+# 3. Web IDE build
+pnpm --filter @index0/ide-web build
+
+# 4. Extension compilation check
+pnpm --filter @index0/ide-extension build
+```
+
+### Day 3 Integration Scenario
+1. Launch Web IDE in development mode (`pnpm --filter @index0/ide-web dev`).
+2. Load mock workspace file tree; verify directory navigation works without errors.
+3. Simulate incoming SSE agent event stream; verify Agent Panel visualizes plan steps, tool calls, and completion indicators.
+4. Verify no direct cross-origin requests bypass the API Gateway abstraction.
+
+### Merge Gate Checklist
+- [ ] `apps/ide/web` builds production bundle without errors.
+- [ ] `apps/ide/extension` compiles cleanly.
+- [ ] SSE event parser correctly handles all `AgentEventType` variants.
+- [ ] Tag created: `checkpoint/day-03`.
