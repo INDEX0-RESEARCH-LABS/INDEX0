@@ -1,0 +1,126 @@
+{
+  "version": "1.0",
+  "description": "Authoritative Lago pricing plans, billable metrics, and subscription quotas for INDEX0 AI",
+  "billableMetrics": [
+    {
+      "code": "tokens_total",
+      "name": "Total Tokens Consumed",
+      "description": "Total prompt and completion tokens ingested across agent runs",
+      "aggregationType": "sum_agg",
+      "fieldName": "value",
+      "recurring": false
+    },
+    {
+      "code": "tokens_prompt",
+      "name": "Prompt Input Tokens",
+      "description": "Input context tokens sent to LLM providers",
+      "aggregationType": "sum_agg",
+      "fieldName": "value",
+      "recurring": false
+    },
+    {
+      "code": "tokens_completion",
+      "name": "Completion Output Tokens",
+      "description": "Generated completion tokens from LLM providers",
+      "aggregationType": "sum_agg",
+      "fieldName": "value",
+      "recurring": false
+    },
+    {
+      "code": "sandbox_duration_ms",
+      "name": "Sandbox Runtime Duration",
+      "description": "Execution time in milliseconds within isolated container sandboxes",
+      "aggregationType": "sum_agg",
+      "fieldName": "value",
+      "recurring": false
+    },
+    {
+      "code": "agent_run_count",
+      "name": "Agent Run Executions",
+      "description": "Total count of autonomous agent sessions dispatched",
+      "aggregationType": "count_agg",
+      "recurring": false
+    }
+  ],
+  "plans": [
+    {
+      "code": "plan_free",
+      "name": "Community Developer",
+      "description": "Free tier for personal exploration and open-source contributions",
+      "interval": "monthly",
+      "amountCents": 0,
+      "amountCurrency": "USD",
+      "trialPeriod": 0,
+      "charges": [],
+      "quotas": {
+        "tokensPerMonth": 300000,
+        "concurrentSandboxes": 1,
+        "overageAllowed": false
+      }
+    },
+    {
+      "code": "plan_pro",
+      "name": "Professional Engineer",
+      "description": "Full sovereign AI IDE runtime with generous limits and metered overage",
+      "interval": "monthly",
+      "amountCents": 2900,
+      "amountCurrency": "USD",
+      "trialPeriod": 14,
+      "charges": [
+        {
+          "billableMetricCode": "tokens_total",
+          "chargeModel": "standard",
+          "amountCents": 3,
+          "properties": {
+            "unit": "per_1000_tokens"
+          }
+        },
+        {
+          "billableMetricCode": "sandbox_duration_ms",
+          "chargeModel": "standard",
+          "amountCents": 1,
+          "properties": {
+            "unit": "per_minute"
+          }
+        }
+      ],
+      "quotas": {
+        "tokensPerMonth": 1000000,
+        "concurrentSandboxes": 5,
+        "overageAllowed": true
+      }
+    },
+    {
+      "code": "plan_enterprise",
+      "name": "Sovereign Enterprise",
+      "description": "Dedicated sovereign cluster with priority execution and volume discounts",
+      "interval": "monthly",
+      "amountCents": 49900,
+      "amountCurrency": "USD",
+      "trialPeriod": 30,
+      "charges": [
+        {
+          "billableMetricCode": "tokens_total",
+          "chargeModel": "graduated",
+          "amountCents": 2,
+          "properties": {
+            "unit": "per_1000_tokens"
+          }
+        },
+        {
+          "billableMetricCode": "sandbox_duration_ms",
+          "chargeModel": "graduated",
+          "amountCents": 1,
+          "properties": {
+            "unit": "per_minute"
+          }
+        }
+      ],
+      "quotas": {
+        "tokensPerMonth": 50000000,
+        "concurrentSandboxes": 50,
+        "overageAllowed": true
+      }
+    }
+  ]
+}

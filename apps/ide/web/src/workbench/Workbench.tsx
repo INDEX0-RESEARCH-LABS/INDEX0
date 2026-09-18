@@ -7,8 +7,9 @@ import { UserNav } from '../components/UserNav.js';
 import { OpenHandsViewer } from '../components/OpenHandsViewer.js';
 import { MCPToolsPanel } from '../components/MCPToolsPanel.js';
 import { TelemetryUsagePanel } from '../components/TelemetryUsagePanel.js';
+import { SubscriptionPlanModal } from '../components/SubscriptionPlanModal.js';
 import type { IAgentPlanStep, IAgentMessagePayload, AgentRunStatus } from '@index0/contracts';
-import { GitBranch, Layers, ShieldCheck, Play, Bot, Code2, Wrench, Activity } from 'lucide-react';
+import { GitBranch, Layers, ShieldCheck, Play, Bot, Code2, Wrench, Activity, CreditCard } from 'lucide-react';
 
 export interface IWorkbenchProps {
   initialFiles?: IWorkspaceFileNode[];
@@ -53,6 +54,8 @@ export const Workbench: React.FC<IWorkbenchProps> = ({
   const [viewMode, setViewMode] = useState<'workbench' | 'openhands'>(initialMode);
   const [showMcpPanel, setShowMcpPanel] = useState(false);
   const [showTelemetryPanel, setShowTelemetryPanel] = useState(false);
+  const [showBillingModal, setShowBillingModal] = useState(false);
+  const [currentPlanCode, setCurrentPlanCode] = useState('plan_free');
   const [files] = useState<IWorkspaceFileNode[]>(initialFiles);
   const [tabs, setTabs] = useState<IEditorTab[]>(initialTabs);
   const [activeTabPath, setActiveTabPath] = useState<string>(initialTabs[0]?.path || '');
@@ -275,6 +278,28 @@ export const Workbench: React.FC<IWorkbenchProps> = ({
           </button>
 
           <button
+            onClick={() => setShowBillingModal(!showBillingModal)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              background: showBillingModal ? 'rgba(245, 158, 11, 0.25)' : 'rgba(255, 255, 255, 0.05)',
+              border: showBillingModal ? '1px solid #f59e0b' : '1px solid rgba(255, 255, 255, 0.1)',
+              color: showBillingModal ? '#fbbf24' : '#e2e8f0',
+              borderRadius: '4px',
+              padding: '4px 8px',
+              fontSize: '0.75rem',
+              fontWeight: 600,
+              cursor: 'pointer'
+            }}
+            title="View sovereign subscription tiers, quotas & Lago rating engine"
+            data-testid="subscription-plan-toggle-btn"
+          >
+            <CreditCard size={12} color="#f59e0b" />
+            <span>Plans</span>
+          </button>
+
+          <button
             onClick={() => handleSendMessage('Run test suite in sandbox')}
             style={{
               display: 'flex',
@@ -418,6 +443,48 @@ export const Workbench: React.FC<IWorkbenchProps> = ({
             onClick={(e) => e.stopPropagation()}
           >
             <TelemetryUsagePanel onClose={() => setShowTelemetryPanel(false)} />
+          </div>
+        </div>
+      )}
+
+      {/* Subscription & Lago Rating Modal Overlay */}
+      {showBillingModal && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0, 0, 0, 0.7)',
+            backdropFilter: 'blur(4px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000
+          }}
+          onClick={() => setShowBillingModal(false)}
+          data-testid="subscription-modal-overlay"
+        >
+          <div
+            style={{
+              width: '980px',
+              maxWidth: '95vw',
+              height: '720px',
+              maxHeight: '92vh',
+              background: '#0a0c14',
+              border: '1px solid rgba(255, 255, 255, 0.15)',
+              borderRadius: '10px',
+              overflow: 'hidden',
+              boxShadow: '0 25px 60px rgba(0, 0, 0, 0.85)'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <SubscriptionPlanModal
+              currentPlanCode={currentPlanCode}
+              onSelectPlan={(plan) => setCurrentPlanCode(plan)}
+              onClose={() => setShowBillingModal(false)}
+            />
           </div>
         </div>
       )}

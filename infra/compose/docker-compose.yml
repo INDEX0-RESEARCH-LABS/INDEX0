@@ -69,6 +69,33 @@ services:
     networks:
       - index0-net
 
+  lago:
+    image: getlago/api:v1.12.0
+    container_name: index0-lago
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      LAGO_DATABASE_URL: postgresql://${POSTGRES_USER:-index0}:${POSTGRES_PASSWORD:-index0_secret}@postgres:5432/${POSTGRES_DB:-index0_dev}?sslmode=disable
+      PORT: 3000
+      RAILS_ENV: production
+      LAGO_API_URL: http://localhost:3001
+      LAGO_FRONT_URL: http://localhost:3001
+      SECRET_KEY_BASE: ${LAGO_SECRET_KEY_BASE:-placeholder_lago_secret_key_base_for_dev_mode_only_1234567890}
+      RSA_PRIVATE_KEY: ${LAGO_RSA_PRIVATE_KEY:-placeholder_rsa_private_key}
+    ports:
+      - "3001:3000"
+    volumes:
+      - ../lago/plans.json:/etc/lago/plans.json:ro
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:3000/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - index0-net
+
   temporal:
     image: temporalio/auto-setup:1.24.2
     container_name: index0-temporal

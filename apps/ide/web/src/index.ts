@@ -18,4 +18,5 @@ export * from './services/openhandsClient.js';
 export * from './services/mcpToolService.js';
 export * from './components/TelemetryUsagePanel.js';
 export * from './services/telemetryService.js';
+export * from './components/SubscriptionPlanModal.js';
 export * from './auth/index.js';
