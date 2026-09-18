@@ -40,3 +40,6 @@ Thumbs.db
 *.swp
 *.swo
 *~
+
+# OpenHands agent runtime state
+workspace/.openhands-state/

@@ -23,9 +23,8 @@
 
     # Health check endpoint for Gateway
     handle /health {
-        respond `{"status":"ok","gateway":"caddy","engine":"index0-gateway"}` 200 {
-            header Content-Type "application/json"
-        }
+        header Content-Type "application/json"
+        respond `{"status":"ok","gateway":"caddy","engine":"index0-gateway"}` 200
     }
 
     # Zitadel Identity Provider
