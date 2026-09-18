@@ -16,7 +16,6 @@ export * from './workbench/Workbench.js';
 export * from './services/agentStream.js';
 export * from './services/openhandsClient.js';
 export * from './services/mcpToolService.js';
+export * from './components/TelemetryUsagePanel.js';
+export * from './services/telemetryService.js';
 export * from './auth/index.js';
-
-
-

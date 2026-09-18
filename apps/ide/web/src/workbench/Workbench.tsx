@@ -6,8 +6,9 @@ import { TerminalViewer, type ITerminalLine } from '../terminal/TerminalViewer.j
 import { UserNav } from '../components/UserNav.js';
 import { OpenHandsViewer } from '../components/OpenHandsViewer.js';
 import { MCPToolsPanel } from '../components/MCPToolsPanel.js';
+import { TelemetryUsagePanel } from '../components/TelemetryUsagePanel.js';
 import type { IAgentPlanStep, IAgentMessagePayload, AgentRunStatus } from '@index0/contracts';
-import { GitBranch, Layers, ShieldCheck, Play, Bot, Code2, Wrench } from 'lucide-react';
+import { GitBranch, Layers, ShieldCheck, Play, Bot, Code2, Wrench, Activity } from 'lucide-react';
 
 export interface IWorkbenchProps {
   initialFiles?: IWorkspaceFileNode[];
@@ -51,6 +52,7 @@ export const Workbench: React.FC<IWorkbenchProps> = ({
 }) => {
   const [viewMode, setViewMode] = useState<'workbench' | 'openhands'>(initialMode);
   const [showMcpPanel, setShowMcpPanel] = useState(false);
+  const [showTelemetryPanel, setShowTelemetryPanel] = useState(false);
   const [files] = useState<IWorkspaceFileNode[]>(initialFiles);
   const [tabs, setTabs] = useState<IEditorTab[]>(initialTabs);
   const [activeTabPath, setActiveTabPath] = useState<string>(initialTabs[0]?.path || '');
@@ -251,6 +253,28 @@ export const Workbench: React.FC<IWorkbenchProps> = ({
           </button>
 
           <button
+            onClick={() => setShowTelemetryPanel(!showTelemetryPanel)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              background: showTelemetryPanel ? 'rgba(56, 189, 248, 0.25)' : 'rgba(255, 255, 255, 0.05)',
+              border: showTelemetryPanel ? '1px solid var(--accent-cyan, #38bdf8)' : '1px solid rgba(255, 255, 255, 0.1)',
+              color: showTelemetryPanel ? '#38bdf8' : '#e2e8f0',
+              borderRadius: '4px',
+              padding: '4px 8px',
+              fontSize: '0.75rem',
+              fontWeight: 600,
+              cursor: 'pointer'
+            }}
+            title="Inspect real-time token usage, cost estimations & ClickHouse metrics"
+            data-testid="telemetry-panel-toggle-btn"
+          >
+            <Activity size={12} color="#38bdf8" />
+            <span>Telemetry</span>
+          </button>
+
+          <button
             onClick={() => handleSendMessage('Run test suite in sandbox')}
             style={{
               display: 'flex',
@@ -356,6 +380,44 @@ export const Workbench: React.FC<IWorkbenchProps> = ({
             onClick={(e) => e.stopPropagation()}
           >
             <MCPToolsPanel onClose={() => setShowMcpPanel(false)} />
+          </div>
+        </div>
+      )}
+
+      {/* Telemetry & Usage Modal Overlay */}
+      {showTelemetryPanel && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0, 0, 0, 0.7)',
+            backdropFilter: 'blur(4px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000
+          }}
+          onClick={() => setShowTelemetryPanel(false)}
+          data-testid="telemetry-modal-overlay"
+        >
+          <div
+            style={{
+              width: '920px',
+              maxWidth: '92vw',
+              height: '680px',
+              maxHeight: '92vh',
+              background: '#0a0c14',
+              border: '1px solid rgba(255, 255, 255, 0.15)',
+              borderRadius: '8px',
+              overflow: 'hidden',
+              boxShadow: '0 20px 50px rgba(0, 0, 0, 0.8)'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <TelemetryUsagePanel onClose={() => setShowTelemetryPanel(false)} />
           </div>
         </div>
       )}

@@ -9,3 +9,4 @@ export * from "./sandbox/index.js";
 export * from "./api/index.js";
 export * from "./agent/index.js";
 export * from "./mcp/index.js";
+export * from "./telemetry/index.js";

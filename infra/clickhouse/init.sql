@@ -66,3 +66,20 @@ CREATE TABLE IF NOT EXISTS api_requests (
 ) ENGINE = MergeTree()
 PARTITION BY toYYYYMM(timestamp)
 ORDER BY (tenant_id, timestamp, request_id);
+
+-- -----------------------------------------------------------------------------
+-- 4. OpenMeter Usage & Metering Events (Sovereign Metering Sink)
+-- -----------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS usage_events (
+    id UUID,
+    type LowCardinality(String),
+    subject String,
+    timestamp DateTime64(3, 'UTC'),
+    value Float64,
+    tenant_id UUID,
+    metadata String,
+    created_at DateTime DEFAULT now()
+) ENGINE = MergeTree()
+PARTITION BY toYYYYMM(timestamp)
+ORDER BY (tenant_id, type, timestamp, id);
+

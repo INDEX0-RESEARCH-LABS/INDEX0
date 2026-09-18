@@ -55,6 +55,20 @@ services:
     networks:
       - index0-net
 
+  openmeter:
+    image: ghcr.io/openmeterio/openmeter:latest
+    container_name: index0-openmeter
+    restart: unless-stopped
+    depends_on:
+      clickhouse:
+        condition: service_healthy
+    ports:
+      - "8888:8888"
+    volumes:
+      - ../openmeter/config.yaml:/etc/openmeter/config.yaml:ro
+    networks:
+      - index0-net
+
   temporal:
     image: temporalio/auto-setup:1.24.2
     container_name: index0-temporal
