@@ -93,3 +93,6 @@ jobs:
             echo "ERROR: Unsanitized credentials detected in git diff!"
             exit 1
           } || echo "No exposed credentials detected. Repository clean."
+
+      - name: License Boundary Audit
+        run: bash scripts/license-check.sh

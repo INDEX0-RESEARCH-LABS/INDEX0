@@ -19,6 +19,7 @@
     "test:telemetry": "node --test tests/telemetry/**/*.test.ts",
     "test:billing": "node --test tests/billing/**/*.test.ts",
     "test:license": "pnpm --filter @index0/ai test:license",
+    "license:check": "bash scripts/license-check.sh",
     "clean": "turbo run clean",
     "postinstall": "pnpm db:generate",
     "db:generate": "pnpm --filter @index0/db db:generate",
