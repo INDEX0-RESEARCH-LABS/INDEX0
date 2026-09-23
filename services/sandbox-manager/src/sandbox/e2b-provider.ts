@@ -71,7 +71,8 @@ export class E2BSandboxSession implements ISandboxSession {
 }
 
 export class E2BSandboxProvider implements ISandboxProvider {
-  public readonly name = "e2b";
+  public readonly name = "e2b" as const;
+  public readonly supportsDesktop = false;
 
   constructor(private readonly apiKey: string) {}
 
@@ -79,7 +80,12 @@ export class E2BSandboxProvider implements ISandboxProvider {
     sessionId: string;
     timeoutMs: number;
     envVars?: Record<string, string>;
+    desktop?: boolean;
   }): Promise<ISandboxSession> {
+    if (options.desktop) {
+      throw new Error("E2BSandboxProvider does not support desktop sessions. Use E2BDesktopProvider instead.");
+    }
+
     const sandbox = await Sandbox.create({
       apiKey: this.apiKey,
       timeoutMs: options.timeoutMs,

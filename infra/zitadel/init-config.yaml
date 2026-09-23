@@ -41,10 +41,12 @@ projects:
         redirectUris:
           - "http://localhost:5173/auth/callback"
           - "http://localhost:8000/auth/callback"
+          - "http://localhost:8085/auth/callback"
           - "http://localhost:3000/callback"
         postLogoutRedirectUris:
           - "http://localhost:5173/"
           - "http://localhost:8000/"
+          - "http://localhost:8085/"
         scopes:
           - "openid"
           - "profile"

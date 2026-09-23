@@ -1,0 +1,198 @@
+/*
+ * Copyright (c) 2026 INDEX0 AI Inc. All Rights Reserved.
+ *
+ * PROPRIETARY AND CONFIDENTIAL CODE.
+ * NOTICE: All information contained herein is, and remains the property of INDEX0 AI Inc.
+ * The intellectual and technical concepts contained herein are proprietary to INDEX0 AI Inc.
+ * and may be covered by U.S. and Foreign Patents, patents in process, and are protected by
+ * trade secret or copyright law. Dissemination of this information or reproduction of this
+ * material is strictly forbidden unless prior written permission is obtained from INDEX0 AI Inc.
+ */
+
+@import "tailwindcss";
+
+:root,
+[data-theme="light"] {
+  --bg: #f2f1ed;
+  --surface-100: #f7f7f4;
+  --surface-200: #e6e5e0;
+  --surface-warm: #ebeae5;
+  --fg: #26251e;
+  --muted: rgba(38, 37, 30, 0.60);
+  --meta: rgba(38, 37, 30, 0.40);
+  --accent: #f54e00;
+  --accent-hover: #d94500;
+  --hover-crimson: #cf2d56;
+  --border-oklab: oklab(0.263084 -0.00230259 0.0124794 / 0.1);
+  --border-oklab-strong: oklab(0.263084 -0.00230259 0.0124794 / 0.2);
+  --shadow-atmospheric: 0 28px 70px rgba(0, 0, 0, 0.08), 0 14px 32px rgba(0, 0, 0, 0.05), 0 0 0 1px oklab(0.263084 -0.00230259 0.0124794 / 0.1);
+  --state-thinking: #dfa88f;
+  --state-grep: #9fc9a2;
+  --state-read: #9fbbe0;
+  --state-edit: #c0a8dd;
+  --state-done: #c08532;
+  --grid-dot: rgba(38, 37, 30, 0.07);
+}
+
+[data-theme="dark"] {
+  --bg: #141311;
+  --surface-100: #1c1b17;
+  --surface-200: #25241f;
+  --surface-warm: #2a2923;
+  --fg: #f2f1ed;
+  --muted: rgba(242, 241, 237, 0.65);
+  --meta: rgba(242, 241, 237, 0.40);
+  --accent: #f54e00;
+  --accent-hover: #ff5c14;
+  --hover-crimson: #e03b65;
+  --border-oklab: oklab(0.85 0.002 0.01 / 0.12);
+  --border-oklab-strong: oklab(0.85 0.002 0.01 / 0.24);
+  --shadow-atmospheric: 0 28px 70px rgba(0, 0, 0, 0.5), 0 14px 32px rgba(0, 0, 0, 0.3), 0 0 0 1px oklab(0.85 0.002 0.01 / 0.12);
+  --state-thinking: #dfa88f;
+  --state-grep: #9fc9a2;
+  --state-read: #9fbbe0;
+  --state-edit: #c0a8dd;
+  --state-done: #c08532;
+  --grid-dot: rgba(242, 241, 237, 0.07);
+}
+
+@theme {
+  --font-mono: "JetBrains Mono", "Berkeley Mono", ui-monospace, monospace;
+  --font-serif: var(--font-editorial-serif), "Newsreader", "EB Garamond", Georgia, serif;
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --color-canvas: var(--bg);
+  --color-surface: var(--surface-100);
+  --color-surface-muted: var(--surface-200);
+  --color-surface-warm: var(--surface-warm);
+  --color-ink: var(--fg);
+  --color-cursor-orange: var(--accent);
+  --color-hover-crimson: var(--hover-crimson);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  background-color: var(--bg);
+  color: var(--fg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  transition: background-color 150ms ease, color 150ms ease;
+}
+
+::selection {
+  background-color: var(--accent);
+  color: #ffffff;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-oklab-strong);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
+
+/* Three-Voice Typography System */
+.font-display-hero {
+  font-family: var(--font-sans);
+  font-size: 72px;
+  line-height: 1.10;
+  letter-spacing: -2.16px;
+  font-weight: 400;
+}
+
+@media (max-width: 768px) {
+  .font-display-hero {
+    font-size: 44px;
+    letter-spacing: -1.32px;
+  }
+}
+
+.font-display-section {
+  font-family: var(--font-sans);
+  font-size: 36px;
+  line-height: 1.20;
+  letter-spacing: -0.72px;
+  font-weight: 400;
+}
+
+@media (max-width: 768px) {
+  .font-display-section {
+    font-size: 28px;
+    letter-spacing: -0.56px;
+  }
+}
+
+.font-display-sub {
+  font-family: var(--font-sans);
+  font-size: 26px;
+  line-height: 1.25;
+  letter-spacing: -0.325px;
+  font-weight: 400;
+}
+
+.font-editorial {
+  font-family: var(--font-serif);
+  font-size: 19.2px;
+  line-height: 1.50;
+  font-weight: 400;
+  font-feature-settings: "cswh" 1;
+}
+
+.font-tech {
+  font-family: var(--font-mono);
+}
+
+/* Oklab Border Utilities */
+.border-oklab {
+  border: 1px solid var(--border-oklab);
+}
+
+.border-oklab-b {
+  border-bottom: 1px solid var(--border-oklab);
+}
+
+.border-oklab-t {
+  border-top: 1px solid var(--border-oklab);
+}
+
+.border-oklab-l {
+  border-left: 1px solid var(--border-oklab);
+}
+
+.border-oklab-r {
+  border-right: 1px solid var(--border-oklab);
+}
+
+/* Diffused Atmospheric Shadow */
+.shadow-atmospheric {
+  box-shadow: var(--shadow-atmospheric);
+}
+
+/* Full-Pill CTA Geometry */
+.pill-btn {
+  border-radius: 9999px;
+}
+
+/* Fine Grid Background */
+.bg-fine-grid {
+  background-size: 24px 24px;
+  background-image: 
+    radial-gradient(circle, var(--grid-dot) 1px, transparent 1px);
+}

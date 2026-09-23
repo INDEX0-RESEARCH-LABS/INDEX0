@@ -1,0 +1,60 @@
+version: "3.8"
+
+networks:
+  index0-net:
+    name: index0-net
+    driver: bridge
+  coolify:
+    external: true
+
+volumes:
+  index0_scratch:
+    driver: local
+
+services:
+  index0-agent-canvas:
+    build:
+      context: ./
+      dockerfile: ./docker/build/Dockerfile
+    image: index0-ai/agent-canvas:latest
+    container_name: index0-agent-canvas
+    restart: unless-stopped
+    environment:
+      - INDEX0_RUNTIME_CONTAINER_IMAGE=${INDEX0_RUNTIME_CONTAINER_IMAGE:-index0-ai/sandbox-runtime:latest}
+      - INDEX0_API_KEY=${INDEX0_API_KEY:-}
+      - INDEX0_WORKSPACE_DIR=/workspace/scratch
+      - WORKSPACE_BASE=/workspace/scratch
+      - LOG_ALL_EVENTS=true
+      - LLM_MODEL=${LLM_MODEL:-anthropic/claude-3-5-sonnet-20241022}
+      - LLM_API_KEY=${LLM_API_KEY:-}
+      - LLM_BASE_URL=${LLM_BASE_URL:-}
+      - PORT=3000
+      - API_PORT=3001
+      - FILE_STORE=local
+      - FILE_STORE_PATH=/.index0-state
+    ports:
+      - "3000:3000"
+      - "3001:3001"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - index0_scratch:/workspace/scratch
+      - ${WORKSPACE_MOUNT_PATH:-./workspace}:/workspace/scratch
+    networks:
+      index0-net:
+        aliases:
+          - agent-canvas
+          - agent-canvas.index0.internal
+      coolify:
+        aliases:
+          - agent-canvas.coolify.internal
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3001/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    pull_policy: build
+    stdin_open: true
+    tty: true

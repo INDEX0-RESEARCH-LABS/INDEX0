@@ -1,0 +1,26 @@
+# INDEX0 AI Agent Canvas Service Definition
+services:
+  index0-agent-canvas:
+    build:
+      context: ./
+      dockerfile: ./docker/build/Dockerfile
+    image: index0-ai/agent-canvas:latest
+    container_name: index0-agent-canvas
+    environment:
+      - INDEX0_RUNTIME_CONTAINER_IMAGE=${INDEX0_RUNTIME_CONTAINER_IMAGE:-index0-ai/sandbox-runtime:latest}
+      - INDEX0_WORKSPACE_DIR=/workspace/scratch
+      - WORKSPACE_BASE=/workspace/scratch
+      - SANDBOX_USER_ID=${SANDBOX_USER_ID:-1234}
+      - PORT=3000
+      - API_PORT=3001
+    ports:
+      - "3000:3000"
+      - "3001:3001"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${WORKSPACE_BASE:-$PWD/workspace/scratch}:/workspace/scratch
+    pull_policy: build
+    stdin_open: true
+    tty: true

@@ -9,3 +9,5 @@ allowBuilds:
   esbuild: true
   'prisma': true
   'turbo': true
+  'core-js': true
+  'msw': true

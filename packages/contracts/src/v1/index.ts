@@ -10,3 +10,10 @@ export * from "./api/index.js";
 export * from "./agent/index.js";
 export * from "./mcp/index.js";
 export * from "./telemetry/index.js";
+
+// Sovereign AGI Augmentation Layers
+export * from "./voice/index.js";
+export * from "./context/index.js";
+export * from "./coordination/index.js";
+export * from "./review-loop/index.js";
+

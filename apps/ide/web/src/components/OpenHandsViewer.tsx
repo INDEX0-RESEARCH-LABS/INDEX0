@@ -135,8 +135,21 @@ export const OpenHandsViewer: React.FC<IOpenHandsViewerProps> = ({
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <Bot size={16} color="#38bdf8" />
-            <strong>OpenHands Autonomous Agent Runtime</strong>
+            <Bot size={16} color="#f54e00" />
+            <strong>INDEX0 AI Agent Canvas</strong>
+            <span
+              style={{
+                background: 'rgba(245, 78, 0, 0.15)',
+                color: '#f54e00',
+                border: '1px solid rgba(245, 78, 0, 0.3)',
+                borderRadius: '3px',
+                padding: '0 5px',
+                fontSize: '0.62rem',
+                fontWeight: 700
+              }}
+            >
+              v1.0.0
+            </span>
           </div>
 
           <span style={{ color: '#64748b' }}>|</span>
@@ -439,7 +452,7 @@ export const OpenHandsViewer: React.FC<IOpenHandsViewerProps> = ({
               }}
             />
             <div style={{ fontSize: '0.85rem' }}>
-              Connecting to OpenHands workbench on port 8000 ({activeProfile.model})...
+              Connecting to INDEX0 AI Agent Canvas on port 8000 ({activeProfile.model})...
             </div>
           </div>
         )}
@@ -465,9 +478,9 @@ export const OpenHandsViewer: React.FC<IOpenHandsViewerProps> = ({
           >
             <AlertCircle size={24} />
             <div>
-              <div style={{ fontWeight: 600, fontSize: '0.85rem' }}>OpenHands Container Offline</div>
+              <div style={{ fontWeight: 600, fontSize: '0.85rem' }}>INDEX0 Agent Canvas Offline</div>
               <div style={{ fontSize: '0.75rem', color: '#cbd5e1', marginTop: '4px' }}>
-                Ensure container <code>index0-openhands</code> is active via:
+                Ensure container <code>index0-openhands</code> / <code>index0-agent-canvas</code> is active via:
                 <br />
                 <code>docker compose -f infra/compose/docker-compose.yml up -d openhands</code>
               </div>
@@ -479,7 +492,7 @@ export const OpenHandsViewer: React.FC<IOpenHandsViewerProps> = ({
           key={reloadKey}
           ref={iframeRef}
           src={targetUrl}
-          title="OpenHands Autonomous Agent Workbench"
+          title="INDEX0 AI Autonomous Agent Canvas"
           onLoad={() => setIsLoading(false)}
           onError={() => {
             setIsLoading(false);
@@ -605,3 +618,5 @@ export const OpenHandsViewer: React.FC<IOpenHandsViewerProps> = ({
     </div>
   );
 };
+
+export const Index0AgentCanvas = OpenHandsViewer;

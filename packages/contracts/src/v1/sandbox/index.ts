@@ -44,3 +44,5 @@ export interface ISandboxHealthResponse {
   activeSandboxes: number;
   timestamp: string;
 }
+
+export * from "./desktop.js";

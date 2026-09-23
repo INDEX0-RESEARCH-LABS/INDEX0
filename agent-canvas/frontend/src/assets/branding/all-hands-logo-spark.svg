@@ -1,0 +1,13 @@
+<svg width="70" height="46" viewBox="0 0 70 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- INDEX0 AI Spark Brand Mark -->
+  <g>
+    <!-- Background Frame -->
+    <rect x="2" y="4" width="38" height="38" rx="8" fill="#0A0E0A" stroke="#F54E00" stroke-width="2"/>
+    <path d="M14 14H30M22 14V32M14 32H30" stroke="#F7F7F4" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- Subscript 0 Node -->
+    <rect x="42" y="16" width="22" height="24" rx="6" fill="#F54E00"/>
+    <ellipse cx="53" cy="28" rx="5" ry="7" fill="#0A0E0A"/>
+    <!-- Sovereign Spark Glyphs -->
+    <path d="M35 8L37 12L41 14L37 16L35 20L33 16L29 14L33 12L35 8Z" fill="#F54E00"/>
+  </g>
+</svg>

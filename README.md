@@ -1,95 +1,103 @@
-# INDEX0 AI
+# INDEX0 AI — Sovereign AGI Operating System
 
-> Sovereign, multi-agent AI Software Engineering Platform.
+> Zero-lock-in, self-hosted, multi-agent AI software engineering platform with sub-100ms multimodal voice, edge autocomplete, microVM execution isolation, Git-native coordination, and self-evolving review loops.
 
-INDEX0 AI provides an integrated, self-hosted, and production-grade operating system for autonomous AI software engineering. It spans the complete lifecycle: **BUILD**, **SHIP**, **SELL**, and **GROW**.
+INDEX0 AI provides an integrated, production-grade operating system for autonomous AI software engineering spanning the complete lifecycle: **BUILD**, **SHIP**, **SELL**, and **GROW**, supercharged with 6 sovereign capability layers.
 
 ---
 
-## High-Level Architecture
+## 🌊 Sovereign AGI Architecture
 
 ```text
-                         INDEX0 AI
-                             |
-                             v
-                       API GATEWAY
-                    Caddy + Zitadel OIDC
-                        (Port 8000)
-                             |
-          +------------------+------------------+
-          |                  |                  |
-          v                  v                  v
-        BUILD              SHIP               SELL
-          |                  |                  |
-      OpenHands          Temporal            Lago
-     Workbench            Coolify         OpenMeter
-    (Editor/Terminal)   ClickHouse          Twenty
-    (Docker Sandbox)
-```
-
-Surrounding Platform Capabilities:
-```text
-GROW: PostHog (Analytics) | Postiz (Social Outreach) | Listmonk (Email Campaigns)
+┌──────────────────────────────────────────────────────────────────────────────────┐
+│                      INDEX0 SOVEREIGN AGI ARCHITECTURE                           │
+├──────────────────────────────────────────────────────────────────────────────────┤
+│ 🎙️ 1. Voice & Multimodal Layer   → LiveKit Agents + Pipecat (Sub-100ms WebRTC)   │
+│ ⚡ 2. Edge & GhostText Layer      → TabbyML + vLLM (Sub-20ms Local Autocomplete) │
+│ 🔒 3. MicroVM Execution Sandbox   → Firecracker + E2B Cloud (Hardware Virtualized)│
+│ 🐙 4. Git-Native Agent Protocol   → GNAP + Postcard (Decentralized Git State)    │
+│ 🧠 5. Context Compression & Memory→ OpenViking + Letta MemGPT + LiteLLM Proxy     │
+│ 🔄 6. Self-Evolving Review Loop   → LangGraph 4-Tier + TextGrad Backpropagation  │
+├──────────────────────────────────────────────────────────────────────────────────┤
+│                         FOUNDATIONAL PILLARS                                     │
+│  BUILD: OpenHands Workbench | SHIP: Temporal + Coolify                           │
+│  SELL:  OpenMeter + Lago    | GROW: Twenty CRM + PostHog                         │
+└──────────────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## Core Pillars
+## Six Sovereign Capability Layers
 
-### 1. BUILD
-- **OpenHands Workbench**: Self-hosted autonomous software engineering workbench with integrated Monaco editor, terminal, file explorer, and agent execution loop.
-- **Local Container Sandboxes**: Automated Docker execution containers running locally with zero cloud dependencies.
-- **Model Context Protocol (MCP)**: Off-the-shelf filesystem, ripgrep, and workspace inspection tools.
+### 1. Voice & Multimodal Interaction
+- **LiveKit Agents SDK & WebRTC SFU**: Real-time voice room token generation, sub-100ms latency.
+- **Pipecat Frame Pipeline**: Modular audio streaming pipeline: VAD → STT (Whisper) → LLM → TTS (ElevenLabs).
+- **Service**: `services/voice-agent/` (Python/FastAPI).
 
-### 2. SHIP
-- **Temporal**: Durable, distributed workflow orchestration for long-running agent tasks.
-- **Coolify**: Sovereign container deployment engine.
-- **ClickHouse**: High-throughput analytics and execution audit logs.
+### 2. Edge & GhostText Autocomplete
+- **Local vLLM / TabbyML**: Ultra-low latency code completions with local edge offloading.
+- **Zero-Cloud Fallback**: Completely sovereign offline operation.
 
-### 3. SELL
-- **OpenMeter**: Real-time agent usage metering (tokens, sandbox runtime, API calls).
-- **Lago**: Subscription, tiered billing, and invoice lifecycle management.
-- **Stripe**: Global payment rails and checkout infrastructure.
-- **Twenty**: Open-source sovereign CRM integration.
+### 3. MicroVM Execution Isolation
+- **E2B Cloud SDK**: Production code interpretation and browser desktop automation.
+- **Self-Hosted Firecracker MicroVMs**: Hardware-level KVM virtualization (<150ms boot time).
+- **Service**: `services/sandbox-manager/` (TypeScript/Express).
 
-### 4. GROW
-- **PostHog**: Product telemetry, funnel analytics, and feature flags.
-- **Postiz**: Omnichannel agent release announcements and social automation.
-- **Listmonk**: High-deliverability developer newsletter and transactional messaging.
+### 4. Git-Native Agent Protocol (GNAP)
+- **Git Commit Storage**: Transparent agent communication stored inside git history (`.gnap/`).
+- **Postcard Protocol**: Structured inter-agent message envelopes and cryptographic signatures.
+- **Contracts**: `packages/contracts/src/v1/coordination/`.
+
+### 5. Context Compression & Memory
+- **OpenViking Protocol (`viking://`)**: 3-tier hierarchical context retrieval (L0 Abstract ~50 tokens, L1 Structural ~500 tokens, L2 Full Code).
+- **Letta (MemGPT)**: Persistent Core, Archival, and Recall agent memory blocks.
+- **LiteLLM Proxy**: Unified cost-aware model routing and multi-provider fallback chains.
+- **Package**: `packages/mcp-host/` (TypeScript MCP host).
+
+### 6. Self-Evolving Multi-Agent Review Loop
+- **4-Tier Agent Graph**: Architect → Developer → Critic → QA.
+- **TextGrad Feedback Engine**: Textual backpropagation optimizing code diffs from compiler/critic critique.
+- **Service**: `services/agent-orchestrator/` (Python/LangGraph/FastAPI).
 
 ---
 
 ## Repository Structure
 
 ```text
-index0-ai/
+index0/
 ├── apps/
-│   ├── ide/            # INDEX0 IDE (web interface + VS Code extension)
-│   ├── dashboard/      # Web console for organizations, keys, and quotas
-│   └── marketing/      # Public platform documentation and portal
+│   ├── ide/                    # INDEX0 Web IDE + VS Code Extension
+│   └── ai/                     # Next.js platform landing portal
 ├── services/
-│   ├── gateway/        # High-performance Go API gateway with Zitadel OIDC
-│   ├── agent-host/     # NestJS service orchestrating OpenHands runtime
-│   ├── sandbox-manager/# Node.js / Express microservice managing E2B sandboxes
-│   ├── telemetry/      # Event ingestion pipeline to ClickHouse and OpenMeter
-│   ├── billing/        # Lago and Stripe billing integration service
-│   ├── deployment/     # Deployment orchestration with Coolify
-│   └── workflows/      # Temporal durable workflows
+│   ├── agent-orchestrator/     # Python LangGraph 4-Tier Review Loop & TextGrad
+│   ├── voice-agent/            # Python LiveKit & Pipecat WebRTC service
+│   ├── sandbox-manager/        # Node.js E2B Cloud & Firecracker MicroVM manager
+│   ├── gateway/                # Caddy reverse proxy & Zitadel OIDC gateway
+│   └── agent-host/             # Autonomous agent execution host
 ├── packages/
-│   ├── contracts/      # Versioned shared contracts (v1)
-│   ├── db/             # Prisma schema and PostgreSQL 16 migrations
-│   ├── mcp-host/       # Go stdio MCP host (ripgrep and file utilities)
-│   ├── shared/         # Common TypeScript utilities
-│   └── config/         # Shared configuration definitions
+│   ├── contracts/              # Shared schemas (@index0/contracts v1)
+│   ├── mcp-host/               # Model Context Protocol host (viking:// 3-tier)
+│   ├── db/                     # Prisma schema & PostgreSQL 16 migrations
+│   └── client-harness/         # Developer CLI & SDK client harness
 ├── infra/
-│   ├── compose/        # Docker Compose configuration for local dev
-│   ├── postgres/       # PostgreSQL 16 DDL and extensions
-│   ├── clickhouse/     # ClickHouse analytics table schemas
-│   ├── temporal/       # Temporal server configuration
-│   └── zitadel/        # Zitadel identity provider setup
-├── docs/               # System architecture, runbooks, and task board
-├── tests/              # Cross-service unit, contract, and e2e suites
-└── .github/workflows/  # CI/CD and security audit pipelines
+│   ├── compose/                # Unified Docker Compose stack
+│   │   ├── docker-compose.yml  # Master compose with modular includes
+│   │   ├── agent-orchestrator.yml
+│   │   ├── litellm.yml
+│   │   ├── letta.yml
+│   │   ├── livekit.yml
+│   │   └── security.yml
+│   ├── litellm/                # LiteLLM model routing rules
+│   ├── livekit/                # LiveKit WebRTC server config
+│   ├── mcp/                    # MCP canonical tool registry
+│   ├── postgres/               # PostgreSQL initialization scripts
+│   ├── clickhouse/             # Columnar telemetry schema
+│   └── zitadel/                # Zitadel OIDC configuration
+└── docs/                       # Architecture specifications & blueprints
+    ├── ARCHITECT_BEFORE_ACTION.md
+    ├── SYSTEM_ARCHITECTURE.md
+    ├── OPENSOURCE_STACK.md
+    └── ROADMAP_AND_UNIT_ECONOMICS.md
 ```
 
 ---
@@ -98,8 +106,8 @@ index0-ai/
 
 ### Prerequisites
 - Node.js 20+
-- pnpm 9+
-- Go 1.24+
+- pnpm 10+
+- Python 3.11+
 - Docker & Docker Compose
 
 ### 1. Initialize Environment
@@ -108,33 +116,32 @@ cp .env.example .env
 pnpm install
 ```
 
-### 2. Start Core Infrastructure
+### 2. Start Sovereign Infrastructure Stack
 ```bash
 docker compose -f infra/compose/docker-compose.yml up -d
 ```
 
-### 3. Run Checks
+### 3. Run Quality Gates & Validation
 ```bash
-pnpm lint
+# Typecheck full monorepo
 pnpm typecheck
+
+# Run unit tests across packages
 pnpm test
-pnpm build
+
+# Run Python service test suites
+cd services/agent-orchestrator && python -m pytest tests
+cd ../voice-agent && python -m pytest tests
 ```
 
 ---
 
-## Documentation
-- [Architecture Overview](docs/architecture/overview.md)
-- [BUILD Blueprint](docs/architecture/build.md)
-- [SHIP Blueprint](docs/architecture/ship.md)
-- [SELL Blueprint](docs/architecture/sell.md)
-- [GROW Blueprint](docs/architecture/grow.md)
-- [Contracts Guide](docs/contracts/README.md)
-- [Security Model](docs/security/security-model.md)
-- [Deployment Guides](docs/deployment/local.md)
-- [8-Day Task Board](docs/tasks/day-01.md)
+## Architecture Blueprints
+- [Architect Before Action Blueprint](docs/ARCHITECT_BEFORE_ACTION.md)
+- [System Architecture (4+6 Pillars)](docs/SYSTEM_ARCHITECTURE.md)
+- [Open Source Stack Breakdown](docs/OPENSOURCE_STACK.md)
+- [Roadmap & Unit Economics](docs/ROADMAP_AND_UNIT_ECONOMICS.md)
 - [Development Rules](docs/DEVELOPMENT_RULES.md)
-- [Contributing Guidelines](docs/CONTRIBUTING.md)
 
 ---
 

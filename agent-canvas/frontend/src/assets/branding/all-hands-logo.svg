@@ -1,0 +1,8 @@
+<svg width="39" height="26" viewBox="0 0 39 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- INDEX0 AI Brand Mark -->
+  <rect x="1" y="2" width="22" height="22" rx="5" fill="#0A0E0A" stroke="#F54E00" stroke-width="2"/>
+  <path d="M7 8H17M12 8V18M7 18H17" stroke="#F7F7F4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Subscript 0 Sovereign Node -->
+  <rect x="25" y="10" width="13" height="14" rx="4" fill="#F54E00"/>
+  <ellipse cx="31.5" cy="17" rx="3" ry="4" fill="#0A0E0A"/>
+</svg>

@@ -1,0 +1,36 @@
+services:
+  livekit:
+    image: livekit/livekit-server:v1.7
+    container_name: index0-livekit
+    restart: unless-stopped
+    ports:
+      - "7880:7880"
+      - "7881:7881"
+      - "7882:7882/udp"
+    environment:
+      LIVEKIT_KEYS: "${LIVEKIT_API_KEY:-devkey}: ${LIVEKIT_API_SECRET:-secret}"
+    command: --config /etc/livekit/config.yaml --dev
+    volumes:
+      - ../livekit/livekit-config.yaml:/etc/livekit/config.yaml:ro
+    networks:
+      - index0-net
+
+  voice-agent:
+    build:
+      context: ../../services/voice-agent
+      dockerfile: Dockerfile
+    container_name: index0-voice-agent
+    restart: unless-stopped
+    ports:
+      - "8020:8020"
+    environment:
+      - PORT=8020
+      - VOICE_LIVEKIT_URL=ws://livekit:7880
+      - VOICE_LIVEKIT_API_KEY=${LIVEKIT_API_KEY:-devkey}
+      - VOICE_LIVEKIT_API_SECRET=${LIVEKIT_API_SECRET:-secret}
+      - VOICE_LITELLM_PROXY_URL=http://litellm:4000
+      - VOICE_AGENT_ORCHESTRATOR_URL=http://agent-orchestrator:8000
+    depends_on:
+      - livekit
+    networks:
+      - index0-net

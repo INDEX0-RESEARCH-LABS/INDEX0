@@ -1,0 +1,25 @@
+services:
+  semgrep:
+    image: semgrep/semgrep:latest
+    container_name: index0-semgrep
+    restart: "no"
+    environment:
+      - SEMGREP_RULES=${SEMGREP_RULES:-auto}
+    volumes:
+      - ../..:/src:ro
+    command: semgrep scan --config=auto /src
+    networks:
+      - index0-net
+
+  trivy:
+    image: aquasec/trivy:latest
+    container_name: index0-trivy
+    restart: "no"
+    environment:
+      - TRIVY_SEVERITY=${TRIVY_SEVERITY_GATE:-HIGH,CRITICAL}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ../..:/workspace:ro
+    command: fs --severity HIGH,CRITICAL /workspace
+    networks:
+      - index0-net

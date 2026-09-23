@@ -14,6 +14,7 @@ import { SANDBOX_QUOTAS } from "@index0/contracts";
 import type { ISandboxProvider, ISandboxSession } from "../sandbox/types.js";
 import { MockSandboxProvider } from "../sandbox/mock-provider.js";
 import { E2BSandboxProvider } from "../sandbox/e2b-provider.js";
+import { FirecrackerSandboxProvider } from "../sandbox/firecracker-provider.js";
 import { config } from "../config.js";
 
 export class ExecutionService {
@@ -23,10 +24,41 @@ export class ExecutionService {
   constructor(customProvider?: ISandboxProvider) {
     if (customProvider) {
       this.provider = customProvider;
-    } else if (config.e2bApiKey) {
-      this.provider = new E2BSandboxProvider(config.e2bApiKey);
     } else {
-      this.provider = new MockSandboxProvider();
+      this.provider = ExecutionService.createProvider();
+    }
+  }
+
+  /**
+   * Create the appropriate sandbox provider based on config.provider setting.
+   */
+  private static createProvider(): ISandboxProvider {
+    switch (config.provider) {
+      case "e2b":
+        if (!config.e2bApiKey) {
+          console.warn("[SandboxManager] E2B provider selected but no API key configured. Falling back to mock.");
+          return new MockSandboxProvider();
+        }
+        return new E2BSandboxProvider(config.e2bApiKey);
+
+      case "firecracker":
+        return new FirecrackerSandboxProvider({
+          binaryPath: config.firecrackerBin || "/usr/local/bin/firecracker",
+          kernelImagePath: config.firecrackerKernel || "/var/lib/firecracker/vmlinux",
+          rootfsPath: config.firecrackerRootfs || "/var/lib/firecracker/rootfs.ext4",
+          socketPathPrefix: "/tmp/firecracker-",
+          vcpuCount: config.defaultCpuCount,
+          memSizeMib: config.maxMemoryMb
+        });
+
+      case "docker":
+        // Docker provider is not yet implemented; fall back to mock
+        console.warn("[SandboxManager] Docker provider not yet implemented. Falling back to mock.");
+        return new MockSandboxProvider();
+
+      case "mock":
+      default:
+        return new MockSandboxProvider();
     }
   }
 

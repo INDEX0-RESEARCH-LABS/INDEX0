@@ -1,0 +1,28 @@
+{
+  "name": "@index0/mcp-host",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "description": "Model Context Protocol (MCP) Host implementing viking:// 3-tier context retrieval for INDEX0 AGI",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "test": "tsc && node --test test/**/*.test.ts"
+  },
+  "dependencies": {
+    "@index0/contracts": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.0",
+    "typescript": "^5.4.5"
+  }
+}

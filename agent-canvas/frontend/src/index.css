@@ -1,0 +1,90 @@
+:root {
+  /* INDEX0 Sovereign Theme Tokens */
+  --bg-dark: #0a0e0a;
+  --bg-cream: #f7f7f4;
+  --brand-accent: #f54e00; /* Cursor Orange */
+  --brand-accent-hover: #d84500;
+  --brand-accent-subtle: rgba(245, 78, 0, 0.12);
+  --surface-hairline: 1px solid rgba(38, 37, 30, 0.08);
+  --surface-hairline-dark: 1px solid rgba(255, 255, 255, 0.08);
+
+  --bg-light: #161a16;
+  --bg-input: #1b201b;
+  --bg-workspace: #0f140f;
+  --border: rgba(255, 255, 255, 0.08);
+  --text-editor-base: #8e9a8f;
+  --text-editor-active: #e2e8e2;
+  --bg-editor-sidebar: #0e120e;
+  --bg-editor-active: #181d18;
+  --border-editor-sidebar: rgba(255, 255, 255, 0.08);
+  background-color: var(--bg-dark) !important;
+  --bg-neutral-muted: rgba(255, 255, 255, 0.05);
+}
+
+.theme-cream {
+  --bg-dark: #f7f7f4;
+  --bg-light: #efeee9;
+  --bg-input: #ffffff;
+  --bg-workspace: #fbfbf9;
+  --border: rgba(38, 37, 30, 0.08);
+  --text-editor-base: #525048;
+  --text-editor-active: #1e1d1a;
+  --bg-editor-sidebar: #f0efe9;
+  --bg-editor-active: #e6e5dd;
+  --border-editor-sidebar: rgba(38, 37, 30, 0.08);
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, "SF Pro", BlinkMacSystemFont, "Inter", "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--bg-dark);
+}
+
+code, kbd, samp, pre {
+  font-family: 'JetBrains Mono', 'Fira Code', Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
+.markdown-body code {
+  padding: 0.2em 0.4em;
+  margin: 0;
+  font-size: 85%;
+  white-space: break-spaces;
+  background-color: #141a14;
+  border-radius: 4px;
+  color: #f7f7f4;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  letter-spacing: -0.2px;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+.markdown-body pre code {
+  padding: 0;
+  background-color: inherit;
+}
+
+.markdown-body {
+  white-space: pre-wrap; /* Handles line breaks */
+}
+
+.markdown-body th {
+  text-align: left;
+}
+
+.markdown-body th, .markdown-body td {
+  padding: 0.1rem 1rem;
+}
+
+/* INDEX0 Active tab & status spinner accents */
+.active-execution-tab {
+  border-bottom: 2px solid var(--brand-accent) !important;
+  color: var(--brand-accent) !important;
+}
+
+.index0-spinner {
+  border-color: var(--brand-accent) transparent transparent transparent;
+}

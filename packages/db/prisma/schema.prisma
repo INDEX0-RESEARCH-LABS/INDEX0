@@ -262,3 +262,76 @@ model Invoice {
   @@index([status])
   @@map("invoices")
 }
+
+// -----------------------------------------------------------------------------
+// 5. Sovereign AGI Capabilities: Voice, Multi-Agent, Memory, & Context
+// -----------------------------------------------------------------------------
+
+model VoiceSession {
+  id             String    @id @default(uuid())
+  roomName       String
+  userId         String
+  organizationId String
+  agentRunId     String?
+  status         String    @default("connecting") // "connecting" | "connected" | "active" | "paused" | "disconnected" | "failed"
+  durationMs     Float?
+  createdAt      DateTime  @default(now())
+  endedAt        DateTime?
+
+  @@index([userId])
+  @@index([organizationId])
+  @@index([roomName])
+  @@map("voice_sessions")
+}
+
+model ReviewCycle {
+  id              String   @id @default(uuid())
+  projectId       String?
+  taskId          String
+  status          String   @default("started") // "started" | "planned" | "implemented" | "reviewed" | "qa_verified" | "completed" | "rejected"
+  iteration       Int      @default(0)
+  maxIterations   Int      @default(5)
+  currentRole     String?  // "architect" | "developer" | "critic" | "qa"
+  finalVerdict    String?  // "approve" | "request_changes" | "reject"
+  architecturePlan String? @db.Text
+  implementationDiff String? @db.Text
+  qaResults       Json?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([taskId])
+  @@index([projectId])
+  @@map("review_cycles")
+}
+
+model ContextCache {
+  id          String   @id @default(uuid())
+  cacheKey    String   @unique
+  path        String
+  tier        String   // "L0_ABSTRACT" | "L1_STRUCTURAL" | "L2_FULL"
+  content     String   @db.Text
+  tokenCount  Int
+  commitHash  String?
+  createdAt   DateTime @default(now())
+  expiresAt   DateTime
+
+  @@index([cacheKey])
+  @@index([path])
+  @@map("context_caches")
+}
+
+model AgentMemoryBlock {
+  id         String   @id @default(uuid())
+  agentId    String
+  type       String   @default("core") // "core" | "archival" | "recall"
+  label      String
+  value      String   @db.Text
+  tokenLimit Int      @default(2048)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([agentId])
+  @@index([type])
+  @@index([label])
+  @@map("agent_memory_blocks")
+}

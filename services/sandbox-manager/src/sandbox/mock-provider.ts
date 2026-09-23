@@ -114,13 +114,15 @@ export class MockSandboxSession implements ISandboxSession {
 }
 
 export class MockSandboxProvider implements ISandboxProvider {
-  public readonly name = "mock";
+  public readonly name = "mock" as const;
+  public readonly supportsDesktop = false;
   public readonly sessions: MockSandboxSession[] = [];
 
   async createSession(options: {
     sessionId: string;
     timeoutMs: number;
     envVars?: Record<string, string>;
+    desktop?: boolean;
   }): Promise<ISandboxSession> {
     const session = new MockSandboxSession(options.sessionId, options.timeoutMs, options.envVars);
     this.sessions.push(session);

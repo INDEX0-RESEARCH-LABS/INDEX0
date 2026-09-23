@@ -1,0 +1,112 @@
+{
+  "version": "1.0",
+  "description": "Sovereign AGI extended MCP tool registry for INDEX0 AI — including Viking Context, Semgrep SAST, and Trivy Vulnerability scanning",
+  "servers": [
+    {
+      "name": "@modelcontextprotocol/server-filesystem",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/opt/workspace_base"],
+      "env": {},
+      "transport": "stdio",
+      "workspaceConfined": true,
+      "description": "Standard MCP filesystem server providing read-only file access confined to workspace root"
+    },
+    {
+      "name": "@modelcontextprotocol/server-brave-search",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-brave-search"],
+      "env": {
+        "BRAVE_API_KEY": "${BRAVE_API_KEY:-}"
+      },
+      "transport": "stdio",
+      "workspaceConfined": false,
+      "description": "Optional standard MCP Brave Search server for web research queries"
+    },
+    {
+      "name": "@index0/mcp-viking-context",
+      "command": "node",
+      "args": ["./packages/mcp-host/dist/index.js"],
+      "env": {
+        "VIKING_CACHE_TTL_SECONDS": "${VIKING_CACHE_TTL_SECONDS:-3600}"
+      },
+      "transport": "stdio",
+      "workspaceConfined": true,
+      "description": "OpenViking 3-tier context retrieval protocol host (L0 Abstract, L1 Structural, L2 Full Code)"
+    },
+    {
+      "name": "semgrep-sast",
+      "command": "semgrep",
+      "args": ["scan", "--config=auto", "--json", "--quiet"],
+      "env": {
+        "SEMGREP_RULES": "${SEMGREP_RULES:-auto}"
+      },
+      "transport": "stdio",
+      "workspaceConfined": true,
+      "description": "Pre-merge SAST scanning via Semgrep with auto-detected rule packs"
+    },
+    {
+      "name": "trivy-scanner",
+      "command": "trivy",
+      "args": ["fs", "--format", "json", "--severity", "${TRIVY_SEVERITY_GATE:-HIGH,CRITICAL}", "."],
+      "env": {},
+      "transport": "stdio",
+      "workspaceConfined": true,
+      "description": "Filesystem and container vulnerability scanning via Trivy"
+    }
+  ],
+  "nativeTools": [
+    {
+      "name": "openhands_file_search",
+      "description": "Ripgrep-powered workspace code search across all project files",
+      "category": "search",
+      "transport": "native",
+      "sandboxed": true,
+      "isNative": true
+    },
+    {
+      "name": "openhands_file_read",
+      "description": "Read file contents within the workspace boundary",
+      "category": "filesystem",
+      "transport": "native",
+      "sandboxed": true,
+      "isNative": true
+    },
+    {
+      "name": "openhands_file_edit",
+      "description": "Apply edits to workspace files with diff tracking",
+      "category": "filesystem",
+      "transport": "native",
+      "sandboxed": true,
+      "isNative": true
+    },
+    {
+      "name": "openhands_directory_list",
+      "description": "List directory contents within the workspace tree",
+      "category": "inspection",
+      "transport": "native",
+      "sandboxed": true,
+      "isNative": true
+    },
+    {
+      "name": "openhands_bash_execute",
+      "description": "Execute shell commands inside the sandboxed runtime container",
+      "category": "execution",
+      "transport": "native",
+      "sandboxed": true,
+      "isNative": true
+    },
+    {
+      "name": "openhands_browser",
+      "description": "Browser interaction tool for web page navigation and inspection",
+      "category": "inspection",
+      "transport": "native",
+      "sandboxed": true,
+      "isNative": true
+    }
+  ],
+  "boundaryRules": {
+    "workspaceRoot": "/opt/workspace_base",
+    "denyPaths": ["../../", "/etc", "/var", "/root", "/home"],
+    "symlinkResolution": "deny"
+  }
+}

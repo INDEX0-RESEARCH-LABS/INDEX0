@@ -1,0 +1,17 @@
+services:
+  letta:
+    image: letta/letta-server:latest
+    container_name: index0-letta
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      LETTA_PG_URI: "postgresql://${POSTGRES_USER:-index0}:${POSTGRES_PASSWORD:-index0_secret}@postgres:5432/${POSTGRES_DB:-index0_dev}"
+      LETTA_SERVER_PORT: 8283
+      OPENAI_API_BASE: "http://litellm:4000/v1"
+      OPENAI_API_KEY: "${LITELLM_MASTER_KEY:-sk-index0-litellm-dev}"
+    ports:
+      - "8283:8283"
+    networks:
+      - index0-net

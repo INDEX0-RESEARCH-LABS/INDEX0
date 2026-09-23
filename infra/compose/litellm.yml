@@ -1,0 +1,20 @@
+services:
+  litellm:
+    image: ghcr.io/berriai/litellm:main-latest
+    container_name: index0-litellm
+    restart: unless-stopped
+    environment:
+      LITELLM_MASTER_KEY: "${LITELLM_MASTER_KEY:-sk-index0-litellm-dev}"
+      DATABASE_URL: "postgresql://${POSTGRES_USER:-index0}:${POSTGRES_PASSWORD:-index0_secret}@postgres:5432/${POSTGRES_DB:-index0_dev}"
+      OPENAI_API_KEY: "${OPENAI_API_KEY:-}"
+      ANTHROPIC_API_KEY: "${ANTHROPIC_API_KEY:-}"
+    ports:
+      - "4000:4000"
+    volumes:
+      - ../litellm/config.yaml:/app/config.yaml:ro
+    command: --config /app/config.yaml --detailed_debug
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - index0-net

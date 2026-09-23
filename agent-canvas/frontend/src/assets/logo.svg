@@ -1,0 +1,6 @@
+<svg width="140" height="36" viewBox="0 0 140 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- INDEX0 AI Wordmark -->
+  <rect x="2" y="4" width="28" height="28" rx="6" fill="#0A0E0A" stroke="#F54E00" stroke-width="2"/>
+  <path d="M10 12H22M16 12V24M10 24H22" stroke="#F7F7F4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="36" y="24" fill="#F7F7F4" font-family="'JetBrains Mono', 'Inter', monospace" font-size="16" font-weight="700" letter-spacing="-0.5px">INDEX<tspan fill="#F54E00">0</tspan> <tspan font-size="12" fill="#F54E00" font-weight="600">AI</tspan></text>
+</svg>

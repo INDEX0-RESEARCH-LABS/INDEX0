@@ -43,3 +43,9 @@ Thumbs.db
 
 # OpenHands agent runtime state
 workspace/.openhands-state/
+
+# Python bytecode & cache
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/

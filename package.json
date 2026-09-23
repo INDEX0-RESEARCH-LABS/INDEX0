@@ -18,6 +18,7 @@
     "test:mcp": "node --test tests/mcp/**/*.test.ts",
     "test:telemetry": "node --test tests/telemetry/**/*.test.ts",
     "test:billing": "node --test tests/billing/**/*.test.ts",
+    "test:license": "pnpm --filter @index0/ai test:license",
     "clean": "turbo run clean",
     "postinstall": "pnpm db:generate",
     "db:generate": "pnpm --filter @index0/db db:generate",
@@ -26,7 +27,11 @@
     "db:seed": "pnpm --filter @index0/db db:seed",
     "infra:up": "docker compose -f infra/compose/docker-compose.yml up -d",
     "infra:down": "docker compose -f infra/compose/docker-compose.yml down",
-    "infra:config": "docker compose -f infra/compose/docker-compose.yml config"
+    "infra:config": "docker compose -f infra/compose/docker-compose.yml config",
+    "openhands:up": "docker compose -f infra/compose/docker-compose.yml up -d openhands",
+    "openhands:down": "docker compose -f infra/compose/docker-compose.yml stop openhands",
+    "canvas:dev": "cd agent-canvas/frontend && pnpm dev",
+    "canvas:mock": "cd agent-canvas/frontend && pnpm dev:mock"
   },
   "devDependencies": {
     "@index0/contracts": "workspace:*",
