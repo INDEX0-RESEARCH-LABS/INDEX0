@@ -5,10 +5,14 @@ on:
     branches:
       - main
       - 'integration/**'
+      - 'feat/**'
+      - 'feature/**'
   pull_request:
     branches:
       - main
       - 'integration/**'
+      - 'feat/**'
+      - 'feature/**'
 
 jobs:
   monorepo:
@@ -95,4 +99,14 @@ jobs:
           } || echo "No exposed credentials detected. Repository clean."
 
       - name: License Boundary Audit
+        run: bash scripts/license-check.sh
+
+  license-compliance:
+    name: License Boundary & AGPL Compliance Audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Run License Audit
         run: bash scripts/license-check.sh
