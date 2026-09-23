@@ -17,7 +17,7 @@
   "scripts": {
     "build": "tsc",
     "typecheck": "tsc --noEmit",
-    "test": "tsc && node --test test/**/*.test.ts",
+    "test": "tsc && node --test test/*.test.ts",
     "dev": "vite"
   },
   "dependencies": {
