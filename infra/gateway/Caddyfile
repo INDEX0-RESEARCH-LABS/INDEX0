@@ -1,34 +1,45 @@
 {
     admin off
-    auto_https off
 }
 
-:8000 {
+# ==============================================================================
+# 1. Primary Platform Domain (ai.index0.in) + IP & Port Fallbacks
+# ==============================================================================
+ai.index0.in, http://ai.index0.in, http://20.106.136.209, :80, :443, :8000 {
+    tls internal
+    encode gzip zstd
+
     log {
         output stdout
         format json
     }
 
-    # Security, CORS, and tracing headers
+    # Security & CORS Headers
     header {
         X-Frame-Options "SAMEORIGIN"
         X-Content-Type-Options "nosniff"
         X-XSS-Protection "1; mode=block"
         Referrer-Policy "strict-origin-when-cross-origin"
         -Server
-        Access-Control-Allow-Origin "http://localhost:5173"
-        Access-Control-Allow-Methods "GET, POST, PUT, PATCH, DELETE, OPTIONS"
-        Access-Control-Allow-Headers "Authorization, Content-Type, X-Request-ID"
     }
 
     # Health check endpoint for Gateway
     handle /health {
         header Content-Type "application/json"
-        respond `{"status":"ok","gateway":"caddy","engine":"index0-gateway"}` 200
+        respond `{"status":"ok","gateway":"caddy","domain":"ai.index0.in","engine":"index0-gateway"}` 200
     }
 
-    # Zitadel Identity Provider
+    # Zitadel Identity Provider & Admin Console
     handle /auth* {
+        reverse_proxy zitadel:8085 {
+            header_up Host {host}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+            header_up X-Forwarded-Proto {scheme}
+        }
+    }
+
+    handle /ui* {
         reverse_proxy zitadel:8085 {
             header_up Host {host}
             header_up X-Real-IP {remote_host}
@@ -47,6 +58,26 @@
         }
     }
 
+    # LiteLLM OpenAI-Compatible Router (Azure OpenAI Backend)
+    handle /v1* {
+        reverse_proxy litellm:4000 {
+            header_up Host {host}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+            header_up X-Forwarded-Proto {scheme}
+        }
+    }
+
+    # Agent Orchestrator (LangGraph 4-Tier)
+    handle /orchestrator* {
+        reverse_proxy agent-orchestrator:8000 {
+            header_up Host {host}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+            header_up X-Forwarded-Proto {scheme}
+        }
+    }
+
     # ClickHouse Analytics HTTP Interface
     handle /analytics* {
         reverse_proxy clickhouse:8123 {
@@ -57,7 +88,99 @@
         }
     }
 
-    # OpenHands All-in-One Autonomous Agent Workbench (UI, Terminal, Editor, Agent Loop)
+    # Static Web IDE Client
+    handle /ide* {
+        reverse_proxy host.docker.internal:5173 {
+            header_up Host {host}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+            header_up X-Forwarded-Proto {scheme}
+        }
+    }
+
+    # OpenHands Monaco Workbench & Static Assets
+    handle /canvas* {
+        reverse_proxy openhands:3000 {
+            flush_interval -1
+            header_up Host {host}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+            header_up X-Forwarded-Proto {scheme}
+        }
+    }
+
+    handle /assets* {
+        reverse_proxy openhands:3000 {
+            header_up Host {host}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+            header_up X-Forwarded-Proto {scheme}
+        }
+    }
+
+    handle /locales* {
+        reverse_proxy openhands:3000 {
+            header_up Host {host}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+            header_up X-Forwarded-Proto {scheme}
+        }
+    }
+
+    handle /api/options* {
+        reverse_proxy openhands:3000 {
+            header_up Host {host}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+            header_up X-Forwarded-Proto {scheme}
+        }
+    }
+
+    handle /api/conversations* {
+        reverse_proxy openhands:3000 {
+            header_up Host {host}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+            header_up X-Forwarded-Proto {scheme}
+        }
+    }
+
+    handle /api/config* {
+        reverse_proxy openhands:3000 {
+            header_up Host {host}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+            header_up X-Forwarded-Proto {scheme}
+        }
+    }
+
+    handle /ws* {
+        reverse_proxy openhands:3000 {
+            header_up Host {host}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+            header_up X-Forwarded-Proto {scheme}
+        }
+    }
+
+    # Next.js Landing Platform (Port 3005 on host)
+    handle {
+        reverse_proxy host.docker.internal:3005 {
+            header_up Host {host}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+            header_up X-Forwarded-Proto {scheme}
+        }
+    }
+}
+
+# ==============================================================================
+# 2. Dedicated OpenHands Subdomain (canvas.index0.in)
+# ==============================================================================
+canvas.index0.in {
+    tls internal
+    encode gzip zstd
+
     handle {
         reverse_proxy openhands:3000 {
             flush_interval -1

@@ -8,6 +8,8 @@ services:
       DATABASE_URL: "postgresql://${POSTGRES_USER:-index0}:${POSTGRES_PASSWORD:-index0_secret}@postgres:5432/${LITELLM_DB:-index0_litellm}"
       OPENAI_API_KEY: "${OPENAI_API_KEY:-}"
       ANTHROPIC_API_KEY: "${ANTHROPIC_API_KEY:-}"
+      AZURE_OPENAI_API_KEY: "${AZURE_OPENAI_API_KEY:-}"
+      AZURE_OPENAI_RESOURCE_NAME: "${AZURE_OPENAI_RESOURCE_NAME:-}"
     ports:
       - "4000:4000"
     volumes:

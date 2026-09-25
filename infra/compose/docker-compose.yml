@@ -205,7 +205,11 @@ services:
     container_name: index0-gateway
     restart: unless-stopped
     ports:
+      - "80:80"
+      - "443:443"
       - "8000:8000"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     volumes:
       - ../gateway/Caddyfile:/etc/caddy/Caddyfile:ro
     depends_on:
