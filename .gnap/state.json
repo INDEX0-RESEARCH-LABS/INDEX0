@@ -1,8 +1,9 @@
 {
   "currentCycleId": "cycle-1790285465353",
-  "sequence": 1,
+  "sequence": 2,
   "activeAgents": [
-    "agent-critic-01"
+    "agent-critic-01",
+    "opencode-cli-01"
   ],
   "lastVerdict": "approved"
 }

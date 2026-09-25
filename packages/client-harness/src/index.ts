@@ -152,4 +152,7 @@ export class SandboxClient {
 }
 
 export * from './gnap.js';
+export * from './filter.js';
+export * from './worktree.js';
+export * from './opencode.js';
 

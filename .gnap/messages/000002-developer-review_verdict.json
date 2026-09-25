@@ -1,0 +1,22 @@
+{
+  "envelope": {
+    "version": "1.0",
+    "id": "postcard-1790325780409-2",
+    "from": {
+      "agentId": "opencode-cli-01",
+      "role": "developer",
+      "displayName": "Agent developer"
+    },
+    "to": "*",
+    "type": "review_verdict",
+    "payload": {
+      "taskDescription": "Audit Zitadel authentication endpoints",
+      "executedAt": "2026-09-25T08:43:00.400Z"
+    },
+    "timestamp": "2026-09-25T08:43:00.409Z"
+  },
+  "meta": {
+    "writtenAt": "2026-09-25T08:43:00.409Z",
+    "sequence": 2
+  }
+}
