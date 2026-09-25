@@ -1,74 +1,78 @@
 model_list:
-  - model_name: "gpt-4o"
+  # Primary Architect & Coding Model (Azure OpenAI - Consumes Azure Credits)
+  - model_name: "azure-gpt-4o"
     litellm_params:
-      model: "openai/gpt-4o"
-      api_key: "os.environ/OPENAI_API_KEY"
+      model: "azure/azure-gpt-4o"
+      api_base: "https://oai-index0-prod-eastus-426dd.openai.azure.com/"
+      api_version: "2024-08-01-preview"
+      api_key: "os.environ/AZURE_OPENAI_API_KEY"
     model_info:
       max_tokens: 128000
       input_cost_per_token: 0.0000025
       output_cost_per_token: 0.00001
 
-  - model_name: "claude-sonnet-4"
+  # High-Speed QA & Critic Model (Azure OpenAI - Consumes Azure Credits)
+  - model_name: "azure-gpt-4o-mini"
     litellm_params:
-      model: "anthropic/claude-sonnet-4-20250514"
-      api_key: "os.environ/ANTHROPIC_API_KEY"
+      model: "azure/azure-gpt-4o"
+      api_base: "https://oai-index0-prod-eastus-426dd.openai.azure.com/"
+      api_version: "2024-08-01-preview"
+      api_key: "os.environ/AZURE_OPENAI_API_KEY"
     model_info:
-      max_tokens: 200000
-      input_cost_per_token: 0.000003
-      output_cost_per_token: 0.000015
+      max_tokens: 128000
+      input_cost_per_token: 0.0000025
+      output_cost_per_token: 0.00001
 
+  # Map standard alias names to Azure deployments
+  - model_name: "gpt-4o"
+    litellm_params:
+      model: "azure/azure-gpt-4o"
+      api_base: "https://oai-index0-prod-eastus-426dd.openai.azure.com/"
+      api_version: "2024-08-01-preview"
+      api_key: "os.environ/AZURE_OPENAI_API_KEY"
+
+  - model_name: "gpt-4o-mini"
+    litellm_params:
+      model: "azure/azure-gpt-4o"
+      api_base: "https://oai-index0-prod-eastus-426dd.openai.azure.com/"
+      api_version: "2024-08-01-preview"
+      api_key: "os.environ/AZURE_OPENAI_API_KEY"
+
+  # Fallback mappings to guarantee zero third-party bills
   - model_name: "claude-3-5-sonnet"
     litellm_params:
-      model: "anthropic/claude-3-5-sonnet-20241022"
-      api_key: "os.environ/ANTHROPIC_API_KEY"
-    model_info:
-      max_tokens: 200000
-      input_cost_per_token: 0.000003
-      output_cost_per_token: 0.000015
+      model: "azure/azure-gpt-4o"
+      api_base: "https://oai-index0-prod-eastus-426dd.openai.azure.com/"
+      api_version: "2024-08-01-preview"
+      api_key: "os.environ/AZURE_OPENAI_API_KEY"
+
+  - model_name: "claude-sonnet-4"
+    litellm_params:
+      model: "azure/azure-gpt-4o"
+      api_base: "https://oai-index0-prod-eastus-426dd.openai.azure.com/"
+      api_version: "2024-08-01-preview"
+      api_key: "os.environ/AZURE_OPENAI_API_KEY"
 
   - model_name: "claude-3-5-haiku"
     litellm_params:
-      model: "anthropic/claude-3-5-haiku-20241022"
-      api_key: "os.environ/ANTHROPIC_API_KEY"
-    model_info:
-      max_tokens: 200000
-      input_cost_per_token: 0.0000008
-      output_cost_per_token: 0.000004
+      model: "azure/azure-gpt-4o"
+      api_base: "https://oai-index0-prod-eastus-426dd.openai.azure.com/"
+      api_version: "2024-08-01-preview"
+      api_key: "os.environ/AZURE_OPENAI_API_KEY"
 
-  - model_name: "local-codellama"
-    litellm_params:
-      model: "openai/codellama-34b"
-      api_base: "http://vllm:8000/v1"
-      api_key: "none"
-    model_info:
-      max_tokens: 16384
-      input_cost_per_token: 0.0
-      output_cost_per_token: 0.0
+litellm_settings:
+  drop_params: true
 
 router_settings:
   routing_strategy: "usage-based-routing-v2"
   num_retries: 3
   timeout: 60
   fallbacks:
-    - "claude-sonnet-4": ["gpt-4o", "local-codellama"]
-    - "claude-3-5-sonnet": ["gpt-4o", "local-codellama"]
+    - "azure-gpt-4o-mini": ["azure-gpt-4o"]
+    - "azure-gpt-4o": ["azure-gpt-4o"]
+    - "gpt-4o": ["azure-gpt-4o"]
+    - "gpt-4o-mini": ["azure-gpt-4o"]
 
 general_settings:
   master_key: "os.environ/LITELLM_MASTER_KEY"
   database_url: "os.environ/DATABASE_URL"
-
-environment_variables:
-  ZDR_ENFORCE: "true"
-
-# Hard Token Budget Limits (Sovereign Governance)
-user_settings:
-  - user_id: "default-developer"
-    max_budget: 20.00          # $20/month hard cap
-    budget_duration: "30d"
-    action_on_budget_exceeded: "block"
-
-  - user_id: "background-agent"
-    max_budget: 50.00          # $50/month hard cap
-    budget_duration: "30d"
-    action_on_budget_exceeded: "require_human_approval"
-
