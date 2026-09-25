@@ -77,7 +77,7 @@ export default function BlogPostDetailPage() {
           At INDEX0, we designed our execution tier around microVM instances powered by Amazon Firecracker. Each virtual machine instance provides a dedicated Linux guest kernel, hardware virtualization bounds (KVM), and strict cgroup resource throttling.
         </p>
 
-        <h2 className="font-sans font-bold text-2xl text-[var(--fg)] pt-4">
+        <h2 className="font-mono font-bold text-2xl text-[var(--fg)] pt-4">
           The 0.4ms Pre-Warm Pool Architecture
         </h2>
 

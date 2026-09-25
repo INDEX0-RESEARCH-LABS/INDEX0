@@ -159,5 +159,33 @@ describe('Dev 3: OpenHands Autonomous Agent Workbench & Client UX (@index0/ide-w
       assert.ok(React.isValidElement(element));
       assert.strictEqual(element.props.initialProfileId, 'local-ollama');
     });
+
+    it('should construct OpenHandsViewer in light mode with theme="light"', () => {
+      let toggledTheme = '';
+      const onThemeChange = (newTheme: 'dark' | 'light') => {
+        toggledTheme = newTheme;
+      };
+
+      const element = React.createElement(OpenHandsViewer, {
+        gatewayUrl: 'http://localhost:8000',
+        theme: 'light',
+        onThemeChange
+      });
+
+      assert.ok(React.isValidElement(element));
+      assert.strictEqual(element.props.theme, 'light');
+      assert.strictEqual(element.props.onThemeChange, onThemeChange);
+    });
+
+    it('should construct OpenHandsViewer with dark theme explicitly configured', () => {
+      const element = React.createElement(OpenHandsViewer, {
+        gatewayUrl: 'http://localhost:8000',
+        theme: 'dark'
+      });
+
+      assert.ok(React.isValidElement(element));
+      assert.strictEqual(element.props.theme, 'dark');
+    });
   });
 });
+

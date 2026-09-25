@@ -46,7 +46,7 @@ export default function PrivacyPage() {
       {/* Privacy Commitments */}
       <div className="space-y-8 font-editorial text-base leading-relaxed text-[var(--fg)]">
         <section className="space-y-3">
-          <h2 className="font-sans font-bold text-xl text-[var(--fg)]">
+          <h2 className="font-mono font-bold text-xl text-[var(--fg)]">
             1. Zero Source Code Storage
           </h2>
           <p>
@@ -55,7 +55,7 @@ export default function PrivacyPage() {
         </section>
 
         <section className="space-y-3">
-          <h2 className="font-sans font-bold text-xl text-[var(--fg)]">
+          <h2 className="font-mono font-bold text-xl text-[var(--fg)]">
             2. Ephemeral Virtual Machine Isolation
           </h2>
           <p>
@@ -64,7 +64,7 @@ export default function PrivacyPage() {
         </section>
 
         <section className="space-y-3">
-          <h2 className="font-sans font-bold text-xl text-[var(--fg)]">
+          <h2 className="font-mono font-bold text-xl text-[var(--fg)]">
             3. Sovereign Telemetry &amp; Anonymity
           </h2>
           <p>
@@ -73,7 +73,7 @@ export default function PrivacyPage() {
         </section>
 
         <section className="space-y-3">
-          <h2 className="font-sans font-bold text-xl text-[var(--fg)]">
+          <h2 className="font-mono font-bold text-xl text-[var(--fg)]">
             4. Compliance &amp; Certifications
           </h2>
           <p>

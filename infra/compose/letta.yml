@@ -1,8 +1,13 @@
 services:
   letta:
-    image: letta/letta-server:latest
+    image: letta/letta:latest
     container_name: index0-letta
     restart: unless-stopped
+    command: >
+      sh -c "letta backend local &&
+             mkdir -p /root/.letta &&
+             echo '$${LETTA_AUTH_TOKEN:-sk-index0-letta-dev}' > /root/.letta/token &&
+             exec letta server --listen ws://0.0.0.0:8283 --ws-auth capability-token --ws-token-file /root/.letta/token --openai-api"
     depends_on:
       postgres:
         condition: service_healthy

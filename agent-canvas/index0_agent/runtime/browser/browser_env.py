@@ -37,7 +37,14 @@ class BrowserEnv:
         multiprocessing.set_start_method('spawn', force=True)
         self.browser_side, self.agent_side = multiprocessing.Pipe()
 
-        self.init_browser()
+        try:
+            self.init_browser()
+        except Exception as e:
+            if self.eval_mode:
+                raise
+            logger.warning(
+                f'Failed to start browser environment: {e}. Non-browser actions will continue unaffected.'
+            )
         atexit.register(self.close)
 
     def get_html_text_converter(self):
@@ -88,7 +95,7 @@ class BrowserEnv:
         else:
             env = gym.make(
                 'browsergym/openended',
-                task_kwargs={'start_url': 'about:blank', 'goal': 'PLACEHOLDER_GOAL', 'user_agent': 'INDEX0-Agent/1.0'},
+                task_kwargs={'start_url': 'about:blank', 'goal': 'PLACEHOLDER_GOAL'},
                 pw_context_kwargs={'user_agent': 'INDEX0-Agent/1.0'},
                 wait_for_user_message=False,
                 headless=True,

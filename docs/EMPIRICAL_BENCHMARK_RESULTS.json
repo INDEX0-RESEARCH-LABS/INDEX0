@@ -1,0 +1,33 @@
+{
+  "compression": {
+    "totalFiles": 33,
+    "rawBytes": 95007,
+    "rawEstimatedTokens": 25223,
+    "l0AbstractBytes": 18597,
+    "l0EstimatedTokens": 4962,
+    "l0CompressionRatioPct": 80.3,
+    "l1StructuralBytes": 39670,
+    "l1EstimatedTokens": 10589,
+    "l1CompressionRatioPct": 58,
+    "weightedEffectiveTokens": 8676,
+    "weightedEffectiveReductionPct": 65.6,
+    "estimatedCostPer100kTurnsRaw": 7566.9,
+    "estimatedCostPer100kTurnsCompressed": 2602.86,
+    "dollarSavingsPct": 65.6
+  },
+  "gnapProtocol": {
+    "totalCycles": 25,
+    "totalStepsRecorded": 100,
+    "wallClockTimeMs": 132.09,
+    "throughputStepsPerSec": 757,
+    "latencyP50Ms": 0.76,
+    "latencyP95Ms": 3.87,
+    "latencyP99Ms": 5.87
+  },
+  "contractValidation": {
+    "totalValidations": 10000,
+    "wallClockTimeMs": 27.38,
+    "throughputValidationsPerSec": 365207,
+    "latencyMicrosecondsPerOp": 2.74
+  }
+}

@@ -13,53 +13,55 @@
 
 :root,
 [data-theme="light"] {
-  --bg: #f2f1ed;
-  --surface-100: #f7f7f4;
-  --surface-200: #e6e5e0;
-  --surface-warm: #ebeae5;
-  --fg: #26251e;
-  --muted: rgba(38, 37, 30, 0.60);
-  --meta: rgba(38, 37, 30, 0.40);
-  --accent: #f54e00;
-  --accent-hover: #d94500;
-  --hover-crimson: #cf2d56;
-  --border-oklab: oklab(0.263084 -0.00230259 0.0124794 / 0.1);
-  --border-oklab-strong: oklab(0.263084 -0.00230259 0.0124794 / 0.2);
-  --shadow-atmospheric: 0 28px 70px rgba(0, 0, 0, 0.08), 0 14px 32px rgba(0, 0, 0, 0.05), 0 0 0 1px oklab(0.263084 -0.00230259 0.0124794 / 0.1);
-  --state-thinking: #dfa88f;
-  --state-grep: #9fc9a2;
-  --state-read: #9fbbe0;
-  --state-edit: #c0a8dd;
-  --state-done: #c08532;
-  --grid-dot: rgba(38, 37, 30, 0.07);
+  --bg: #ffffff;
+  --surface-100: #f5f5f5;
+  --surface-200: #e8e8e8;
+  --surface-warm: #f0f0f0;
+  --fg: #0a0a0a;
+  --muted: #666666;
+  --meta: #8c8c8c;
+  --accent: #0a0a0a;
+  --accent-hover: #262626;
+  --accent-fg: #ffffff;
+  --hover-crimson: #0a0a0a;
+  --border-oklab: rgba(0, 0, 0, 0.12);
+  --border-oklab-strong: rgba(0, 0, 0, 0.25);
+  --shadow-atmospheric: none;
+  --state-thinking: #525252;
+  --state-grep: #525252;
+  --state-read: #525252;
+  --state-edit: #525252;
+  --state-done: #525252;
+  --grid-dot: rgba(0, 0, 0, 0.08);
 }
 
 [data-theme="dark"] {
-  --bg: #141311;
-  --surface-100: #1c1b17;
-  --surface-200: #25241f;
-  --surface-warm: #2a2923;
-  --fg: #f2f1ed;
-  --muted: rgba(242, 241, 237, 0.65);
-  --meta: rgba(242, 241, 237, 0.40);
-  --accent: #f54e00;
-  --accent-hover: #ff5c14;
-  --hover-crimson: #e03b65;
-  --border-oklab: oklab(0.85 0.002 0.01 / 0.12);
-  --border-oklab-strong: oklab(0.85 0.002 0.01 / 0.24);
-  --shadow-atmospheric: 0 28px 70px rgba(0, 0, 0, 0.5), 0 14px 32px rgba(0, 0, 0, 0.3), 0 0 0 1px oklab(0.85 0.002 0.01 / 0.12);
-  --state-thinking: #dfa88f;
-  --state-grep: #9fc9a2;
-  --state-read: #9fbbe0;
-  --state-edit: #c0a8dd;
-  --state-done: #c08532;
-  --grid-dot: rgba(242, 241, 237, 0.07);
+  --bg: #0a0a0a;
+  --surface-100: #141414;
+  --surface-200: #1f1f1f;
+  --surface-warm: #181818;
+  --fg: #ffffff;
+  --muted: #a3a3a3;
+  --meta: #737373;
+  --accent: #ffffff;
+  --accent-hover: #e5e5e5;
+  --accent-fg: #0a0a0a;
+  --hover-crimson: #ffffff;
+  --border-oklab: rgba(255, 255, 255, 0.12);
+  --border-oklab-strong: rgba(255, 255, 255, 0.25);
+  --shadow-atmospheric: none;
+  --state-thinking: #d4d4d4;
+  --state-grep: #d4d4d4;
+  --state-read: #d4d4d4;
+  --state-edit: #d4d4d4;
+  --state-done: #d4d4d4;
+  --grid-dot: rgba(255, 255, 255, 0.08);
 }
 
 @theme {
-  --font-mono: "JetBrains Mono", "Berkeley Mono", ui-monospace, monospace;
-  --font-serif: var(--font-editorial-serif), "Newsreader", "EB Garamond", Georgia, serif;
-  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --font-serif: var(--font-jetbrains-mono), "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --font-sans: var(--font-jetbrains-mono), "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   --color-canvas: var(--bg);
   --color-surface: var(--surface-100);
   --color-surface-muted: var(--surface-200);
@@ -69,6 +71,12 @@
   --color-hover-crimson: var(--hover-crimson);
 }
 
+:root {
+  --font-mono: var(--font-jetbrains-mono), "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --font-sans: var(--font-jetbrains-mono), "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --font-serif: var(--font-jetbrains-mono), "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -76,6 +84,7 @@
 html, body {
   background-color: var(--bg);
   color: var(--fg);
+  font-family: var(--font-mono);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   margin: 0;
@@ -86,7 +95,7 @@ html, body {
 
 ::selection {
   background-color: var(--accent);
-  color: #ffffff;
+  color: var(--accent-fg);
 }
 
 /* Custom Scrollbar */
@@ -105,27 +114,28 @@ html, body {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--accent);
+  background: var(--muted);
 }
 
-/* Three-Voice Typography System */
+/* Typography System - Powered by JetBrains Mono */
 .font-display-hero {
-  font-family: var(--font-sans);
-  font-size: 72px;
-  line-height: 1.10;
-  letter-spacing: -2.16px;
-  font-weight: 400;
+  font-family: var(--font-mono);
+  font-size: 36px;
+  line-height: 1.20;
+  letter-spacing: -1.0px;
+  font-weight: 600;
 }
 
 @media (max-width: 768px) {
   .font-display-hero {
-    font-size: 44px;
-    letter-spacing: -1.32px;
+    font-size: 24px;
+    line-height: 1.25;
+    letter-spacing: -0.5px;
   }
 }
 
 .font-display-section {
-  font-family: var(--font-sans);
+  font-family: var(--font-mono);
   font-size: 36px;
   line-height: 1.20;
   letter-spacing: -0.72px;
@@ -140,7 +150,7 @@ html, body {
 }
 
 .font-display-sub {
-  font-family: var(--font-sans);
+  font-family: var(--font-mono);
   font-size: 26px;
   line-height: 1.25;
   letter-spacing: -0.325px;
@@ -148,11 +158,11 @@ html, body {
 }
 
 .font-editorial {
-  font-family: var(--font-serif);
+  font-family: var(--font-mono);
   font-size: 19.2px;
   line-height: 1.50;
   font-weight: 400;
-  font-feature-settings: "cswh" 1;
+  font-feature-settings: "liga" 1, "calt" 1;
 }
 
 .font-tech {
@@ -180,9 +190,26 @@ html, body {
   border-right: 1px solid var(--border-oklab);
 }
 
-/* Diffused Atmospheric Shadow */
-.shadow-atmospheric {
-  box-shadow: var(--shadow-atmospheric);
+/* Zero Shadows: Completely Flat Brutalist Aesthetic */
+*,
+*::before,
+*::after {
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+img, svg {
+  filter: none !important;
+}
+
+.shadow-atmospheric,
+.shadow-sm,
+.shadow-md,
+.shadow-lg,
+.shadow-xl,
+.shadow-2xl,
+.shadow-inner {
+  box-shadow: none !important;
 }
 
 /* Full-Pill CTA Geometry */

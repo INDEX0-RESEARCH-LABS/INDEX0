@@ -65,15 +65,14 @@ INDEX0 AI provides an integrated, production-grade operating system for autonomo
 
 ```text
 index0/
+├── agent-canvas/               # Autonomous Workbench & OpenHands Runtime (Rebranded)
 ├── apps/
 │   ├── ide/                    # INDEX0 Web IDE + VS Code Extension
-│   └── ai/                     # Next.js platform landing portal
+│   └── ai/                     # Next.js platform landing portal & docs
 ├── services/
 │   ├── agent-orchestrator/     # Python LangGraph 4-Tier Review Loop & TextGrad
 │   ├── voice-agent/            # Python LiveKit & Pipecat WebRTC service
-│   ├── sandbox-manager/        # Node.js E2B Cloud & Firecracker MicroVM manager
-│   ├── gateway/                # Caddy reverse proxy & Zitadel OIDC gateway
-│   └── agent-host/             # Autonomous agent execution host
+│   └── sandbox-manager/        # Node.js E2B Cloud & Firecracker MicroVM manager
 ├── packages/
 │   ├── contracts/              # Shared schemas (@index0/contracts v1)
 │   ├── mcp-host/               # Model Context Protocol host (viking:// 3-tier)
@@ -81,18 +80,24 @@ index0/
 │   └── client-harness/         # Developer CLI & SDK client harness
 ├── infra/
 │   ├── compose/                # Unified Docker Compose stack
-│   │   ├── docker-compose.yml  # Master compose with modular includes
+│   │   ├── docker-compose.yml  # Master compose (Foundational OS Pillars)
 │   │   ├── agent-orchestrator.yml
 │   │   ├── litellm.yml
 │   │   ├── letta.yml
 │   │   ├── livekit.yml
 │   │   └── security.yml
-│   ├── litellm/                # LiteLLM model routing rules
+│   ├── gateway/                # Caddy API reverse proxy
+│   ├── litellm/                # LiteLLM routing rules & budget caps
 │   ├── livekit/                # LiveKit WebRTC server config
 │   ├── mcp/                    # MCP canonical tool registry
 │   ├── postgres/               # PostgreSQL initialization scripts
 │   ├── clickhouse/             # Columnar telemetry schema
+│   ├── openmeter/              # OpenMeter event metering config
+│   ├── lago/                   # Lago subscription plan catalog
 │   └── zitadel/                # Zitadel OIDC configuration
+├── scripts/                    # Platform verification & compliance scripts
+│   ├── healthcheck.sh          # Sovereign stack readiness diagnostic
+│   └── license-check.sh        # License boundary enforcement guard
 └── docs/                       # Architecture specifications & blueprints
     ├── ARCHITECT_BEFORE_ACTION.md
     ├── SYSTEM_ARCHITECTURE.md
@@ -118,20 +123,28 @@ pnpm install
 
 ### 2. Start Sovereign Infrastructure Stack
 ```bash
-docker compose -f infra/compose/docker-compose.yml up -d
+# Boot foundational pillars + all sovereign capability services:
+pnpm run infra:all:up
+
+# Or foundational stack only:
+pnpm run infra:up
 ```
 
 ### 3. Run Quality Gates & Validation
 ```bash
-# Typecheck full monorepo
+# 1. Run diagnostic system healthcheck
+./scripts/healthcheck.sh
+# or: pnpm run healthcheck
+
+# 2. Typecheck full monorepo
 pnpm typecheck
 
-# Run unit tests across packages
+# 3. Run monorepo test suites
 pnpm test
 
-# Run Python service test suites
-cd services/agent-orchestrator && python -m pytest tests
-cd ../voice-agent && python -m pytest tests
+# 4. Run Python service test suites
+cd services/agent-orchestrator && python -m pytest tests/
+cd ../voice-agent && python -m pytest tests/
 ```
 
 ---

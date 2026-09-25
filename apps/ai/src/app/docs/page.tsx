@@ -25,27 +25,27 @@ export default function DocsPage() {
 
   const CLI_COMMANDS = [
     {
-      cmd: "kilo init",
+      cmd: "index0 init",
       desc: "Initializes a sovereign INDEX0 workspace in the current directory with contracts and sandbox bounds.",
       flags: "--template [react|node|rust|python] --air-gap",
     },
     {
-      cmd: "kilo agent run [prompt]",
+      cmd: "index0 agent run [prompt]",
       desc: "Dispatches an autonomous multi-agent task through the Architect -> Planner -> Coder loop.",
       flags: "--model [claude-3-7|gpt-4o] --sandbox microvm --timeout 300s",
     },
     {
-      cmd: "kilo sandbox inspect",
+      cmd: "index0 sandbox inspect",
       desc: "Lists all running Firecracker microVM instances and active memory/cgroup allocations.",
       flags: "--json --watch",
     },
     {
-      cmd: "kilo mcp add [server]",
+      cmd: "index0 mcp add [server]",
       desc: "Connects an external Model Context Protocol server over stdio or SSE transport.",
       flags: "--env KEY=VAL --strict-schema",
     },
     {
-      cmd: "kilo diff review",
+      cmd: "index0 diff review",
       desc: "Interactively inspects generated AST diffs, runs background typechecks, and generates atomic git commits.",
       flags: "--apply --interactive",
     },
@@ -57,19 +57,19 @@ export default function DocsPage() {
       <div className="space-y-3 border-oklab-b pb-8">
         <div className="inline-flex items-center gap-2 text-xs font-mono text-[var(--accent)] font-semibold uppercase tracking-wider">
           <IconBook size={16} />
-          <span>[KILO CLI DOCUMENTATION]</span>
+          <span>[INDEX0 CLI DOCUMENTATION]</span>
         </div>
         <h1 className="font-display-section text-[var(--fg)]">
           Developer Manual &amp; Command Reference.
         </h1>
         <p className="font-editorial text-[var(--muted)] text-base max-w-2xl leading-relaxed">
-          The Kilo CLI is the primary developer interface for coordinating sovereign agents, dispatching Firecracker sandboxes, and auditing AST diffs.
+          The INDEX0 CLI is the primary developer interface for coordinating sovereign agents, dispatching Firecracker sandboxes, and auditing AST diffs.
         </p>
       </div>
 
       {/* Quickstart 3-Step Guide */}
       <div className="p-8 rounded-2xl border-oklab bg-[var(--surface-100)] shadow-sm space-y-6">
-        <h2 className="font-sans font-bold text-xl text-[var(--fg)] flex items-center gap-2">
+        <h2 className="font-mono font-bold text-xl text-[var(--fg)] flex items-center gap-2">
           <IconTerminal size={20} className="text-[var(--accent)]" />
           <span>Quickstart in 60 Seconds</span>
         </h2>
@@ -78,7 +78,7 @@ export default function DocsPage() {
           {/* Step 1 */}
           <div className="p-4 rounded-xl bg-[var(--surface-200)] border-oklab flex items-center justify-between">
             <div className="space-y-1">
-              <div className="text-[var(--meta)] text-[10px]">STEP 01: INSTALL KILO BINARY</div>
+              <div className="text-[var(--meta)] text-[10px]">STEP 01: INSTALL INDEX0 BINARY</div>
               <div className="text-[var(--fg)] font-bold">curl -fsSL https://dl.ai.index0.in/install.sh | sh</div>
             </div>
             <button
@@ -94,14 +94,14 @@ export default function DocsPage() {
           <div className="p-4 rounded-xl bg-[var(--surface-200)] border-oklab flex items-center justify-between">
             <div className="space-y-1">
               <div className="text-[var(--meta)] text-[10px]">STEP 02: BOOTSTRAP WORKSPACE</div>
-              <div className="text-[var(--fg)] font-bold">kilo init --air-gap</div>
+              <div className="text-[var(--fg)] font-bold">index0 init --air-gap</div>
             </div>
             <button
               type="button"
-              onClick={() => copy("kilo init --air-gap")}
+              onClick={() => copy("index0 init --air-gap")}
               className="text-[var(--muted)] hover:text-[var(--fg)]"
             >
-              {copiedCmd === "kilo init --air-gap" ? <IconCheck size={16} className="text-[var(--accent)]" /> : <IconCopy size={16} />}
+              {copiedCmd === "index0 init --air-gap" ? <IconCheck size={16} className="text-[var(--accent)]" /> : <IconCopy size={16} />}
             </button>
           </div>
 
@@ -109,14 +109,14 @@ export default function DocsPage() {
           <div className="p-4 rounded-xl bg-[var(--surface-200)] border-oklab flex items-center justify-between">
             <div className="space-y-1">
               <div className="text-[var(--meta)] text-[10px]">STEP 03: DISPATCH FIRST AGENT TASK</div>
-              <div className="text-[var(--fg)] font-bold">kilo agent run &quot;Refactor auth middleware to zero-trust ed25519&quot;</div>
+              <div className="text-[var(--fg)] font-bold">index0 agent run &quot;Refactor auth middleware to zero-trust ed25519&quot;</div>
             </div>
             <button
               type="button"
-              onClick={() => copy("kilo agent run \"Refactor auth middleware to zero-trust ed25519\"")}
+              onClick={() => copy("index0 agent run \"Refactor auth middleware to zero-trust ed25519\"")}
               className="text-[var(--muted)] hover:text-[var(--fg)]"
             >
-              {copiedCmd === "kilo agent run \"Refactor auth middleware to zero-trust ed25519\"" ? <IconCheck size={16} className="text-[var(--accent)]" /> : <IconCopy size={16} />}
+              {copiedCmd === "index0 agent run \"Refactor auth middleware to zero-trust ed25519\"" ? <IconCheck size={16} className="text-[var(--accent)]" /> : <IconCopy size={16} />}
             </button>
           </div>
         </div>
@@ -124,7 +124,7 @@ export default function DocsPage() {
 
       {/* CLI Command Reference Grid */}
       <div className="space-y-6">
-        <h2 className="font-sans font-bold text-2xl text-[var(--fg)]">
+        <h2 className="font-mono font-bold text-2xl text-[var(--fg)]">
           Command Line Reference
         </h2>
 

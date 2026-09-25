@@ -1,0 +1,13 @@
+# Tabby Sovereign AI Code Engine Configuration for INDEX0
+[model.completion.http]
+kind = "openai/completion"
+model_name = "claude-3-5-haiku"
+api_endpoint = "http://litellm:4000/v1"
+api_key = "sk-index0-litellm-dev"
+prompt_template = "<PRE> {prefix} <SUF>{suffix} <MID>"
+
+[model.embedding.http]
+kind = "openai/embedding"
+model_name = "text-embedding-3-small"
+api_endpoint = "http://litellm:4000/v1"
+api_key = "sk-index0-litellm-dev"

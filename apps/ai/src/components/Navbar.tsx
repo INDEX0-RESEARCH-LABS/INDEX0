@@ -37,6 +37,13 @@ const NAV_LINKS = [
   { href: "/downloads", label: "Downloads" },
 ];
 
+const ASCII_LOGO = `██╗███╗   ██╗██████╗ ███████╗██╗  ██╗ ██████╗   █████╗ ██╗
+██║████╗  ██║██╔══██╗██╔════╝╚██╗██╔╝██╔═══██╗ ██╔══██╗██║
+██║██╔██╗ ██║██║  ██║█████╗   ╚███╔╝ ██║   ██║ ███████║██║
+██║██║╚██╗██║██║  ██║██╔══╝   ██╔██╗ ██║   ██║ ██╔══██║██║
+██║██║ ╚████║██████╔╝███████╗██╔╝ ██╗╚██████╔╝ ██║  ██║██║
+╚═╝╚═╝  ╚═══╝╚═════╝ ╚══════╝╚═╝  ╚═╝ ╚═════╝  ╚═╝  ╚═╝╚═╝`;
+
 export function Navbar({ onOpenCommandPalette }: NavbarProps) {
   const pathname = usePathname();
   const { theme, toggleTheme } = useTheme();
@@ -45,18 +52,24 @@ export function Navbar({ onOpenCommandPalette }: NavbarProps) {
   return (
     <nav className="sticky top-0 z-40 w-full bg-[var(--bg)]/90 backdrop-blur-md border-oklab-b transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-        {/* Brand */}
-        <Link href="/" className="flex items-center gap-2.5 group">
-          <span className="font-sans font-bold text-lg tracking-tight text-[var(--fg)] group-hover:text-[var(--accent)] transition-colors">
-            INDEX0
-          </span>
-          <span className="px-2 py-0.5 text-[10px] font-mono font-medium rounded-full bg-[var(--accent)] text-white tracking-wider">
-            AI INC.
-          </span>
+        {/* Brand: Compact Miniature ASCII Logo */}
+        <Link
+          href="/"
+          className="flex items-center group py-1 select-none cursor-pointer"
+          title="INDEX0 AI"
+        >
+          <div className="relative w-[125px] sm:w-[145px] h-6 flex items-center overflow-hidden">
+            <pre
+              className="font-mono text-[8px] leading-[1.0] tracking-tighter text-[var(--fg)] group-hover:text-[var(--accent)] transition-colors select-none whitespace-pre origin-left scale-[0.38] sm:scale-[0.44]"
+              aria-label="INDEX0 AI"
+            >
+              {ASCII_LOGO}
+            </pre>
+          </div>
         </Link>
 
         {/* Desktop Navigation Links */}
-        <div className="hidden md:flex items-center gap-6 text-sm font-sans font-medium text-[var(--muted)]">
+        <div className="hidden md:flex items-center gap-6 text-sm font-mono font-medium text-[var(--muted)]">
           {NAV_LINKS.map((link) => {
             const isActive = pathname === link.href || pathname.startsWith(link.href + "/");
             return (
@@ -100,9 +113,9 @@ export function Navbar({ onOpenCommandPalette }: NavbarProps) {
           {/* Full-Pill CTA Button */}
           <Link
             href="/downloads"
-            className="pill-btn flex items-center gap-1.5 px-4 py-1.5 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white text-xs font-sans font-medium tracking-wide shadow-sm transition-colors"
+            className="pill-btn flex items-center gap-1.5 px-4 py-1.5 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-[var(--accent-fg)] text-xs font-mono font-medium tracking-wide shadow-sm transition-colors"
           >
-            <span>Install Kilo</span>
+            <span>Install INDEX0</span>
             <IconArrowUpRight size={14} strokeWidth={2} />
           </Link>
         </div>
@@ -128,7 +141,7 @@ export function Navbar({ onOpenCommandPalette }: NavbarProps) {
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="md:hidden px-4 pt-2 pb-4 space-y-2 border-oklab-t bg-[var(--surface-100)] text-sm font-sans">
+        <div className="md:hidden px-4 pt-2 pb-4 space-y-2 border-oklab-t bg-[var(--surface-100)] text-sm font-mono">
           {NAV_LINKS.map((link) => (
             <Link
               key={link.href}
@@ -143,9 +156,9 @@ export function Navbar({ onOpenCommandPalette }: NavbarProps) {
             <Link
               href="/downloads"
               onClick={() => setMobileMenuOpen(false)}
-              className="pill-btn w-full flex items-center justify-center gap-2 py-2 bg-[var(--accent)] text-white text-xs font-medium"
+              className="pill-btn w-full flex items-center justify-center gap-2 py-2 bg-[var(--accent)] text-[var(--accent-fg)] text-xs font-medium"
             >
-              <span>Install Kilo CLI</span>
+              <span>Install INDEX0 CLI</span>
               <IconArrowUpRight size={14} />
             </Link>
           </div>

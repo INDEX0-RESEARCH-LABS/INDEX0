@@ -5,7 +5,8 @@
  */
 
 import { SandboxClient } from './index.js';
-import type { SandboxLanguage, ISandboxRequest } from '@index0/contracts';
+import { GNAPWorker } from './gnap.js';
+import type { SandboxLanguage, ISandboxRequest, AgentRole } from '@index0/contracts';
 
 function printHelp(): void {
   console.log(`
@@ -21,11 +22,14 @@ Options:
   --mock              Run in local mock mode without network requests
   --url=<url>         Sandbox manager base URL (default: http://localhost:4001)
   --health            Check health of sandbox manager
+  --gnap              Record autonomous GNAP review step in local .gnap/ branch
+  --role=<role>       GNAP agent role: architect, developer, critic, qa (default: critic)
+  --verdict=<verdict> GNAP review verdict: approved, rejected, needs_qa (default: approved)
   --help              Display this help message
 
 Examples:
   index0-sandbox --mock --lang=python --code="print('Hello from sandbox')"
-  index0-sandbox --mock --lang=typescript --code="console.log([1,2,3].map(x => x*2))"
+  index0-sandbox --gnap --role=critic --verdict=approved
   index0-sandbox --health
 `);
 }
@@ -40,11 +44,34 @@ async function main(): Promise<void> {
 
   const isMock = args.includes('--mock');
   const isHealth = args.includes('--health');
+  const isGnap = args.includes('--gnap');
 
   const getArgValue = (prefix: string): string | undefined => {
     const match = args.find((a) => a.startsWith(prefix));
     return match ? match.slice(prefix.length) : undefined;
   };
+
+  if (isGnap) {
+    const role = (getArgValue('--role=') ?? 'critic') as AgentRole;
+    const agentId = getArgValue('--agent=') ?? `agent-${role}-01`;
+    const title = getArgValue('--title=') ?? 'Autonomous Review Step';
+    const verdict = getArgValue('--verdict=') ?? 'approved';
+
+    console.log(`\x1b[36m[GNAP]\x1b[0m Initializing Git-Native Agent Protocol worker (${role})...`);
+    const worker = new GNAPWorker({ agentId, agentRole: role });
+    await worker.initializeRepository();
+    const step = await worker.recordStep({
+      messageType: 'review_verdict',
+      title,
+      summary: `GNAP autonomous cycle review step executed by ${agentId}`,
+      payload: { executedAt: new Date().toISOString() },
+      verdict
+    });
+
+    console.log(`\x1b[32m[OK]\x1b[0m Recorded step in .gnap/messages/`);
+    console.log(`\x1b[1mGenerated Git Commit Message with Trailers:\x1b[0m\n\n${step.commitMessage}\n`);
+    return;
+  }
 
   const url = getArgValue('--url=') ?? 'http://localhost:4001';
   const lang = (getArgValue('--lang=') ?? 'python') as SandboxLanguage;

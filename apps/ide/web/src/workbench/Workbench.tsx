@@ -8,8 +8,10 @@ import { OpenHandsViewer } from '../components/OpenHandsViewer.js';
 import { MCPToolsPanel } from '../components/MCPToolsPanel.js';
 import { TelemetryUsagePanel } from '../components/TelemetryUsagePanel.js';
 import { SubscriptionPlanModal } from '../components/SubscriptionPlanModal.js';
+import { VoiceAgentModal } from '../components/VoiceAgentModal.js';
+import { PhoneVerificationModal } from '../components/PhoneVerificationModal.js';
 import type { IAgentPlanStep, IAgentMessagePayload, AgentRunStatus } from '@index0/contracts';
-import { GitBranch, Layers, ShieldCheck, Play, Bot, Code2, Wrench, Activity, CreditCard } from 'lucide-react';
+import { GitBranch, Layers, ShieldCheck, Play, Bot, Code2, Wrench, Activity, CreditCard, Mic, Smartphone } from 'lucide-react';
 
 export interface IWorkbenchProps {
   initialFiles?: IWorkspaceFileNode[];
@@ -55,7 +57,20 @@ export const Workbench: React.FC<IWorkbenchProps> = ({
   const [showMcpPanel, setShowMcpPanel] = useState(false);
   const [showTelemetryPanel, setShowTelemetryPanel] = useState(false);
   const [showBillingModal, setShowBillingModal] = useState(false);
+  const [showVoiceModal, setShowVoiceModal] = useState(false);
+  const [showPhoneModal, setShowPhoneModal] = useState(false);
+  const [phoneVerified, setPhoneVerified] = useState(false);
+  const [verifiedPhone, setVerifiedPhone] = useState<string | null>(null);
   const [currentPlanCode, setCurrentPlanCode] = useState('plan_free');
+  const [theme, setTheme] = useState<'dark' | 'light'>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('index0_theme');
+      if (saved === 'light' || saved === 'dark') return saved;
+      const htmlTheme = document.documentElement.getAttribute('data-theme');
+      if (htmlTheme === 'light' || htmlTheme === 'dark') return htmlTheme;
+    }
+    return 'dark';
+  });
   const [files] = useState<IWorkspaceFileNode[]>(initialFiles);
   const [tabs, setTabs] = useState<IEditorTab[]>(initialTabs);
   const [activeTabPath, setActiveTabPath] = useState<string>(initialTabs[0]?.path || '');
@@ -300,6 +315,50 @@ export const Workbench: React.FC<IWorkbenchProps> = ({
           </button>
 
           <button
+            onClick={() => setShowVoiceModal(true)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              background: showVoiceModal ? 'rgba(245, 78, 0, 0.25)' : 'rgba(255, 255, 255, 0.05)',
+              border: showVoiceModal ? '1px solid #f54e00' : '1px solid rgba(255, 255, 255, 0.1)',
+              color: showVoiceModal ? '#f54e00' : '#e2e8f0',
+              borderRadius: '4px',
+              padding: '4px 8px',
+              fontSize: '0.75rem',
+              fontWeight: 600,
+              cursor: 'pointer'
+            }}
+            title="Start real-time WebRTC voice session (<100ms LiveKit SFU)"
+            data-testid="voice-modal-toggle-btn"
+          >
+            <Mic size={12} color="#f54e00" />
+            <span>Voice Agent</span>
+          </button>
+
+          <button
+            onClick={() => setShowPhoneModal(true)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              background: phoneVerified ? 'rgba(52, 211, 153, 0.15)' : 'rgba(99, 102, 241, 0.15)',
+              border: phoneVerified ? '1px solid rgba(52, 211, 153, 0.4)' : '1px solid rgba(99, 102, 241, 0.4)',
+              color: phoneVerified ? '#34d399' : '#a5b4fc',
+              borderRadius: '4px',
+              padding: '4px 8px',
+              fontSize: '0.75rem',
+              fontWeight: 600,
+              cursor: 'pointer'
+            }}
+            title="Anchor sovereign identity to a unique mobile phone number"
+            data-testid="phone-verify-toggle-btn"
+          >
+            <Smartphone size={12} color={phoneVerified ? "#34d399" : "#818cf8"} />
+            <span>{phoneVerified ? (verifiedPhone ? `📱 ${verifiedPhone}` : '📱 Verified Phone') : '📱 Verify Mobile'}</span>
+          </button>
+
+          <button
             onClick={() => handleSendMessage('Run test suite in sandbox')}
             style={{
               display: 'flex',
@@ -325,7 +384,12 @@ export const Workbench: React.FC<IWorkbenchProps> = ({
 
       {/* Main Viewport: Either OpenHands Embedded Viewer or Native 3-Pane Body */}
       {viewMode === 'openhands' ? (
-        <OpenHandsViewer gatewayUrl="http://localhost:8000" workspacePath="/opt/workspace_base" />
+        <OpenHandsViewer
+          gatewayUrl="http://localhost:8000"
+          workspacePath="/opt/workspace_base"
+          theme={theme}
+          onThemeChange={setTheme}
+        />
       ) : (
         <div className="index0-workbench-body">
           {/* Left Explorer */}
@@ -487,6 +551,29 @@ export const Workbench: React.FC<IWorkbenchProps> = ({
             />
           </div>
         </div>
+      )}
+
+      {/* Real-Time LiveKit WebRTC Voice Agent Modal */}
+      <VoiceAgentModal
+        isOpen={showVoiceModal}
+        onClose={() => setShowVoiceModal(false)}
+        theme={theme}
+        onDispatchToOrchestrator={(prompt) => {
+          handleSendMessage(prompt);
+        }}
+      />
+
+      {/* Sovereign Phone Verification & Anti-Sybil Modal */}
+      {showPhoneModal && (
+        <PhoneVerificationModal
+          isOpen={showPhoneModal}
+          initialPhoneNumber={verifiedPhone || '+91'}
+          onVerified={(num) => {
+            setPhoneVerified(true);
+            setVerifiedPhone(num);
+          }}
+          onClose={() => setShowPhoneModal(false)}
+        />
       )}
     </div>
   );

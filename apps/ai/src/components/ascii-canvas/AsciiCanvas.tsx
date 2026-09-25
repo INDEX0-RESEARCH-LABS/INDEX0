@@ -16,9 +16,10 @@ import * as THREE from "three";
 
 interface AsciiCanvasProps {
   className?: string;
+  shapeMode?: "knot" | "polyhedra" | "matrix";
 }
 
-export function AsciiCanvas({ className = "" }: AsciiCanvasProps) {
+export function AsciiCanvas({ className = "", shapeMode = "knot" }: AsciiCanvasProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -27,31 +28,61 @@ export function AsciiCanvas({ className = "" }: AsciiCanvasProps) {
 
     // Scene & Camera
     const scene = new THREE.Scene();
-    const width = container.clientWidth || 600;
-    const height = container.clientHeight || 450;
+    const width = container.clientWidth || 480;
+    const height = container.clientHeight || 360;
 
     const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
     camera.position.z = 3.6;
 
     // Renderer
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
+    const renderer = new THREE.WebGLRenderer({
+      antialias: true,
+      alpha: true,
+      powerPreference: "high-performance",
+    });
     renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     container.appendChild(renderer.domElement);
 
-    // 3D Geometry: TorusKnot + Wireframe Icosahedron
-    const knotGroup = new THREE.Group();
-    const knotGeo = new THREE.TorusKnotGeometry(0.85, 0.28, 100, 16);
+    // -------------------------------------------------------------
+    // Kinetic 3D Motion Art Geometries (Rendered inside the CRT)
+    // -------------------------------------------------------------
+    const motionGroup = new THREE.Group();
+
+    // 1. Central Torus Knot Mesh
+    const knotGeo = new THREE.TorusKnotGeometry(0.85, 0.28, 128, 20);
     const knotMat = new THREE.MeshNormalMaterial({ wireframe: false });
     const knotMesh = new THREE.Mesh(knotGeo, knotMat);
-    knotGroup.add(knotMesh);
+    motionGroup.add(knotMesh);
 
-    const wireGeo = new THREE.IcosahedronGeometry(1.6, 2);
-    const wireMat = new THREE.MeshBasicMaterial({ wireframe: true, color: 0xf54e00, transparent: true, opacity: 0.25 });
+    // 2. Surrounding Wireframe Icosahedron Cage
+    const wireGeo = new THREE.IcosahedronGeometry(1.65, 2);
+    const wireMat = new THREE.MeshBasicMaterial({
+      wireframe: true,
+      color: 0x888888,
+      transparent: true,
+      opacity: 0.35,
+    });
     const wireMesh = new THREE.Mesh(wireGeo, wireMat);
-    knotGroup.add(wireMesh);
+    motionGroup.add(wireMesh);
 
-    scene.add(knotGroup);
+    // 3. Concentric Orbital Coordinate Rings
+    const ringGeo1 = new THREE.RingGeometry(1.9, 1.95, 48);
+    const ringMat = new THREE.MeshBasicMaterial({
+      color: 0x555555,
+      side: THREE.DoubleSide,
+      wireframe: true,
+    });
+    const ringMesh1 = new THREE.Mesh(ringGeo1, ringMat);
+    ringMesh1.rotation.x = Math.PI / 2.5;
+    motionGroup.add(ringMesh1);
+
+    const ringGeo2 = new THREE.RingGeometry(2.1, 2.14, 48);
+    const ringMesh2 = new THREE.Mesh(ringGeo2, ringMat);
+    ringMesh2.rotation.y = Math.PI / 3;
+    motionGroup.add(ringMesh2);
+
+    scene.add(motionGroup);
 
     // Offscreen render target for the 3D scene
     const renderTarget = new THREE.WebGLRenderTarget(width, height);
@@ -60,7 +91,7 @@ export function AsciiCanvas({ className = "" }: AsciiCanvasProps) {
     const postCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
     const postScene = new THREE.Scene();
 
-    // Procedural ASCII GLSL Shader
+    // Procedural ASCII GLSL Shader (Strictly Dark, White, and Gray)
     const asciiShader = {
       uniforms: {
         tDiffuse: { value: renderTarget.texture },
@@ -97,7 +128,6 @@ export function AsciiCanvas({ className = "" }: AsciiCanvasProps) {
         float drawGlyph(vec2 uv, int charIndex) {
           vec2 p = uv * vec2(5.0, 7.0);
           vec2 cell = floor(p);
-          vec2 f = fract(p);
 
           if (charIndex == 0) return 0.0; // Space
           if (charIndex == 1) { // .
@@ -136,11 +166,11 @@ export function AsciiCanvas({ className = "" }: AsciiCanvasProps) {
           // Kinetic ripple deflection from mouse
           vec2 mouseDist = vUv - u_mouse;
           float dist = length(mouseDist);
-          float ripple = sin(dist * 25.0 - u_time * 4.0) * exp(-dist * 4.0) * 0.015 * u_ripple;
+          float ripple = sin(dist * 24.0 - u_time * 4.0) * exp(-dist * 4.0) * 0.015 * u_ripple;
           vec2 uv = vUv + normalize(mouseDist + 0.0001) * ripple;
 
-          // ASCII cell size: 10px by 14px
-          vec2 charSize = vec2(10.0, 14.0);
+          // ASCII cell size: 8px by 12px for sharp resolution on CRT
+          vec2 charSize = vec2(8.0, 12.0);
           vec2 numChars = floor(u_resolution / charSize);
           vec2 cellCoord = floor(uv * numChars);
           vec2 cellUV = fract(uv * numChars);
@@ -150,21 +180,21 @@ export function AsciiCanvas({ className = "" }: AsciiCanvasProps) {
           vec4 sceneColor = texture2D(tDiffuse, sampleUV);
           float lum = getLuminance(sceneColor.rgb);
 
-          int charIdx = int(floor(lum * 9.5));
+          int charIdx = int(floor(lum * 9.6));
           charIdx = clamp(charIdx, 0, 9);
 
           float charPixel = drawGlyph(cellUV, charIdx);
 
           // CRT scanline pass
-          float scanline = sin(gl_FragCoord.y * 1.4) * 0.08;
+          float scanline = sin(gl_FragCoord.y * 1.5) * 0.08;
 
-          // Color palette: Warm Cursor Orange highlight + Ink base
-          vec3 inkColor = vec3(0.15, 0.14, 0.12);
-          vec3 orangeColor = vec3(0.96, 0.31, 0.0); // #f54e00
-          vec3 charColor = mix(inkColor, orangeColor, lum * 1.3);
+          // Strict 3-Color Palette: Dark base, Gray midtone, White highlight
+          vec3 darkBase = vec3(0.06, 0.06, 0.06);
+          vec3 whiteHighlight = vec3(0.96, 0.96, 0.96);
+          vec3 charColor = mix(darkBase, whiteHighlight, lum * 1.3);
 
           vec3 finalColor = charColor * charPixel - scanline;
-          float alpha = charPixel > 0.0 ? clamp(lum * 1.5 + 0.1, 0.0, 1.0) : 0.0;
+          float alpha = charPixel > 0.0 ? clamp(lum * 1.6 + 0.15, 0.0, 1.0) : 0.0;
 
           gl_FragColor = vec4(finalColor, alpha);
         }
@@ -194,18 +224,18 @@ export function AsciiCanvas({ className = "" }: AsciiCanvasProps) {
       const y = 1.0 - (e.clientY - rect.top) / rect.height;
       mouseX = x;
       mouseY = y;
-      targetRotY = (x - 0.5) * 2.5;
-      targetRotX = (y - 0.5) * 2.5;
+      targetRotY = (x - 0.5) * 2.4;
+      targetRotX = (y - 0.5) * 2.4;
       rippleStrength = 1.0;
     };
 
-    window.addEventListener("mousemove", handleMouseMove);
+    container.addEventListener("mousemove", handleMouseMove);
 
     // Resize Handler
     const handleResize = () => {
       if (!container) return;
-      const w = container.clientWidth || 600;
-      const h = container.clientHeight || 450;
+      const w = container.clientWidth || 480;
+      const h = container.clientHeight || 360;
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
       renderer.setSize(w, h);
@@ -217,16 +247,18 @@ export function AsciiCanvas({ className = "" }: AsciiCanvasProps) {
 
     // Animation Loop
     let animationId: number;
-    let clock = new THREE.Clock();
+    const clock = new THREE.Clock();
 
     const animate = () => {
       animationId = requestAnimationFrame(animate);
       const elapsedTime = clock.getElapsedTime();
 
-      // Smooth rotation
-      knotGroup.rotation.x += 0.008 + (targetRotX - knotGroup.rotation.x) * 0.05;
-      knotGroup.rotation.y += 0.012 + (targetRotY - knotGroup.rotation.y) * 0.05;
-      wireMesh.rotation.z = -elapsedTime * 0.2;
+      // Smooth kinetic rotation of the 3D motion art
+      motionGroup.rotation.x += 0.009 + (targetRotX - motionGroup.rotation.x) * 0.05;
+      motionGroup.rotation.y += 0.014 + (targetRotY - motionGroup.rotation.y) * 0.05;
+      wireMesh.rotation.z = -elapsedTime * 0.22;
+      ringMesh1.rotation.z = elapsedTime * 0.15;
+      ringMesh2.rotation.z = -elapsedTime * 0.18;
 
       // Update shader uniforms
       asciiShader.uniforms.u_time.value = elapsedTime;
@@ -247,21 +279,28 @@ export function AsciiCanvas({ className = "" }: AsciiCanvasProps) {
 
     return () => {
       cancelAnimationFrame(animationId);
-      window.removeEventListener("mousemove", handleMouseMove);
+      container.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("resize", handleResize);
       renderer.dispose();
       renderTarget.dispose();
+      knotGeo.dispose();
+      knotMat.dispose();
+      wireGeo.dispose();
+      wireMat.dispose();
+      ringGeo1.dispose();
+      ringGeo2.dispose();
+      ringMat.dispose();
       if (container.contains(renderer.domElement)) {
         container.removeChild(renderer.domElement);
       }
     };
-  }, []);
+  }, [shapeMode]);
 
   return (
     <div
       ref={containerRef}
-      className={`relative w-full h-full min-h-[380px] md:min-h-[480px] overflow-hidden ${className}`}
-      title="GPU-Accelerated WebGL ASCII Motion Engine"
+      className={`relative w-full h-full overflow-hidden select-none cursor-crosshair ${className}`}
+      title="INDEX0 Sovereign 3D ASCII Motion Engine"
     />
   );
 }

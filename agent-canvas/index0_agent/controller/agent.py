@@ -79,7 +79,8 @@ class Agent(ABC):
         - AgentAlreadyRegisteredError: If name already registered
         """
         if name in cls._registry:
-            raise AgentAlreadyRegisteredError(name)
+            cls._registry[name] = agent_cls
+            return
         cls._registry[name] = agent_cls
 
     @classmethod

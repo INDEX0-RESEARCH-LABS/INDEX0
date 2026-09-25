@@ -28,7 +28,7 @@ export default function MarketplaceDetailPage() {
   const [activeTab, setActiveTab] = useState<"README" | "SCHEMA" | "VERSIONS">("README");
   const [copied, setCopied] = useState(false);
 
-  const installCmd = `kilo mcp add @index0/${slug}`;
+  const installCmd = `index0 mcp add @index0/${slug}`;
 
   const copyInstall = () => {
     navigator.clipboard.writeText(installCmd);
@@ -79,7 +79,7 @@ export default function MarketplaceDetailPage() {
               <IconShieldCheck size={16} />
               <span>[VERIFIED INDEX0 SOVEREIGN EXTENSION]</span>
             </div>
-            <h1 className="font-sans font-bold text-2xl md:text-3xl text-[var(--fg)]">
+            <h1 className="font-mono font-bold text-2xl md:text-3xl text-[var(--fg)]">
               @{slug}
             </h1>
           </div>
@@ -88,10 +88,10 @@ export default function MarketplaceDetailPage() {
             <button
               type="button"
               onClick={copyInstall}
-              className="pill-btn flex items-center gap-2 px-5 py-2.5 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white text-xs font-mono font-medium shadow-sm transition-colors cursor-pointer"
+              className="pill-btn flex items-center gap-2 px-5 py-2.5 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-[var(--accent-fg)] text-xs font-mono font-medium shadow-sm transition-colors cursor-pointer"
             >
               {copied ? <IconCheck size={14} /> : <IconDownload size={14} />}
-              <span>{copied ? "COPIED TO CLIPBOARD" : "INSTALL VIA KILO"}</span>
+              <span>{copied ? "COPIED TO CLIPBOARD" : "INSTALL VIA CLI"}</span>
             </button>
           </div>
         </div>
@@ -162,11 +162,11 @@ export default function MarketplaceDetailPage() {
         <div className="p-6 rounded-2xl border-oklab bg-[var(--surface-100)] shadow-sm">
           {activeTab === "README" && (
             <div className="space-y-4 font-editorial text-sm leading-relaxed text-[var(--fg)]">
-              <h2 className="font-sans font-bold text-lg text-[var(--fg)]">Architecture Overview</h2>
+              <h2 className="font-mono font-bold text-lg text-[var(--fg)]">Architecture Overview</h2>
               <p>
                 The {slug} module integrates directly with the INDEX0 Kernel Orchestrator via standard Model Context Protocol (MCP) JSON-RPC over stdio. All execution boundaries are strictly enforced using Linux cgroups and seccomp profiles to prevent untrusted code escape.
               </p>
-              <h3 className="font-sans font-bold text-base text-[var(--fg)] pt-2">Security Contract</h3>
+              <h3 className="font-mono font-bold text-base text-[var(--fg)] pt-2">Security Contract</h3>
               <ul className="list-disc list-inside space-y-1 font-mono text-xs text-[var(--muted)]">
                 <li>Hardware microVM container isolation with 0 WAN outbound access.</li>
                 <li>Zero data retention commitment: temporary storage purged on exit.</li>

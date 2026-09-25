@@ -46,7 +46,7 @@ model_list:
       output_cost_per_token: 0.0
 
 router_settings:
-  routing_strategy: "cost-based-routing"
+  routing_strategy: "usage-based-routing-v2"
   num_retries: 3
   timeout: 60
   fallbacks:
@@ -56,3 +56,19 @@ router_settings:
 general_settings:
   master_key: "os.environ/LITELLM_MASTER_KEY"
   database_url: "os.environ/DATABASE_URL"
+
+environment_variables:
+  ZDR_ENFORCE: "true"
+
+# Hard Token Budget Limits (Sovereign Governance)
+user_settings:
+  - user_id: "default-developer"
+    max_budget: 20.00          # $20/month hard cap
+    budget_duration: "30d"
+    action_on_budget_exceeded: "block"
+
+  - user_id: "background-agent"
+    max_budget: 50.00          # $50/month hard cap
+    budget_duration: "30d"
+    action_on_budget_exceeded: "require_human_approval"
+

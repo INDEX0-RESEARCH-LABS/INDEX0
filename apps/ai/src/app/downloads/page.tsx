@@ -40,30 +40,30 @@ const BINARIES: BinaryPackage[] = [
     arch: "Apple Silicon (arm64)",
     icon: <IconBrandApple size={22} />,
     version: "v2.4.0",
-    filename: "kilo-darwin-arm64.tar.gz",
+    filename: "index0-darwin-arm64.tar.gz",
     size: "28.4 MB",
     sha256: "e08f2a947bc382a910dc81729bca21e49120bc7102938172bc91028371629abc",
-    downloadUrl: "https://dl.ai.index0.in/v2.4.0/kilo-darwin-arm64.tar.gz",
+    downloadUrl: "https://dl.ai.index0.in/v2.4.0/index0-darwin-arm64.tar.gz",
   },
   {
     os: "Linux",
     arch: "x86_64 / amd64",
     icon: <IconTerminal2 size={22} />,
     version: "v2.4.0",
-    filename: "kilo-linux-amd64.tar.gz",
+    filename: "index0-linux-amd64.tar.gz",
     size: "31.2 MB",
     sha256: "9182371928bc8192731928371928371928371928371928371928371928371928",
-    downloadUrl: "https://dl.ai.index0.in/v2.4.0/kilo-linux-amd64.tar.gz",
+    downloadUrl: "https://dl.ai.index0.in/v2.4.0/index0-linux-amd64.tar.gz",
   },
   {
     os: "Windows",
     arch: "x64 (WSL2 / Native)",
     icon: <IconBrandWindows size={22} />,
     version: "v2.4.0",
-    filename: "kilo-windows-x64.zip",
+    filename: "index0-windows-x64.zip",
     size: "33.8 MB",
     sha256: "8712938192837192837192837192837192837192837192837192837192837192",
-    downloadUrl: "https://dl.ai.index0.in/v2.4.0/kilo-windows-x64.zip",
+    downloadUrl: "https://dl.ai.index0.in/v2.4.0/index0-windows-x64.zip",
   },
 ];
 
@@ -85,7 +85,7 @@ export default function DownloadsPage() {
           <span>[BINARY CDN &amp; EXTENSIONS]</span>
         </div>
         <h1 className="font-display-section text-[var(--fg)]">
-          Download Kilo Platform Binaries.
+          Download INDEX0 Platform Binaries.
         </h1>
         <p className="font-editorial text-[var(--muted)] text-base max-w-2xl leading-relaxed">
           Standalone statically linked binaries compiled with zero runtime dependencies. Verified with cryptographic SHA256 checksums.
@@ -112,7 +112,7 @@ export default function DownloadsPage() {
           <button
             type="button"
             onClick={() => copySha("curl -fsSL https://dl.ai.index0.in/install.sh | sh")}
-            className="pill-btn px-4 py-1.5 bg-[var(--accent)] text-white font-medium hover:bg-[var(--accent-hover)] transition-colors cursor-pointer shrink-0"
+            className="pill-btn px-4 py-1.5 bg-[var(--accent)] text-[var(--accent-fg)] font-medium hover:bg-[var(--accent-hover)] transition-colors cursor-pointer shrink-0"
           >
             {copiedSha === "curl -fsSL https://dl.ai.index0.in/install.sh | sh" ? "COPIED" : "COPY SCRIPT"}
           </button>
@@ -121,7 +121,7 @@ export default function DownloadsPage() {
 
       {/* Standalone OS Binaries Grid */}
       <div className="space-y-6">
-        <h2 className="font-sans font-bold text-2xl text-[var(--fg)]">
+        <h2 className="font-mono font-bold text-2xl text-[var(--fg)]">
           Operating System Packages
         </h2>
 
@@ -142,7 +142,7 @@ export default function DownloadsPage() {
                 </div>
 
                 <div>
-                  <h3 className="font-sans font-bold text-lg text-[var(--fg)]">{pkg.os}</h3>
+                  <h3 className="font-mono font-bold text-lg text-[var(--fg)]">{pkg.os}</h3>
                   <div className="text-xs font-mono text-[var(--muted)]">{pkg.arch}</div>
                 </div>
 
@@ -171,7 +171,7 @@ export default function DownloadsPage() {
               <a
                 href={pkg.downloadUrl}
                 download
-                className="pill-btn w-full py-2.5 flex items-center justify-center gap-2 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white text-xs font-sans font-medium transition-colors shadow-sm"
+                className="pill-btn w-full py-2.5 flex items-center justify-center gap-2 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-[var(--accent-fg)] text-xs font-mono font-medium transition-colors shadow-sm"
               >
                 <IconDownload size={15} />
                 <span>Download for {pkg.os}</span>
@@ -189,8 +189,8 @@ export default function DownloadsPage() {
           </div>
           <div>
             <div className="text-xs font-mono text-[var(--meta)]">CURSOR &amp; VS CODE EXTENSION</div>
-            <h3 className="font-sans font-bold text-lg text-[var(--fg)]">
-              INDEX0 Kilo Companion Extension (.vsix)
+            <h3 className="font-mono font-bold text-lg text-[var(--fg)]">
+              INDEX0 Companion Extension (.vsix)
             </h3>
             <p className="font-editorial text-xs text-[var(--muted)]">
               Directly attaches your IDE editor tabs to sovereign MicroVM sandboxes with live AST diff rendering.

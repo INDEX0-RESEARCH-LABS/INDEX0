@@ -5,14 +5,56 @@
 
 export type UserRole = "admin" | "member" | "viewer" | "agent";
 
+export type SocialAuthProvider = "github" | "google";
+
 export interface IUser {
   id: string;
   email: string;
   name: string;
   avatarUrl?: string;
   emailVerified: boolean;
+  phoneNumber?: string;
+  phoneVerified: boolean;
+  phoneVerifiedAt?: string;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface IAccount {
+  id: string;
+  userId: string;
+  provider: SocialAuthProvider;
+  providerAccountId: string;
+  refreshToken?: string;
+  accessToken?: string;
+  expiresAt?: number;
+  tokenType?: string;
+  scope?: string;
+  idToken?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface IPhoneOtpSendRequest {
+  phoneNumber: string; // E.164 format (e.g. +919876543210)
+}
+
+export interface IPhoneOtpSendResponse {
+  success: boolean;
+  expiresInSeconds: number;
+  message: string;
+}
+
+export interface IPhoneOtpVerifyRequest {
+  phoneNumber: string;
+  otp: string; // 6-digit OTP code
+}
+
+export interface IPhoneOtpVerifyResponse {
+  success: boolean;
+  message: string;
+  phoneVerified: boolean;
+  user?: Partial<IUser>;
 }
 
 export interface IOrganization {

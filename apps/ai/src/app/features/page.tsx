@@ -44,7 +44,7 @@ export default function FeaturesPage() {
             <div className="text-xs font-mono text-[var(--accent)] font-semibold">
               [INTERACTIVE ASCII FLOWCHART]
             </div>
-            <h2 className="font-sans font-bold text-lg text-[var(--fg)]">
+            <h2 className="font-mono font-bold text-lg text-[var(--fg)]">
               Core Platform Topology
             </h2>
           </div>
@@ -159,7 +159,7 @@ export default function FeaturesPage() {
           <div className="w-10 h-10 rounded-full bg-[var(--surface-200)] flex items-center justify-center text-[var(--accent)]">
             <IconCpu size={20} strokeWidth={1.5} />
           </div>
-          <h3 className="font-sans font-bold text-lg text-[var(--fg)]">
+          <h3 className="font-mono font-bold text-lg text-[var(--fg)]">
             E2B Firecracker Ephemeral MicroVMs
           </h3>
           <p className="font-editorial text-sm leading-relaxed text-[var(--muted)]">
@@ -171,7 +171,7 @@ export default function FeaturesPage() {
           <div className="w-10 h-10 rounded-full bg-[var(--surface-200)] flex items-center justify-center text-[var(--accent)]">
             <IconGitCommit size={20} strokeWidth={1.5} />
           </div>
-          <h3 className="font-sans font-bold text-lg text-[var(--fg)]">
+          <h3 className="font-mono font-bold text-lg text-[var(--fg)]">
             Deterministic AST Node Patching
           </h3>
           <p className="font-editorial text-sm leading-relaxed text-[var(--muted)]">
@@ -183,7 +183,7 @@ export default function FeaturesPage() {
           <div className="w-10 h-10 rounded-full bg-[var(--surface-200)] flex items-center justify-center text-[var(--accent)]">
             <IconShieldLock size={20} strokeWidth={1.5} />
           </div>
-          <h3 className="font-sans font-bold text-lg text-[var(--fg)]">
+          <h3 className="font-mono font-bold text-lg text-[var(--fg)]">
             Zero Data Retention Guarantee
           </h3>
           <p className="font-editorial text-sm leading-relaxed text-[var(--muted)]">
@@ -195,7 +195,7 @@ export default function FeaturesPage() {
           <div className="w-10 h-10 rounded-full bg-[var(--surface-200)] flex items-center justify-center text-[var(--accent)]">
             <IconLayersLinked size={20} strokeWidth={1.5} />
           </div>
-          <h3 className="font-sans font-bold text-lg text-[var(--fg)]">
+          <h3 className="font-mono font-bold text-lg text-[var(--fg)]">
             Model Context Protocol (MCP) Standard
           </h3>
           <p className="font-editorial text-sm leading-relaxed text-[var(--muted)]">

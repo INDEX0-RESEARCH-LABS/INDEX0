@@ -53,10 +53,10 @@ class NoColorFormatter(logging.Formatter):
     """Formatter for non-colored logging in files."""
 
     def format(self, record: logging.LogRecord) -> str:
-        # Create a deep copy of the record to avoid modifying the original
-        new_record: logging.LogRecord = copy.deepcopy(record)
-        # Strip ANSI color codes from the message
-        new_record.msg = strip_ansi(new_record.msg)
+        # Create a shallow copy of the record to avoid mutating original message
+        new_record = copy.copy(record)
+        if isinstance(new_record.msg, str):
+            new_record.msg = strip_ansi(new_record.msg)
 
         return super().format(new_record)
 

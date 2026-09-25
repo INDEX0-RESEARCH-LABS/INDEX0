@@ -1,9 +1,11 @@
 from tenacity import (
     retry,
     retry_if_exception_type,
+    retry_if_not_exception_type,
     stop_after_attempt,
     wait_exponential,
 )
+from litellm.exceptions import AuthenticationError
 
 from index0_agent.core.logger import openhands_logger as logger
 from index0_agent.utils.tenacity_stop import stop_if_should_exit
@@ -33,7 +35,10 @@ class RetryMixin:
             before_sleep=self.log_retry_attempt,
             stop=stop_after_attempt(num_retries) | stop_if_should_exit(),
             reraise=True,
-            retry=(retry_if_exception_type(retry_exceptions)),
+            retry=(
+                retry_if_exception_type(retry_exceptions)
+                & retry_if_not_exception_type(AuthenticationError)
+            ),
             wait=wait_exponential(
                 multiplier=retry_multiplier,
                 min=retry_min_wait,

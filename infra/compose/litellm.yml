@@ -5,7 +5,7 @@ services:
     restart: unless-stopped
     environment:
       LITELLM_MASTER_KEY: "${LITELLM_MASTER_KEY:-sk-index0-litellm-dev}"
-      DATABASE_URL: "postgresql://${POSTGRES_USER:-index0}:${POSTGRES_PASSWORD:-index0_secret}@postgres:5432/${POSTGRES_DB:-index0_dev}"
+      DATABASE_URL: "postgresql://${POSTGRES_USER:-index0}:${POSTGRES_PASSWORD:-index0_secret}@postgres:5432/${LITELLM_DB:-index0_litellm}"
       OPENAI_API_KEY: "${OPENAI_API_KEY:-}"
       ANTHROPIC_API_KEY: "${ANTHROPIC_API_KEY:-}"
     ports:

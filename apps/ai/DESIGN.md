@@ -15,36 +15,33 @@
 - **Metadata & Telemetry**: Monospace uppercase small caps (`text-xs tracking-wider font-mono`).
 - **Strictly Banned**: Default `Inter` and decorative serifs (`Fraunces`, `Instrument Serif`).
 
-## 4. DUAL-MODE COLOR SYSTEM (OKLCH)
-Max 1 accent color across the entire interface (Terminal Emerald), calibrated for contrast in each mode.
+## 4. STRICT 3-COLOR SYSTEM (DARK, WHITE, GRAY)
+Zero chromatic colors. The entire platform interface strictly utilizes Dark, White, and Gray shades.
 
-### Dark Mode (Deep Obsidian Void)
-- **Base**: `oklch(0.08 0.01 260)` (`#0b0c0e`)
-- **Surface (Cockpit Chrome)**: `oklch(0.12 0.015 260)` (`#121418`)
-- **Surface Active / Hover**: `oklch(0.16 0.02 260)` (`#1a1c22`)
-- **Hairline Border**: `oklch(0.22 0.02 260)` (`#252830`)
-- **Foreground (Crisp Off-White)**: `oklch(0.96 0.01 260)` (`#f5f6f8`)
-- **Muted Foreground**: `oklch(0.55 0.02 260)` (`#777e8c`)
-- **Dim Metadata**: `oklch(0.40 0.015 260)`
-- **Accent (Terminal Emerald)**: `oklch(0.72 0.19 155)` (`#10b981`)
-- **Accent Dim**: `oklch(0.72 0.19 155 / 0.15)`
-- **Diff Insertion**: `oklch(0.72 0.19 155)` / Background `oklch(0.72 0.19 155 / 0.12)`
-- **Diff Deletion**: `oklch(0.65 0.22 25)` / Background `oklch(0.65 0.22 25 / 0.12)`
+### Dark Mode (Deep Void Monochrome)
+- **Base (Dark)**: `#0a0a0a`
+- **Surface (Dark Chrome)**: `#141414`
+- **Surface Active / Hover**: `#1f1f1f`
+- **Hairline Border (Gray)**: `rgba(255, 255, 255, 0.12)`
+- **Foreground (White)**: `#ffffff`
+- **Muted Foreground (Light Gray)**: `#a3a3a3`
+- **Dim Metadata (Medium Gray)**: `#737373`
+- **Accent (White)**: `#ffffff`
+- **Accent Foreground (Dark)**: `#0a0a0a`
 
-### Light Mode (Paper Terminal / Clean Laboratory Monochrome)
-- **Base (Alabaster Void)**: `oklch(0.97 0.005 260)` (`#f6f7f9`)
-- **Surface (Lab Chrome)**: `oklch(0.93 0.008 260)` (`#edf0f4`)
-- **Surface Active / Hover**: `oklch(0.88 0.01 260)` (`#e1e5eb`)
-- **Hairline Border (Carbon Pencil)**: `oklch(0.82 0.015 260)` (`#cfd4dc`)
-- **Foreground (Typewriter Ink)**: `oklch(0.12 0.015 260)` (`#101216`)
-- **Muted Foreground**: `oklch(0.45 0.02 260)` (`#545965`)
-- **Dim Metadata**: `oklch(0.60 0.015 260)`
-- **Accent (Deep Terminal Emerald)**: `oklch(0.50 0.18 155)` (`#059669` for WCAG AAA contrast)
-- **Accent Dim**: `oklch(0.50 0.18 155 / 0.12)`
-- **Diff Insertion**: `oklch(0.46 0.18 155)` / Background `oklch(0.50 0.18 155 / 0.10)`
-- **Diff Deletion**: `oklch(0.52 0.22 25)` / Background `oklch(0.52 0.22 25 / 0.10)`
+### Light Mode (Clean Paper Monochrome)
+- **Base (White)**: `#ffffff`
+- **Surface (Light Gray)**: `#f5f5f5`
+- **Surface Active / Hover**: `#e8e8e8`
+- **Hairline Border (Gray)**: `rgba(0, 0, 0, 0.12)`
+- **Foreground (Dark)**: `#0a0a0a`
+- **Muted Foreground (Medium Gray)**: `#666666`
+- **Dim Metadata (Gray)**: `#8c8c8c`
+- **Accent (Dark)**: `#0a0a0a`
+- **Accent Foreground (White)**: `#ffffff`
 
-- **Strictly Banned**: AI Purple (`#6366f1`) and indigo/violet primary gradients in both modes.
+- **Strictly Banned**: Chromatic colors (orange, red, blue, green, purple, amber, pastels) in both modes. Every visual element must be composed strictly of Dark, White, or Gray.
+
 
 ## 5. ASCII BOX-DRAWING CHARACTERS
 - Box corners & lines: `┌`, `┐`, `└`, `┘`, `│`, `─`, `├`, `┤`, `┬`, `┴`, `┼`

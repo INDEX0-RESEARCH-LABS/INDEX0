@@ -173,3 +173,96 @@ export interface IPlatformPillarsManifest {
   pillars: Record<PlatformPillarName, IPlatformPillarService[]>;
 }
 
+// -----------------------------------------------------------------------------
+// Razorpay Sovereign Payment Rails
+// -----------------------------------------------------------------------------
+
+export type RazorpayCurrency = "INR" | "USD" | "EUR" | "GBP";
+
+export interface IRazorpayOrderCreateRequest {
+  planCode: string;
+  currency?: RazorpayCurrency;
+  billingCycle?: "monthly" | "annual";
+  customerId?: string;
+  organizationId?: string;
+}
+
+export interface IRazorpayOrderResponse {
+  orderId: string;
+  amount: number; // Smallest currency unit (paise for INR, cents for USD)
+  currency: RazorpayCurrency;
+  keyId: string;
+  planCode: string;
+  name: string;
+  description: string;
+  notes?: Record<string, string>;
+}
+
+export interface IRazorpayVerificationRequest {
+  razorpay_order_id: string;
+  razorpay_payment_id: string;
+  razorpay_signature: string;
+  planCode?: string;
+  organizationId?: string;
+}
+
+export interface IRazorpayVerificationResponse {
+  success: boolean;
+  message: string;
+  subscriptionId?: string;
+  tier?: SubscriptionTier;
+  amountPaid?: number;
+}
+
+export type RazorpayWebhookEventName =
+  | "payment.authorized"
+  | "payment.captured"
+  | "payment.failed"
+  | "order.paid"
+  | "subscription.charged"
+  | "subscription.cancelled"
+  | "subscription.halted"
+  | "subscription.pending";
+
+export interface IRazorpayWebhookPayload {
+  entity: string;
+  account_id: string;
+  event: RazorpayWebhookEventName | string;
+  contains: string[];
+  payload: {
+    payment?: {
+      entity: {
+        id: string;
+        order_id: string;
+        amount: number;
+        currency: string;
+        status: string;
+        method: string;
+        email?: string;
+        contact?: string;
+        created_at: number;
+      };
+    };
+    order?: {
+      entity: {
+        id: string;
+        amount: number;
+        currency: string;
+        status: string;
+        receipt?: string;
+        notes?: Record<string, string>;
+      };
+    };
+    subscription?: {
+      entity: {
+        id: string;
+        plan_id: string;
+        status: string;
+        current_start?: number;
+        current_end?: number;
+      };
+    };
+  };
+  created_at: number;
+}
+

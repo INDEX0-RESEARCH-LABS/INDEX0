@@ -52,3 +52,32 @@ projects:
           - "profile"
           - "email"
           - "urn:zitadel:iam:org:project:roles"
+
+idps:
+  - name: "GitHub"
+    type: "GITHUB"
+    clientId: "${AUTH_GITHUB_CLIENT_ID}"
+    clientSecret: "${AUTH_GITHUB_CLIENT_SECRET}"
+    scopes:
+      - "read:user"
+      - "user:email"
+    isLinkingAllowed: true
+    isCreationAllowed: true
+    isAutoCreation: false
+
+  - name: "Google"
+    type: "GOOGLE"
+    clientId: "${AUTH_GOOGLE_CLIENT_ID}"
+    clientSecret: "${AUTH_GOOGLE_CLIENT_SECRET}"
+    scopes:
+      - "openid"
+      - "profile"
+      - "email"
+    isLinkingAllowed: true
+    isCreationAllowed: true
+    isAutoCreation: false
+
+features:
+  userSchema:
+    phoneMandatory: true
+    phoneVerification: true

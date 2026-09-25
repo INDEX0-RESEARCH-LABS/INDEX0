@@ -20,6 +20,7 @@
     "test:billing": "node --test tests/billing/*.test.ts",
     "test:license": "pnpm --filter @index0/ai test:license",
     "license:check": "bash scripts/license-check.sh",
+    "healthcheck": "bash scripts/healthcheck.sh",
     "clean": "turbo run clean",
     "postinstall": "pnpm db:generate",
     "db:generate": "pnpm --filter @index0/db db:generate",
@@ -29,10 +30,16 @@
     "infra:up": "docker compose -f infra/compose/docker-compose.yml up -d",
     "infra:down": "docker compose -f infra/compose/docker-compose.yml down",
     "infra:config": "docker compose -f infra/compose/docker-compose.yml config",
+    "infra:all:up": "docker compose -f infra/compose/docker-compose.yml -f infra/compose/litellm.yml -f infra/compose/letta.yml -f infra/compose/livekit.yml -f infra/compose/agent-orchestrator.yml -f infra/compose/tabby.yml up -d",
+    "infra:all:down": "docker compose -f infra/compose/docker-compose.yml -f infra/compose/litellm.yml -f infra/compose/letta.yml -f infra/compose/livekit.yml -f infra/compose/agent-orchestrator.yml -f infra/compose/tabby.yml down",
+    "infra:all:config": "docker compose -f infra/compose/docker-compose.yml -f infra/compose/litellm.yml -f infra/compose/letta.yml -f infra/compose/livekit.yml -f infra/compose/agent-orchestrator.yml -f infra/compose/tabby.yml config",
+    "tabby:up": "docker compose -f infra/compose/docker-compose.yml -f infra/compose/tabby.yml up -d tabby",
+    "tabby:down": "docker compose -f infra/compose/tabby.yml stop tabby",
     "openhands:up": "docker compose -f infra/compose/docker-compose.yml up -d openhands",
     "openhands:down": "docker compose -f infra/compose/docker-compose.yml stop openhands",
     "canvas:dev": "cd agent-canvas/frontend && pnpm dev",
-    "canvas:mock": "cd agent-canvas/frontend && pnpm dev:mock"
+    "canvas:mock": "cd agent-canvas/frontend && pnpm dev:mock",
+    "gnap:cycle": "node packages/client-harness/dist/cli.js --gnap"
   },
   "devDependencies": {
     "@index0/contracts": "workspace:*",

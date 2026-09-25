@@ -1,0 +1,123 @@
+{
+    email admin@index0.ai
+}
+
+# 1. Main Platform Landing & App
+{$DOMAIN:localhost} {
+    encode gzip zstd
+
+    # Health check endpoint for Gateway
+    handle /health {
+        header Content-Type "application/json"
+        respond `{"status":"healthy","tier":"azure-production","engine":"index0-gateway"}` 200
+    }
+
+    # Static Web IDE Client
+    handle /ide* {
+        reverse_proxy host.docker.internal:5173 {
+            header_up Host {host}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+            header_up X-Forwarded-Proto {scheme}
+        }
+    }
+
+    # OpenHands Monaco Autonomous Agent Canvas
+    handle /canvas* {
+        reverse_proxy openhands:3000 {
+            flush_interval -1
+            header_up Host {host}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+            header_up X-Forwarded-Proto {scheme}
+        }
+    }
+
+    # Next.js Landing & Platform
+    handle {
+        reverse_proxy host.docker.internal:3005 {
+            header_up Host {host}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+            header_up X-Forwarded-Proto {scheme}
+        }
+    }
+}
+
+# 2. API Gateway & Microservices
+api.{$DOMAIN:localhost} {
+    encode gzip zstd
+
+    header {
+        X-Frame-Options "SAMEORIGIN"
+        X-Content-Type-Options "nosniff"
+        X-XSS-Protection "1; mode=block"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        -Server
+    }
+
+    # Zitadel Identity Provider
+    handle /auth* {
+        reverse_proxy zitadel:8085 {
+            header_up Host {host}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+            header_up X-Forwarded-Proto {scheme}
+        }
+    }
+
+    # Temporal Workflow Orchestration UI
+    handle /temporal* {
+        reverse_proxy temporal-ui:8233 {
+            header_up Host {host}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+            header_up X-Forwarded-Proto {scheme}
+        }
+    }
+
+    # LiteLLM OpenAI-Compatible Endpoint
+    handle /v1* {
+        reverse_proxy litellm:4000 {
+            header_up Host {host}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+            header_up X-Forwarded-Proto {scheme}
+        }
+    }
+
+    # Agent Orchestrator (LangGraph 4-Tier)
+    handle /orchestrator* {
+        reverse_proxy agent-orchestrator:8000 {
+            header_up Host {host}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+            header_up X-Forwarded-Proto {scheme}
+        }
+    }
+
+    # ClickHouse Analytics HTTP Interface
+    handle /analytics* {
+        reverse_proxy clickhouse:8123 {
+            header_up Host {host}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+            header_up X-Forwarded-Proto {scheme}
+        }
+    }
+
+    handle /health {
+        header Content-Type "application/json"
+        respond `{"status":"ok","gateway":"caddy","engine":"index0-gateway"}` 200
+    }
+}
+
+# 3. LiveKit WebRTC Signaling
+voice.{$DOMAIN:localhost} {
+    reverse_proxy livekit:7880 {
+        header_up Host {host}
+        header_up X-Real-IP {remote_host}
+        header_up X-Forwarded-For {remote_host}
+        header_up X-Forwarded-Proto {scheme}
+    }
+}

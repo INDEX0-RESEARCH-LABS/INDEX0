@@ -259,10 +259,20 @@ def prep_build_folder(
     project_root = openhands_source_dir.parent
     logger.debug(f'Building source distribution using project root: {project_root}')
 
-    # Copy the 'openhands' directory (Source code)
+    # Copy the 'openhands' and 'index0_agent' directories (Source code)
     shutil.copytree(
         openhands_source_dir,
         Path(build_folder, 'code', 'openhands'),
+        ignore=shutil.ignore_patterns(
+            '.*/',
+            '__pycache__/',
+            '*.pyc',
+            '*.md',
+        ),
+    )
+    shutil.copytree(
+        openhands_source_dir,
+        Path(build_folder, 'code', 'index0_agent'),
         ignore=shutil.ignore_patterns(
             '.*/',
             '__pycache__/',

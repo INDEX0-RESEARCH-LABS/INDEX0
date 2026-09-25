@@ -42,7 +42,7 @@ const MARKETPLACE_ITEMS: MarketplaceItem[] = [
     category: "AGENT_MODE",
     description: "Autonomous sandbox manager orchestrating Firecracker microVMs and isolated Docker execution environments.",
     stars: 1240,
-    installCmd: "kilo agent install @index0/sandbox-agent",
+    installCmd: "index0 agent install @index0/sandbox-agent",
     version: "v1.4.2",
     author: "INDEX0 Core",
     isVerified: true,
@@ -54,7 +54,7 @@ const MARKETPLACE_ITEMS: MarketplaceItem[] = [
     category: "MCP_SERVER",
     description: "Model Context Protocol adapter providing schema introspection, read-only analytical queries, and migration validation.",
     stars: 890,
-    installCmd: "kilo mcp add postgresql --dsn $DATABASE_URL",
+    installCmd: "index0 mcp add postgresql --dsn $DATABASE_URL",
     version: "v2.1.0",
     author: "INDEX0 Labs",
     isVerified: true,
@@ -66,7 +66,7 @@ const MARKETPLACE_ITEMS: MarketplaceItem[] = [
     category: "AGENT_MODE",
     description: "Automated code reviewer evaluating AST diff safety, typecheck gates, and git commit hygiene prior to merging.",
     stars: 1450,
-    installCmd: "kilo agent install @index0/git-reviewer",
+    installCmd: "index0 agent install @index0/git-reviewer",
     version: "v1.8.0",
     author: "INDEX0 Core",
     isVerified: true,
@@ -78,7 +78,7 @@ const MARKETPLACE_ITEMS: MarketplaceItem[] = [
     category: "MCP_SERVER",
     description: "Self-hosted Lago subscription and meter integration without external cloud dependencies. Option A compliant.",
     stars: 430,
-    installCmd: "kilo mcp add lago --api-key $LAGO_KEY",
+    installCmd: "index0 mcp add lago --api-key $LAGO_KEY",
     version: "v1.12.0",
     author: "INDEX0 Finance",
     isVerified: true,
@@ -90,7 +90,7 @@ const MARKETPLACE_ITEMS: MarketplaceItem[] = [
     category: "SKILL",
     description: "Curated skill playbook for migrating legacy HMAC tokens to asymmetric Ed25519 cryptographic signatures.",
     stars: 760,
-    installCmd: "kilo skill add ed25519-auth",
+    installCmd: "index0 skill add ed25519-auth",
     version: "v1.0.4",
     author: "INDEX0 Security",
     isVerified: true,
@@ -102,7 +102,7 @@ const MARKETPLACE_ITEMS: MarketplaceItem[] = [
     category: "MCP_SERVER",
     description: "Ultra-fast telemetry and event log query engine for monitoring sub-millisecond agent execution metrics.",
     stars: 520,
-    installCmd: "kilo mcp add clickhouse --url $CH_URL",
+    installCmd: "index0 mcp add clickhouse --url $CH_URL",
     version: "v1.3.1",
     author: "Community",
     isVerified: false,
@@ -164,14 +164,14 @@ export default function MarketplacePage() {
       <div className="w-full relative">
         <div className="flex items-center gap-3 px-4 py-3 rounded-xl border-oklab bg-[var(--surface-100)] focus-within:border-[var(--accent)] transition-all shadow-sm">
           <IconTerminal2 size={18} className="text-[var(--accent)] shrink-0" strokeWidth={1.5} />
-          <span className="text-xs font-mono text-[var(--meta)]">$ kilo search</span>
+          <span className="text-xs font-mono text-[var(--meta)]">$ index0 search</span>
           <input
             ref={searchInputRef}
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search agents, MCP servers, skills... (Press '/' to focus)"
-            className="flex-1 bg-transparent text-sm font-sans text-[var(--fg)] placeholder:text-[var(--meta)] outline-none"
+            className="flex-1 bg-transparent text-sm font-mono text-[var(--fg)] placeholder:text-[var(--meta)] outline-none"
           />
           <kbd className="hidden sm:inline px-2 py-0.5 rounded border-oklab bg-[var(--surface-200)] text-[11px] font-mono text-[var(--meta)]">
             /
@@ -234,7 +234,7 @@ export default function MarketplacePage() {
                 {/* Name */}
                 <Link
                   href={`/marketplace/${item.slug}`}
-                  className="font-sans font-bold text-base text-[var(--fg)] hover:text-[var(--accent)] transition-colors flex items-center justify-between group"
+                  className="font-mono font-bold text-base text-[var(--fg)] hover:text-[var(--accent)] transition-colors flex items-center justify-between group"
                 >
                   <span>{item.name}</span>
                   <IconArrowUpRight size={16} className="opacity-0 group-hover:opacity-100 text-[var(--accent)] transition-opacity" />
@@ -262,7 +262,7 @@ export default function MarketplacePage() {
               <div className="space-y-2 pt-3 border-oklab-t">
                 <div className="flex items-center justify-between text-xs font-mono text-[var(--muted)]">
                   <div className="flex items-center gap-1 text-[var(--fg)]">
-                    <IconStar size={14} className="text-amber-500 fill-amber-500" />
+                    <IconStar size={14} className="text-[var(--fg)] fill-[var(--fg)]" />
                     <span>{item.stars}</span>
                   </div>
                   <span>{item.version}</span>

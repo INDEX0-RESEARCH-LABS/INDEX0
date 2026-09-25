@@ -134,6 +134,7 @@ services:
       TEMPORAL_CORS_ORIGINS: http://localhost:8233
     ports:
       - "8233:8233"
+      - "8088:8233"
     networks:
       - index0-net
 
@@ -188,6 +189,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ../../workspace:/opt/workspace_base
+      - ../../agent-canvas/frontend/build:/app/frontend/build:ro
       - ../openhands/wget:/usr/local/bin/wget:ro
     healthcheck:
       test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:3000/ || exit 1"]

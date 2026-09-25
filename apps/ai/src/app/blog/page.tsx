@@ -109,7 +109,7 @@ export default function BlogPage() {
           </div>
           <div>
             <div className="text-xs font-mono text-[var(--meta)]">LATEST SWE-BENCH VERIFIED RUN</div>
-            <div className="font-sans font-bold text-lg text-[var(--fg)]">54.8% Pass Rate at Resolved Issues</div>
+            <div className="font-mono font-bold text-lg text-[var(--fg)]">54.8% Pass Rate at Resolved Issues</div>
           </div>
         </div>
 
@@ -138,7 +138,7 @@ export default function BlogPage() {
             </div>
 
             <Link href={`/blog/${post.slug}`} className="block group">
-              <h2 className="font-sans font-bold text-xl md:text-2xl text-[var(--fg)] group-hover:text-[var(--accent)] transition-colors flex items-center justify-between">
+              <h2 className="font-mono font-bold text-xl md:text-2xl text-[var(--fg)] group-hover:text-[var(--accent)] transition-colors flex items-center justify-between">
                 <span>{post.title}</span>
                 <IconArrowUpRight size={20} className="opacity-0 group-hover:opacity-100 text-[var(--accent)] transition-opacity shrink-0 ml-2" />
               </h2>
@@ -164,7 +164,7 @@ export default function BlogPage() {
           <IconMail size={16} />
           <span>[LISTMONK SOVEREIGN NEWSLETTER]</span>
         </div>
-        <h3 className="font-sans font-bold text-xl text-[var(--fg)]">
+        <h3 className="font-mono font-bold text-xl text-[var(--fg)]">
           Subscribe to Engineering Dispatches.
         </h3>
         <p className="font-editorial text-sm text-[var(--muted)] max-w-md mx-auto leading-relaxed">
@@ -178,11 +178,11 @@ export default function BlogPage() {
             onChange={(e) => setEmail(e.target.value)}
             placeholder="engineer@company.com"
             required
-            className="flex-1 px-4 py-2.5 rounded-full border-oklab bg-[var(--surface-100)] text-sm font-sans text-[var(--fg)] placeholder:text-[var(--meta)] outline-none focus:border-[var(--accent)]"
+            className="flex-1 px-4 py-2.5 rounded-full border-oklab bg-[var(--surface-100)] text-sm font-mono text-[var(--fg)] placeholder:text-[var(--meta)] outline-none focus:border-[var(--accent)]"
           />
           <button
             type="submit"
-            className="pill-btn px-6 py-2.5 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white text-xs font-sans font-medium tracking-wide shadow-sm transition-colors cursor-pointer"
+            className="pill-btn px-6 py-2.5 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-[var(--accent-fg)] text-xs font-mono font-medium tracking-wide shadow-sm transition-colors cursor-pointer"
           >
             {subscribed ? (
               <span className="flex items-center gap-1">

@@ -10,7 +10,7 @@
  */
 
 import type { Metadata, Viewport } from "next";
-import { JetBrains_Mono, Newsreader } from "next/font/google";
+import { JetBrains_Mono } from "next/font/google";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -18,14 +18,7 @@ import "./globals.css";
 
 const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
-  variable: "--font-mono",
-  display: "swap",
-});
-
-const newsreader = Newsreader({
-  subsets: ["latin"],
-  style: ["normal", "italic"],
-  variable: "--font-editorial-serif",
+  variable: "--font-jetbrains-mono",
   display: "swap",
 });
 
@@ -53,8 +46,8 @@ export const viewport: Viewport = {
   maximumScale: 1,
   userScalable: false,
   themeColor: [
-    { media: "(prefers-color-scheme: dark)", color: "#141311" },
-    { media: "(prefers-color-scheme: light)", color: "#f2f1ed" },
+    { media: "(prefers-color-scheme: dark)", color: "#0a0a0a" },
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
   ],
 };
 
@@ -73,12 +66,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${jetbrainsMono.variable} ${newsreader.variable}`} suppressHydrationWarning>
+    <html lang="en" className={jetbrainsMono.variable} suppressHydrationWarning>
       <head>
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
-      <body className="bg-[var(--bg)] text-[var(--fg)] font-sans antialiased selection:bg-[var(--accent)] selection:text-white min-h-[100dvh] flex flex-col overflow-x-hidden">
+      <body className="bg-[var(--bg)] text-[var(--fg)] font-mono antialiased selection:bg-[var(--accent)] selection:text-[var(--accent-fg)] min-h-[100dvh] flex flex-col overflow-x-hidden">
         <ThemeProvider>
           <Navbar />
           <div className="flex-1 w-full">{children}</div>

@@ -1,0 +1,21 @@
+{
+  "envelope": {
+    "version": "1.0",
+    "id": "postcard-1790285465355-1",
+    "from": {
+      "agentId": "agent-critic-01",
+      "role": "critic",
+      "displayName": "Agent critic"
+    },
+    "to": "*",
+    "type": "review_verdict",
+    "payload": {
+      "executedAt": "2026-09-24T21:31:05.354Z"
+    },
+    "timestamp": "2026-09-24T21:31:05.355Z"
+  },
+  "meta": {
+    "writtenAt": "2026-09-24T21:31:05.355Z",
+    "sequence": 1
+  }
+}

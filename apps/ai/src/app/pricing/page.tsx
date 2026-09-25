@@ -54,7 +54,7 @@ export default function PricingPage() {
         <div className="p-8 rounded-2xl border-oklab bg-[var(--surface-100)] flex flex-col justify-between space-y-6 shadow-sm hover:border-oklab-strong transition-all">
           <div className="space-y-4">
             <div className="text-xs font-mono text-[var(--meta)]">[TIER_01: COMMUNITY]</div>
-            <h2 className="font-sans font-bold text-2xl text-[var(--fg)]">Self-Hosted</h2>
+            <h2 className="font-mono font-bold text-2xl text-[var(--fg)]">Self-Hosted</h2>
             <div className="flex items-baseline gap-1 font-mono">
               <span className="text-3xl font-bold text-[var(--fg)]">$0</span>
               <span className="text-xs text-[var(--muted)]">/ forever free</span>
@@ -66,7 +66,7 @@ export default function PricingPage() {
             <ul className="space-y-2 text-xs font-mono text-[var(--fg)] pt-2 border-oklab-t">
               <li className="flex items-center gap-2">
                 <IconCheck size={14} className="text-[var(--accent)]" />
-                <span>Single-binary Kilo CLI</span>
+                <span>Single-binary INDEX0 CLI</span>
               </li>
               <li className="flex items-center gap-2">
                 <IconCheck size={14} className="text-[var(--accent)]" />
@@ -85,7 +85,7 @@ export default function PricingPage() {
 
           <Link
             href="/downloads"
-            className="pill-btn w-full py-2.5 text-center text-xs font-sans font-medium border-oklab hover:bg-[var(--surface-200)] text-[var(--fg)] transition-colors"
+            className="pill-btn w-full py-2.5 text-center text-xs font-mono font-medium border-oklab hover:bg-[var(--surface-200)] text-[var(--fg)] transition-colors"
           >
             Download Free Binary
           </Link>
@@ -93,13 +93,13 @@ export default function PricingPage() {
 
         {/* Tier 2: Developer Pro (Featured) */}
         <div className="p-8 rounded-2xl border-2 border-[var(--accent)] bg-[var(--surface-100)] flex flex-col justify-between space-y-6 shadow-atmospheric relative">
-          <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-[var(--accent)] text-white text-[10px] font-mono font-bold tracking-wider">
+          <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-[var(--accent)] text-[var(--accent-fg)] text-[10px] font-mono font-bold tracking-wider">
             RECOMMENDED
           </div>
 
           <div className="space-y-4">
             <div className="text-xs font-mono text-[var(--accent)]">[TIER_02: DEVELOPER PRO]</div>
-            <h2 className="font-sans font-bold text-2xl text-[var(--fg)]">Team Swarm</h2>
+            <h2 className="font-mono font-bold text-2xl text-[var(--fg)]">Team Swarm</h2>
             <div className="flex items-baseline gap-1 font-mono">
               <span className="text-3xl font-bold text-[var(--fg)]">$20</span>
               <span className="text-xs text-[var(--muted)]">/ seat / month</span>
@@ -134,7 +134,7 @@ export default function PricingPage() {
 
           <Link
             href="/downloads"
-            className="pill-btn w-full py-2.5 text-center text-xs font-sans font-medium bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white transition-colors shadow-sm"
+            className="pill-btn w-full py-2.5 text-center text-xs font-mono font-medium bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-[var(--accent-fg)] transition-colors shadow-sm"
           >
             Start 14-Day Free Trial
           </Link>
@@ -144,7 +144,7 @@ export default function PricingPage() {
         <div className="p-8 rounded-2xl border-oklab bg-[var(--surface-100)] flex flex-col justify-between space-y-6 shadow-sm hover:border-oklab-strong transition-all">
           <div className="space-y-4">
             <div className="text-xs font-mono text-[var(--meta)]">[TIER_03: ENTERPRISE]</div>
-            <h2 className="font-sans font-bold text-2xl text-[var(--fg)]">Sovereign VPC</h2>
+            <h2 className="font-mono font-bold text-2xl text-[var(--fg)]">Sovereign VPC</h2>
             <div className="flex items-baseline gap-1 font-mono">
               <span className="text-3xl font-bold text-[var(--fg)]">Custom</span>
               <span className="text-xs text-[var(--muted)]">/ dedicated cluster</span>
@@ -175,7 +175,7 @@ export default function PricingPage() {
 
           <a
             href="mailto:enterprise@index0.ai"
-            className="pill-btn w-full py-2.5 text-center text-xs font-sans font-medium border-oklab hover:bg-[var(--surface-200)] text-[var(--fg)] transition-colors"
+            className="pill-btn w-full py-2.5 text-center text-xs font-mono font-medium border-oklab hover:bg-[var(--surface-200)] text-[var(--fg)] transition-colors"
           >
             Contact Sovereign Sales
           </a>
@@ -245,7 +245,7 @@ export default function PricingPage() {
             <div className="text-xs text-[var(--meta)]">[MONTHLY QUOTA PROJECTION]</div>
             <div className="flex justify-between items-baseline border-oklab-b pb-3">
               <span className="text-sm text-[var(--fg)]">Estimated Monthly Invoice:</span>
-              <span className="text-3xl font-bold text-[var(--accent)] font-sans">${estimatedCost}</span>
+              <span className="text-3xl font-bold text-[var(--accent)] font-mono">${estimatedCost}</span>
             </div>
             <div className="space-y-1.5 text-xs text-[var(--muted)]">
               <div className="flex justify-between">

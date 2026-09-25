@@ -150,3 +150,6 @@ export class SandboxClient {
     return lines.join('\n');
   }
 }
+
+export * from './gnap.js';
+

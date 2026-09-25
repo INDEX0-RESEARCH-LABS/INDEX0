@@ -34,9 +34,9 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand & Purpose */}
           <div className="space-y-3">
-            <div className="flex items-center gap-2 text-base font-sans font-bold text-[var(--fg)]">
+            <div className="flex items-center gap-2 text-base font-mono font-bold text-[var(--fg)]">
               <span>INDEX0</span>
-              <span className="px-1.5 py-0.2 text-[10px] font-mono bg-[var(--accent)] text-white rounded-full">
+              <span className="px-1.5 py-0.2 text-[10px] font-mono bg-[var(--accent)] text-[var(--accent-fg)] rounded-full">
                 AI
               </span>
             </div>
@@ -51,18 +51,18 @@ export function Footer() {
 
           {/* Navigation */}
           <div className="space-y-2 text-xs">
-            <div className="font-sans font-semibold text-[var(--fg)] mb-2 uppercase tracking-wider text-[11px]">
+            <div className="font-mono font-semibold text-[var(--fg)] mb-2 uppercase tracking-wider text-[11px]">
               Platform
             </div>
             <div><Link href="/marketplace" className="hover:text-[var(--hover-crimson)]">Marketplace &amp; MCPs</Link></div>
             <div><Link href="/features" className="hover:text-[var(--hover-crimson)]">Architecture &amp; Features</Link></div>
             <div><Link href="/pricing" className="hover:text-[var(--hover-crimson)]">Pricing &amp; Calculator</Link></div>
-            <div><Link href="/downloads" className="hover:text-[var(--hover-crimson)]">Kilo CLI Downloads</Link></div>
+            <div><Link href="/downloads" className="hover:text-[var(--hover-crimson)]">INDEX0 CLI Downloads</Link></div>
           </div>
 
           {/* Resources */}
           <div className="space-y-2 text-xs">
-            <div className="font-sans font-semibold text-[var(--fg)] mb-2 uppercase tracking-wider text-[11px]">
+            <div className="font-mono font-semibold text-[var(--fg)] mb-2 uppercase tracking-wider text-[11px]">
               Resources
             </div>
             <div><Link href="/docs" className="hover:text-[var(--hover-crimson)]">Documentation</Link></div>
@@ -73,7 +73,7 @@ export function Footer() {
 
           {/* Telemetry */}
           <div className="space-y-2 text-xs">
-            <div className="font-sans font-semibold text-[var(--fg)] mb-2 uppercase tracking-wider text-[11px]">
+            <div className="font-mono font-semibold text-[var(--fg)] mb-2 uppercase tracking-wider text-[11px]">
               Telemetry
             </div>
             <div className="p-3 bg-[var(--surface-200)] border-oklab rounded-lg space-y-1">

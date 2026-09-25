@@ -19,6 +19,7 @@ class Settings(BaseSettings):
     sandbox_manager_url: str = "http://localhost:3002"
     litellm_proxy_url: str = "http://localhost:4000"
     openhands_url: str = "http://localhost:3000"
+    letta_url: str = "http://localhost:8283"
 
     # Orchestrator Policy Defaults
     max_review_iterations: int = 5

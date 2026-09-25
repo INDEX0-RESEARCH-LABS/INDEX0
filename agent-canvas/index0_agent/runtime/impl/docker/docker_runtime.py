@@ -246,19 +246,23 @@ class DockerRuntime(ActionExecutionClient):
         else:
             browsergym_arg = ''
 
+        username = 'openhands' if self.config.run_as_openhands else 'root'
+        startup_cmd = (
+            f'ln -sfn /openhands/code/openhands /openhands/code/index0_agent 2>/dev/null || true; '
+            f'exec /openhands/micromamba/bin/micromamba run -n openhands '
+            f'poetry run '
+            f'python -u -m index0_agent.runtime.action_execution_server {self._container_port} '
+            f'--working-dir "{self.config.workspace_mount_path_in_sandbox}" '
+            f'{plugin_arg}'
+            f'--username {username} '
+            f'--user-id {self.config.sandbox.user_id} '
+            f'{browsergym_arg}'
+        )
+
         try:
             self.container = self.docker_client.containers.run(
                 self.runtime_container_image,
-                command=(
-                    f'/openhands/micromamba/bin/micromamba run -n openhands '
-                    f'poetry run '
-                    f'python -u -m index0_agent.runtime.action_execution_server {self._container_port} '
-                    f'--working-dir "{self.config.workspace_mount_path_in_sandbox}" '
-                    f'{plugin_arg}'
-                    f'--username {"openhands" if self.config.run_as_openhands else "root"} '
-                    f'--user-id {self.config.sandbox.user_id} '
-                    f'{browsergym_arg}'
-                ),
+                command=['/bin/bash', '-c', startup_cmd],
                 network_mode=network_mode,
                 ports=port_mapping,
                 working_dir='/openhands/code/',  # do not change this!

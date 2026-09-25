@@ -19,4 +19,7 @@ export * from './services/mcpToolService.js';
 export * from './components/TelemetryUsagePanel.js';
 export * from './services/telemetryService.js';
 export * from './components/SubscriptionPlanModal.js';
+export * from './components/VoiceAgentModal.js';
+export * from './components/PhoneVerificationModal.js';
+export * from './services/tabbyClient.js';
 export * from './auth/index.js';

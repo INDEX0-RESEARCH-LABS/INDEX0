@@ -286,7 +286,7 @@ export async function seedDatabase(client: PrismaClient = prisma) {
     create: {
       id: DEMO_IDS.customerId,
       organizationId: org.id,
-      externalCustomerId: "cus_stripe_acme_labs_001",
+      externalCustomerId: "cust_rzp_acme_labs_001",
       email: "billing@acme.com",
       name: "Acme Labs Finance",
       currency: "USD"

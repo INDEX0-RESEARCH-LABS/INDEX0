@@ -1,6 +1,6 @@
 services:
   livekit:
-    image: livekit/livekit-server:v1.7
+    image: livekit/livekit-server:latest
     container_name: index0-livekit
     restart: unless-stopped
     ports:

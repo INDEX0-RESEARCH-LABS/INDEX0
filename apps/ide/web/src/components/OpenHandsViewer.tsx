@@ -17,7 +17,9 @@ import {
   Check,
   ChevronDown,
   X,
-  Sparkles
+  Sparkles,
+  Sun,
+  Moon
 } from 'lucide-react';
 import {
   OpenHandsService,
@@ -30,16 +32,39 @@ export interface IOpenHandsViewerProps {
   workspacePath?: string;
   className?: string;
   initialProfileId?: string;
+  theme?: 'dark' | 'light';
+  onThemeChange?: (theme: 'dark' | 'light') => void;
 }
 
 export const OpenHandsViewer: React.FC<IOpenHandsViewerProps> = ({
   gatewayUrl = 'http://localhost:8000',
   workspacePath = '/opt/workspace_base',
   className = '',
-  initialProfileId = 'anthropic-claude'
+  initialProfileId = 'anthropic-claude',
+  theme: themeProp,
+  onThemeChange
 }) => {
   const service = useMemo(() => new OpenHandsService(), []);
   const profilesConfig = service.getProfiles();
+
+  const [currentTheme, setCurrentTheme] = useState<'dark' | 'light'>(() => {
+    if (themeProp) return themeProp;
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('index0_theme');
+      if (saved === 'light' || saved === 'dark') return saved;
+      const htmlTheme = document.documentElement.getAttribute('data-theme');
+      if (htmlTheme === 'light' || htmlTheme === 'dark') return htmlTheme;
+      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) return 'light';
+    }
+    return 'dark';
+  });
+
+  // Sync if prop changes externally
+  useEffect(() => {
+    if (themeProp && themeProp !== currentTheme) {
+      setCurrentTheme(themeProp);
+    }
+  }, [themeProp]);
 
   const [selectedProfileId, setSelectedProfileId] = useState<string>(initialProfileId);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
@@ -57,6 +82,42 @@ export const OpenHandsViewer: React.FC<IOpenHandsViewerProps> = ({
 
   const targetUrl = gatewayUrl.replace(/\/$/, '');
   const activeProfile: ILLMProfile = profilesConfig.profiles[selectedProfileId] || service.getDefaultProfile().profile;
+
+  const targetUrlWithTheme = useMemo(() => {
+    try {
+      const parsed = new URL(targetUrl);
+      parsed.searchParams.set('theme', currentTheme);
+      return parsed.toString();
+    } catch {
+      const joiner = targetUrl.includes('?') ? '&' : '?';
+      return `${targetUrl}${joiner}theme=${currentTheme}`;
+    }
+  }, [targetUrl, currentTheme]);
+
+  const isLight = currentTheme === 'light';
+
+  // Theme design tokens matching apps/ai/DESIGN.md & apps/ai/src/app/globals.css
+  const t = {
+    bg: isLight ? '#f6f7f9' : '#0a0c14',
+    toolbarBg: isLight ? '#ffffff' : '#121524',
+    toolbarBorder: isLight ? 'rgba(38, 37, 30, 0.08)' : 'rgba(255, 255, 255, 0.08)',
+    text: isLight ? '#101216' : '#e2e8f0',
+    textMuted: isLight ? '#545965' : '#94a3b8',
+    textDim: isLight ? '#888f9d' : '#64748b',
+    btnBg: isLight ? 'rgba(0, 0, 0, 0.04)' : 'rgba(255, 255, 255, 0.05)',
+    btnBorder: isLight ? 'rgba(0, 0, 0, 0.12)' : 'rgba(255, 255, 255, 0.12)',
+    btnHoverBg: isLight ? 'rgba(0, 0, 0, 0.08)' : 'rgba(255, 255, 255, 0.1)',
+    cardBg: isLight ? '#ffffff' : '#121524',
+    cardBorder: isLight ? 'rgba(0, 0, 0, 0.14)' : 'rgba(255, 255, 255, 0.15)',
+    cardShadow: isLight ? '0 8px 24px rgba(0, 0, 0, 0.12)' : '0 8px 24px rgba(0, 0, 0, 0.5)',
+    drawerBg: isLight ? '#f0efe9' : '#161a2e',
+    inputBg: isLight ? '#ffffff' : 'rgba(0, 0, 0, 0.4)',
+    inputBorder: isLight ? 'rgba(0, 0, 0, 0.16)' : 'rgba(255, 255, 255, 0.15)',
+    ruleBg: isLight ? 'rgba(0, 0, 0, 0.03)' : 'rgba(255, 255, 255, 0.03)',
+    ruleBorder: isLight ? 'rgba(0, 0, 0, 0.07)' : 'rgba(255, 255, 255, 0.06)',
+    modalOverlay: isLight ? 'rgba(0, 0, 0, 0.35)' : 'rgba(0, 0, 0, 0.7)',
+    errorBg: isLight ? '#fff5f5' : '#1c1917',
+  };
 
   // Probe Gateway & OpenHands health on mount or URL change
   useEffect(() => {
@@ -85,6 +146,23 @@ export const OpenHandsViewer: React.FC<IOpenHandsViewerProps> = ({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  const handleToggleTheme = () => {
+    const nextTheme: 'dark' | 'light' = currentTheme === 'dark' ? 'light' : 'dark';
+    setCurrentTheme(nextTheme);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('index0_theme', nextTheme);
+    }
+    onThemeChange?.(nextTheme);
+
+    // Notify embedded OpenHands iframe in real-time
+    if (iframeRef.current?.contentWindow) {
+      iframeRef.current.contentWindow.postMessage(
+        { type: 'INDEX0_SET_THEME', theme: nextTheme },
+        '*'
+      );
+    }
+  };
+
   const handleReload = () => {
     setIsLoading(true);
     setLoadError(false);
@@ -93,7 +171,7 @@ export const OpenHandsViewer: React.FC<IOpenHandsViewerProps> = ({
 
   const handleOpenExternal = () => {
     if (typeof window !== 'undefined') {
-      window.open(targetUrl, '_blank', 'noopener,noreferrer');
+      window.open(targetUrlWithTheme, '_blank', 'noopener,noreferrer');
     }
   };
 
@@ -109,14 +187,17 @@ export const OpenHandsViewer: React.FC<IOpenHandsViewerProps> = ({
 
   return (
     <div
-      className={`index0-openhands-viewer ${className}`}
+      className={`index0-openhands-viewer ${isLight ? 'theme-light' : 'theme-dark'} ${className}`}
+      data-theme={currentTheme}
       style={{
         display: 'flex',
         flexDirection: 'column',
         height: '100%',
         width: '100%',
-        background: '#0a0c14',
-        overflow: 'hidden'
+        background: t.bg,
+        color: t.text,
+        overflow: 'hidden',
+        transition: 'background-color 150ms ease, color 150ms ease'
       }}
       data-testid="openhands-viewer"
     >
@@ -127,10 +208,10 @@ export const OpenHandsViewer: React.FC<IOpenHandsViewerProps> = ({
           alignItems: 'center',
           justifyContent: 'space-between',
           padding: '8px 16px',
-          background: '#121524',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+          background: t.toolbarBg,
+          borderBottom: `1px solid ${t.toolbarBorder}`,
           fontSize: '0.75rem',
-          color: '#e2e8f0'
+          color: t.text
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -152,7 +233,7 @@ export const OpenHandsViewer: React.FC<IOpenHandsViewerProps> = ({
             </span>
           </div>
 
-          <span style={{ color: '#64748b' }}>|</span>
+          <span style={{ color: t.textDim }}>|</span>
 
           {/* Gateway Health Indicator */}
           <span
@@ -160,7 +241,7 @@ export const OpenHandsViewer: React.FC<IOpenHandsViewerProps> = ({
               display: 'flex',
               alignItems: 'center',
               gap: '4px',
-              color: gatewayStatus === 'online' ? '#34d399' : gatewayStatus === 'checking' ? '#fbbf24' : '#f87171'
+              color: gatewayStatus === 'online' ? '#10b981' : gatewayStatus === 'checking' ? '#f59e0b' : '#ef4444'
             }}
           >
             <ShieldCheck size={13} />
@@ -173,7 +254,7 @@ export const OpenHandsViewer: React.FC<IOpenHandsViewerProps> = ({
             </span>
           </span>
 
-          <span style={{ color: '#64748b' }}>|</span>
+          <span style={{ color: t.textDim }}>|</span>
 
           {/* Active LLM Profile Selector Dropdown */}
           <div ref={profileDropdownRef} style={{ position: 'relative' }}>
@@ -183,25 +264,25 @@ export const OpenHandsViewer: React.FC<IOpenHandsViewerProps> = ({
                 display: 'flex',
                 alignItems: 'center',
                 gap: '6px',
-                background: 'rgba(255, 255, 255, 0.05)',
-                border: '1px solid rgba(255, 255, 255, 0.12)',
+                background: t.btnBg,
+                border: `1px solid ${t.btnBorder}`,
                 borderRadius: '4px',
                 padding: '3px 8px',
-                color: '#e2e8f0',
+                color: t.text,
                 fontSize: '0.7rem',
                 cursor: 'pointer'
               }}
               title="Select LLM Inference Profile"
               data-testid="profile-selector-btn"
             >
-              <Cpu size={12} color="#a78bfa" />
+              <Cpu size={12} color={isLight ? '#7c3aed' : '#a78bfa'} />
               <span>Model:</span>
               <strong>{activeProfile.model.split('/').pop() || activeProfile.model}</strong>
               {activeProfile.is_local && (
                 <span
                   style={{
                     background: 'rgba(16, 185, 129, 0.2)',
-                    color: '#34d399',
+                    color: isLight ? '#059669' : '#34d399',
                     border: '1px solid rgba(16, 185, 129, 0.4)',
                     borderRadius: '3px',
                     padding: '0 4px',
@@ -212,7 +293,7 @@ export const OpenHandsViewer: React.FC<IOpenHandsViewerProps> = ({
                   LOCAL
                 </span>
               )}
-              <ChevronDown size={11} color="#94a3b8" />
+              <ChevronDown size={11} color={t.textMuted} />
             </button>
 
             {isProfileDropdownOpen && (
@@ -222,10 +303,10 @@ export const OpenHandsViewer: React.FC<IOpenHandsViewerProps> = ({
                   top: 'calc(100% + 4px)',
                   left: 0,
                   width: '320px',
-                  background: '#121524',
-                  border: '1px solid rgba(255, 255, 255, 0.15)',
+                  background: t.cardBg,
+                  border: `1px solid ${t.cardBorder}`,
                   borderRadius: '6px',
-                  boxShadow: '0 8px 24px rgba(0, 0, 0, 0.5)',
+                  boxShadow: t.cardShadow,
                   zIndex: 100,
                   padding: '6px',
                   display: 'flex',
@@ -233,7 +314,7 @@ export const OpenHandsViewer: React.FC<IOpenHandsViewerProps> = ({
                   gap: '4px'
                 }}
               >
-                <div style={{ fontSize: '0.65rem', color: '#64748b', padding: '4px 6px', fontWeight: 600 }}>
+                <div style={{ fontSize: '0.65rem', color: t.textDim, padding: '4px 6px', fontWeight: 600 }}>
                   MULTI-PROVIDER LLM PROFILES (infra/openhands/llm-profiles.json)
                 </div>
                 {Object.entries(profilesConfig.profiles).map(([id, p]) => (
@@ -249,22 +330,22 @@ export const OpenHandsViewer: React.FC<IOpenHandsViewerProps> = ({
                       alignItems: 'flex-start',
                       textAlign: 'left',
                       padding: '6px 8px',
-                      background: id === selectedProfileId ? 'rgba(99, 102, 241, 0.2)' : 'transparent',
-                      border: id === selectedProfileId ? '1px solid rgba(99, 102, 241, 0.4)' : '1px solid transparent',
+                      background: id === selectedProfileId ? (isLight ? 'rgba(245, 78, 0, 0.08)' : 'rgba(99, 102, 241, 0.2)') : 'transparent',
+                      border: id === selectedProfileId ? `1px solid ${isLight ? 'rgba(245, 78, 0, 0.3)' : 'rgba(99, 102, 241, 0.4)'}` : '1px solid transparent',
                       borderRadius: '4px',
-                      color: '#e2e8f0',
+                      color: t.text,
                       cursor: 'pointer'
                     }}
                   >
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
                       <span style={{ fontWeight: 600, fontSize: '0.72rem' }}>{id}</span>
                       {p.is_local ? (
-                        <span style={{ color: '#34d399', fontSize: '0.62rem', fontWeight: 700 }}>SOVEREIGN LOCAL</span>
+                        <span style={{ color: isLight ? '#059669' : '#34d399', fontSize: '0.62rem', fontWeight: 700 }}>SOVEREIGN LOCAL</span>
                       ) : (
-                        <span style={{ color: '#94a3b8', fontSize: '0.62rem' }}>CLOUD API</span>
+                        <span style={{ color: t.textMuted, fontSize: '0.62rem' }}>CLOUD API</span>
                       )}
                     </div>
-                    <span style={{ fontSize: '0.65rem', color: '#94a3b8', marginTop: '2px' }}>
+                    <span style={{ fontSize: '0.65rem', color: t.textMuted, marginTop: '2px' }}>
                       {p.recommended_for}
                     </span>
                   </button>
@@ -276,6 +357,30 @@ export const OpenHandsViewer: React.FC<IOpenHandsViewerProps> = ({
 
         {/* Right Toolbar Actions */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          {/* Theme Toggle Button */}
+          <button
+            onClick={handleToggleTheme}
+            title={`Switch to ${isLight ? 'Dark' : 'Light'} Mode`}
+            data-testid="openhands-theme-toggle"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '5px',
+              background: t.btnBg,
+              border: `1px solid ${t.btnBorder}`,
+              borderRadius: '4px',
+              color: isLight ? '#d94500' : '#fbbf24',
+              padding: '4px 8px',
+              fontSize: '0.7rem',
+              fontWeight: 600,
+              cursor: 'pointer',
+              fontFamily: 'monospace'
+            }}
+          >
+            {isLight ? <Moon size={12} color="#101216" /> : <Sun size={12} color="#fbbf24" />}
+            <span style={{ color: t.text }}>{isLight ? '[DARK ☾]' : '[LIGHT ☼]'}</span>
+          </button>
+
           <button
             onClick={() => setIsGuardrailsModalOpen(true)}
             title="Inspect workspace architectural guardrails"
@@ -283,16 +388,16 @@ export const OpenHandsViewer: React.FC<IOpenHandsViewerProps> = ({
               display: 'flex',
               alignItems: 'center',
               gap: '4px',
-              background: 'rgba(255, 255, 255, 0.05)',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
+              background: t.btnBg,
+              border: `1px solid ${t.btnBorder}`,
               borderRadius: '4px',
-              color: '#cbd5e1',
+              color: t.text,
               padding: '4px 8px',
               fontSize: '0.7rem',
               cursor: 'pointer'
             }}
           >
-            <FileText size={12} color="#38bdf8" /> Guardrails
+            <FileText size={12} color={isLight ? '#0284c7' : '#38bdf8'} /> Guardrails
           </button>
 
           <button
@@ -302,10 +407,10 @@ export const OpenHandsViewer: React.FC<IOpenHandsViewerProps> = ({
               display: 'flex',
               alignItems: 'center',
               gap: '4px',
-              background: 'rgba(99, 102, 241, 0.15)',
-              border: '1px solid rgba(99, 102, 241, 0.3)',
+              background: isLight ? 'rgba(245, 78, 0, 0.1)' : 'rgba(99, 102, 241, 0.15)',
+              border: `1px solid ${isLight ? 'rgba(245, 78, 0, 0.3)' : 'rgba(99, 102, 241, 0.3)'}`,
               borderRadius: '4px',
-              color: '#a5b4fc',
+              color: isLight ? '#d94500' : '#a5b4fc',
               padding: '4px 8px',
               fontSize: '0.7rem',
               cursor: 'pointer'
@@ -321,10 +426,10 @@ export const OpenHandsViewer: React.FC<IOpenHandsViewerProps> = ({
               display: 'flex',
               alignItems: 'center',
               gap: '4px',
-              background: 'rgba(255, 255, 255, 0.05)',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
+              background: t.btnBg,
+              border: `1px solid ${t.btnBorder}`,
               borderRadius: '4px',
-              color: '#cbd5e1',
+              color: t.text,
               padding: '4px 8px',
               fontSize: '0.7rem',
               cursor: 'pointer'
@@ -340,7 +445,7 @@ export const OpenHandsViewer: React.FC<IOpenHandsViewerProps> = ({
               display: 'flex',
               alignItems: 'center',
               gap: '4px',
-              background: 'var(--accent-primary, #6366f1)',
+              background: 'var(--brand-accent, #f54e00)',
               border: 'none',
               borderRadius: '4px',
               color: '#fff',
@@ -359,8 +464,8 @@ export const OpenHandsViewer: React.FC<IOpenHandsViewerProps> = ({
       {isPromptDrawerOpen && (
         <div
           style={{
-            background: '#161a2e',
-            borderBottom: '1px solid rgba(99, 102, 241, 0.3)',
+            background: t.drawerBg,
+            borderBottom: `1px solid ${isLight ? 'rgba(245, 78, 0, 0.3)' : 'rgba(99, 102, 241, 0.3)'}`,
             padding: '10px 16px',
             display: 'flex',
             alignItems: 'center',
@@ -376,11 +481,11 @@ export const OpenHandsViewer: React.FC<IOpenHandsViewerProps> = ({
               placeholder="Dispatch task with injected .openhands_instructions guardrails (e.g. 'Implement math tests')..."
               style={{
                 width: '100%',
-                background: 'rgba(0, 0, 0, 0.4)',
-                border: '1px solid rgba(255, 255, 255, 0.15)',
+                background: t.inputBg,
+                border: `1px solid ${t.inputBorder}`,
                 borderRadius: '4px',
                 padding: '6px 10px',
-                color: '#fff',
+                color: t.text,
                 fontSize: '0.75rem',
                 outline: 'none'
               }}
@@ -393,10 +498,12 @@ export const OpenHandsViewer: React.FC<IOpenHandsViewerProps> = ({
               display: 'flex',
               alignItems: 'center',
               gap: '5px',
-              background: hasCopiedPrompt ? 'rgba(16, 185, 129, 0.2)' : 'rgba(255, 255, 255, 0.08)',
-              border: '1px solid rgba(255, 255, 255, 0.15)',
+              background: hasCopiedPrompt
+                ? 'rgba(16, 185, 129, 0.2)'
+                : t.btnBg,
+              border: `1px solid ${t.btnBorder}`,
               borderRadius: '4px',
-              color: hasCopiedPrompt ? '#34d399' : '#e2e8f0',
+              color: hasCopiedPrompt ? (isLight ? '#059669' : '#34d399') : t.text,
               padding: '6px 12px',
               fontSize: '0.72rem',
               fontWeight: 600,
@@ -412,7 +519,7 @@ export const OpenHandsViewer: React.FC<IOpenHandsViewerProps> = ({
             style={{
               background: 'transparent',
               border: 'none',
-              color: '#94a3b8',
+              color: t.textMuted,
               cursor: 'pointer'
             }}
           >
@@ -422,7 +529,7 @@ export const OpenHandsViewer: React.FC<IOpenHandsViewerProps> = ({
       )}
 
       {/* Embedded Iframe Container */}
-      <div style={{ position: 'relative', flex: 1, width: '100%', minHeight: 0 }}>
+      <div style={{ position: 'relative', flex: 1, width: '100%', minHeight: 0, background: t.bg }}>
         {isLoading && (
           <div
             style={{
@@ -435,9 +542,9 @@ export const OpenHandsViewer: React.FC<IOpenHandsViewerProps> = ({
               flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'center',
-              background: '#0a0c14',
+              background: t.bg,
               zIndex: 10,
-              color: '#94a3b8',
+              color: t.textMuted,
               gap: '12px'
             }}
           >
@@ -445,13 +552,13 @@ export const OpenHandsViewer: React.FC<IOpenHandsViewerProps> = ({
               style={{
                 width: '32px',
                 height: '32px',
-                border: '3px solid rgba(56, 189, 248, 0.2)',
-                borderTopColor: '#38bdf8',
+                border: `3px solid ${isLight ? 'rgba(245, 78, 0, 0.2)' : 'rgba(56, 189, 248, 0.2)'}`,
+                borderTopColor: '#f54e00',
                 borderRadius: '50%',
                 animation: 'spin 0.8s linear infinite'
               }}
             />
-            <div style={{ fontSize: '0.85rem' }}>
+            <div style={{ fontSize: '0.85rem', color: t.text }}>
               Connecting to INDEX0 AI Agent Canvas on port 8000 ({activeProfile.model})...
             </div>
           </div>
@@ -464,22 +571,23 @@ export const OpenHandsViewer: React.FC<IOpenHandsViewerProps> = ({
               top: '20px',
               left: '50%',
               transform: 'translateX(-50%)',
-              background: '#1c1917',
+              background: t.errorBg,
               border: '1px solid #ef4444',
               borderRadius: '8px',
               padding: '16px 24px',
-              color: '#f87171',
+              color: '#ef4444',
               zIndex: 20,
               display: 'flex',
               alignItems: 'center',
               gap: '12px',
-              maxWidth: '500px'
+              maxWidth: '500px',
+              boxShadow: isLight ? '0 4px 12px rgba(239, 68, 68, 0.15)' : 'none'
             }}
           >
             <AlertCircle size={24} />
             <div>
               <div style={{ fontWeight: 600, fontSize: '0.85rem' }}>INDEX0 Agent Canvas Offline</div>
-              <div style={{ fontSize: '0.75rem', color: '#cbd5e1', marginTop: '4px' }}>
+              <div style={{ fontSize: '0.75rem', color: t.textMuted, marginTop: '4px' }}>
                 Ensure container <code>index0-openhands</code> / <code>index0-agent-canvas</code> is active via:
                 <br />
                 <code>docker compose -f infra/compose/docker-compose.yml up -d openhands</code>
@@ -491,7 +599,7 @@ export const OpenHandsViewer: React.FC<IOpenHandsViewerProps> = ({
         <iframe
           key={reloadKey}
           ref={iframeRef}
-          src={targetUrl}
+          src={targetUrlWithTheme}
           title="INDEX0 AI Autonomous Agent Canvas"
           onLoad={() => setIsLoading(false)}
           onError={() => {
@@ -502,7 +610,7 @@ export const OpenHandsViewer: React.FC<IOpenHandsViewerProps> = ({
             width: '100%',
             height: '100%',
             border: 'none',
-            background: '#0a0c14'
+            background: t.bg
           }}
           allow="clipboard-read; clipboard-write"
           sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-modals"
@@ -518,7 +626,7 @@ export const OpenHandsViewer: React.FC<IOpenHandsViewerProps> = ({
             left: 0,
             right: 0,
             bottom: 0,
-            background: 'rgba(0, 0, 0, 0.7)',
+            background: t.modalOverlay,
             backdropFilter: 'blur(4px)',
             display: 'flex',
             alignItems: 'center',
@@ -530,32 +638,32 @@ export const OpenHandsViewer: React.FC<IOpenHandsViewerProps> = ({
           <div
             style={{
               width: '540px',
-              background: '#121524',
-              border: '1px solid rgba(255, 255, 255, 0.15)',
+              background: t.cardBg,
+              border: `1px solid ${t.cardBorder}`,
               borderRadius: '8px',
               padding: '20px',
-              color: '#e2e8f0',
-              boxShadow: '0 20px 40px rgba(0, 0, 0, 0.6)'
+              color: t.text,
+              boxShadow: t.cardShadow
             }}
             onClick={(e) => e.stopPropagation()}
             data-testid="guardrails-modal"
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <ShieldCheck size={18} color="#34d399" />
-                <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 600 }}>
+                <ShieldCheck size={18} color="#10b981" />
+                <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 600, color: t.text }}>
                   Autonomous Agent Guardrails (workspace/.openhands_instructions)
                 </h3>
               </div>
               <button
                 onClick={() => setIsGuardrailsModalOpen(false)}
-                style={{ background: 'transparent', border: 'none', color: '#94a3b8', cursor: 'pointer' }}
+                style={{ background: 'transparent', border: 'none', color: t.textMuted, cursor: 'pointer' }}
               >
                 <X size={16} />
               </button>
             </div>
 
-            <p style={{ fontSize: '0.78rem', color: '#94a3b8', margin: '0 0 14px 0' }}>
+            <p style={{ fontSize: '0.78rem', color: t.textMuted, margin: '0 0 14px 0' }}>
               OpenHands runs inside local containers with mounted workspace <code>{workspacePath}</code> adhering to:
             </p>
 
@@ -568,8 +676,8 @@ export const OpenHandsViewer: React.FC<IOpenHandsViewerProps> = ({
                     alignItems: 'center',
                     gap: '10px',
                     padding: '8px 10px',
-                    background: 'rgba(255, 255, 255, 0.03)',
-                    border: '1px solid rgba(255, 255, 255, 0.06)',
+                    background: t.ruleBg,
+                    border: `1px solid ${t.ruleBorder}`,
                     borderRadius: '4px',
                     fontSize: '0.75rem'
                   }}
@@ -579,8 +687,8 @@ export const OpenHandsViewer: React.FC<IOpenHandsViewerProps> = ({
                       width: '20px',
                       height: '20px',
                       borderRadius: '50%',
-                      background: 'rgba(99, 102, 241, 0.2)',
-                      color: '#a5b4fc',
+                      background: isLight ? 'rgba(245, 78, 0, 0.15)' : 'rgba(99, 102, 241, 0.2)',
+                      color: isLight ? '#d94500' : '#a5b4fc',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
@@ -590,7 +698,7 @@ export const OpenHandsViewer: React.FC<IOpenHandsViewerProps> = ({
                   >
                     {idx + 1}
                   </span>
-                  <span style={{ fontWeight: 600 }}>{rule}</span>
+                  <span style={{ fontWeight: 600, color: t.text }}>{rule}</span>
                 </div>
               ))}
             </div>
@@ -599,7 +707,7 @@ export const OpenHandsViewer: React.FC<IOpenHandsViewerProps> = ({
               <button
                 onClick={() => setIsGuardrailsModalOpen(false)}
                 style={{
-                  background: 'var(--accent-primary, #6366f1)',
+                  background: 'var(--brand-accent, #f54e00)',
                   border: 'none',
                   borderRadius: '4px',
                   padding: '6px 14px',

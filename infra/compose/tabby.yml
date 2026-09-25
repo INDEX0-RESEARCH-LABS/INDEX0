@@ -1,0 +1,31 @@
+services:
+  tabby:
+    image: tabbyml/tabby:0.18.0
+    container_name: index0-tabby
+    entrypoint: /opt/tabby/bin/tabby-cpu
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      - TABBY_LOG_LEVEL=info
+    volumes:
+      - tabby_data:/data
+      - ../tabby/config.toml:/data/config.toml:ro
+    command: serve --device cpu
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/v1/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - index0-net
+
+volumes:
+  tabby_data:
+    driver: local
+
+networks:
+  index0-net:
+    name: index0-net
+    driver: bridge

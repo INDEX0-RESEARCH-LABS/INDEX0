@@ -16,6 +16,8 @@ import { SettingsModal } from "#/components/shared/modals/settings/settings-moda
 import { useSettingsUpToDate } from "#/context/settings-up-to-date-context";
 import { useSettings } from "#/hooks/query/use-settings";
 import { ConversationPanel } from "../conversation-panel/conversation-panel";
+import { FaSun, FaMoon } from "react-icons/fa";
+import { TooltipButton } from "#/components/shared/buttons/tooltip-button";
 import { cn } from "#/utils/utils";
 import { MULTI_CONVO_UI_IS_ENABLED } from "#/utils/constants";
 
@@ -56,6 +58,34 @@ export function Sidebar() {
       setStartNewProjectModalIsOpen(true);
   };
 
+  const [currentTheme, setCurrentTheme] = React.useState<"dark" | "light">(() => {
+    if (typeof window !== "undefined") {
+      const htmlTheme = document.documentElement.getAttribute("data-theme");
+      if (htmlTheme === "light" || htmlTheme === "dark") return htmlTheme;
+      const saved = localStorage.getItem("index0_theme");
+      if (saved === "light" || saved === "dark") return saved;
+      if (window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches) return "light";
+    }
+    return "dark";
+  });
+
+  const toggleTheme = () => {
+    const next = currentTheme === "dark" ? "light" : "dark";
+    setCurrentTheme(next);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("index0_theme", next);
+      if (next === "light") {
+        document.documentElement.classList.add("theme-cream", "light");
+        document.documentElement.classList.remove("dark");
+        document.documentElement.setAttribute("data-theme", "light");
+      } else {
+        document.documentElement.classList.add("dark");
+        document.documentElement.classList.remove("theme-cream", "light");
+        document.documentElement.setAttribute("data-theme", "dark");
+      }
+    }
+  };
+
   const showSettingsModal =
     isAuthed && (!settingsAreUpToDate || settingsModalIsOpen);
 
@@ -76,6 +106,18 @@ export function Sidebar() {
               onClickAccountSettings={() => setAccountSettingsModalOpen(true)}
             />
           )}
+          <TooltipButton
+            testId="theme-toggle-button"
+            tooltip={`Switch to ${currentTheme === "dark" ? "Light" : "Dark"} Mode`}
+            ariaLabel="Toggle Theme"
+            onClick={toggleTheme}
+          >
+            {currentTheme === "dark" ? (
+              <FaSun className="w-5 h-5 text-[#f54e00]" />
+            ) : (
+              <FaMoon className="w-5 h-5 text-[#1e1d1a]" />
+            )}
+          </TooltipButton>
           <SettingsButton onClick={() => setSettingsModalIsOpen(true)} />
           {MULTI_CONVO_UI_IS_ENABLED && (
             <button
