@@ -23,13 +23,7 @@ const getSettingsQueryFn = async () => {
 
     return getLocalStorageSettings();
   } catch (error) {
-    if (error instanceof AxiosError) {
-      if (error.response?.status === 404) {
-        return DEFAULT_SETTINGS;
-      }
-    }
-
-    throw error;
+    return DEFAULT_SETTINGS;
   }
 };
 

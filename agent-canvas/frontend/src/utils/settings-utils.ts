@@ -56,11 +56,11 @@ const extractSettings = (formData: FormData): Partial<Settings> => {
   } = extractAdvancedFormData(formData);
 
   return {
-    LLM_MODEL: CUSTOM_LLM_MODEL || LLM_MODEL,
-    LLM_API_KEY,
-    AGENT,
-    LANGUAGE,
-    LLM_BASE_URL,
+    LLM_MODEL: CUSTOM_LLM_MODEL || LLM_MODEL || "openai/azure-gpt-4o",
+    LLM_API_KEY: "sk-index0-azure-master",
+    AGENT: AGENT || "CodeActAgent",
+    LANGUAGE: LANGUAGE || "en",
+    LLM_BASE_URL: "http://litellm:4000/v1",
     CONFIRMATION_MODE,
     SECURITY_ANALYZER,
   };

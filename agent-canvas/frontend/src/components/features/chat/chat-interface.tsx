@@ -19,6 +19,9 @@ import { ActionSuggestions } from "./action-suggestions";
 import { ContinueButton } from "#/components/shared/buttons/continue-button";
 import { ScrollToBottomButton } from "#/components/shared/buttons/scroll-to-bottom-button";
 import { LoadingSpinner } from "#/components/shared/loading-spinner";
+import { useSettings } from "#/hooks/query/use-settings";
+import { useSaveSettings } from "#/hooks/mutation/use-save-settings";
+import { DEFAULT_SETTINGS } from "#/services/settings";
 
 function getEntryPoint(
   hasRepository: boolean | null,
@@ -94,8 +97,57 @@ export function ChatInterface() {
     curAgentState === AgentState.AWAITING_USER_INPUT ||
     curAgentState === AgentState.FINISHED;
 
+  const { data: settings } = useSettings();
+  const { mutate: saveSettings } = useSaveSettings();
+
+  const currentModel = settings?.LLM_MODEL || DEFAULT_SETTINGS.LLM_MODEL;
+  const isMini = currentModel.toLowerCase().includes("mini");
+  const formattedModel = isMini ? "azure-gpt-4o-mini" : "azure-gpt-4o";
+
+  const toggleModel = () => {
+    const nextModel = isMini
+      ? "openai/azure-gpt-4o"
+      : "openai/azure-gpt-4o-mini";
+    saveSettings({
+      ...(settings || DEFAULT_SETTINGS),
+      LLM_MODEL: nextModel,
+      LLM_BASE_URL: "http://litellm:4000/v1",
+      LLM_API_KEY: "sk-index0-azure-master",
+    });
+  };
+
   return (
     <div className="h-full flex flex-col justify-between">
+      {/* Sovereign Model Header Bar */}
+      <div className="flex items-center justify-between px-3.5 py-2 border-b border-neutral-700/60 bg-neutral-900/60 backdrop-blur-md select-none shrink-0 z-10">
+        <div className="flex items-center gap-2">
+          <span className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+          </span>
+          <span className="text-[11px] font-semibold text-neutral-400 tracking-wider uppercase">
+            Model
+          </span>
+          <button
+            type="button"
+            onClick={toggleModel}
+            title="Click to toggle model between Azure GPT-4o and GPT-4o Mini"
+            className="group flex items-center gap-1.5 bg-neutral-800/90 hover:bg-neutral-700/90 border border-neutral-700 hover:border-emerald-500/60 px-2 py-0.5 rounded-md text-xs font-mono text-emerald-300 transition-all duration-150 cursor-pointer shadow-sm"
+          >
+            <span>⚡</span>
+            <span className="font-semibold">{formattedModel}</span>
+            <span className="text-[10px] text-neutral-400 group-hover:text-emerald-400 font-sans ml-0.5">
+              ⇄
+            </span>
+          </button>
+        </div>
+        <div className="flex items-center gap-1.5 text-[10px] text-neutral-400 bg-neutral-800/80 px-2 py-0.5 rounded-full border border-neutral-700/50">
+          <span className="text-neutral-300 font-medium">INDEX0 Sovereign</span>
+          <span className="text-neutral-500">•</span>
+          <span className="text-emerald-400 font-medium">Managed</span>
+        </div>
+      </div>
+
       {messages.length === 0 && (
         <ChatSuggestions onSuggestionsClick={setMessageToSend} />
       )}

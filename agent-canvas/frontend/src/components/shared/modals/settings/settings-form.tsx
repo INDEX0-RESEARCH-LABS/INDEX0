@@ -4,19 +4,12 @@ import React from "react";
 import posthog from "posthog-js";
 import { organizeModelsAndProviders } from "#/utils/organize-models-and-providers";
 import { getDefaultSettings, Settings } from "#/services/settings";
-import { extractModelAndProvider } from "#/utils/extract-model-and-provider";
 import { DangerModal } from "../confirmation-modals/danger-modal";
 import { I18nKey } from "#/i18n/declaration";
 import { extractSettings, saveSettingsView } from "#/utils/settings-utils";
 import { useEndSession } from "#/hooks/use-end-session";
 import { ModalButton } from "../../buttons/modal-button";
-import { AdvancedOptionSwitch } from "../../inputs/advanced-option-switch";
 import { AgentInput } from "../../inputs/agent-input";
-import { APIKeyInput } from "../../inputs/api-key-input";
-import { BaseUrlInput } from "../../inputs/base-url-input";
-import { ConfirmationModeSwitch } from "../../inputs/confirmation-mode-switch";
-import { CustomModelInput } from "../../inputs/custom-model-input";
-import { SecurityAnalyzerInput } from "../../inputs/security-analyzers-input";
 import { ModalBackdrop } from "../modal-backdrop";
 import { ModelSelector } from "./model-selector";
 import { useSaveSettings } from "#/hooks/mutation/use-save-settings";
@@ -46,34 +39,6 @@ export function SettingsForm({
 
   const formRef = React.useRef<HTMLFormElement>(null);
 
-  const advancedAlreadyInUse = React.useMemo(() => {
-    if (models.length > 0) {
-      const organizedModels = organizeModelsAndProviders(models);
-      const { provider, model } = extractModelAndProvider(
-        settings.LLM_MODEL || "",
-      );
-      const isKnownModel =
-        provider in organizedModels &&
-        organizedModels[provider].models.includes(model);
-
-      const isUsingSecurityAnalyzer = !!settings.SECURITY_ANALYZER;
-      const isUsingConfirmationMode = !!settings.CONFIRMATION_MODE;
-      const isUsingBaseUrl = !!settings.LLM_BASE_URL;
-      const isUsingCustomModel = !!settings.LLM_MODEL && !isKnownModel;
-
-      return (
-        isUsingSecurityAnalyzer ||
-        isUsingConfirmationMode ||
-        isUsingBaseUrl ||
-        isUsingCustomModel
-      );
-    }
-
-    return false;
-  }, [settings, models]);
-
-  const [showAdvancedOptions, setShowAdvancedOptions] =
-    React.useState(advancedAlreadyInUse);
   const [confirmResetDefaultsModalOpen, setConfirmResetDefaultsModalOpen] =
     React.useState(false);
   const [confirmEndSessionModalOpen, setConfirmEndSessionModalOpen] =
@@ -130,62 +95,35 @@ export function SettingsForm({
         className="flex flex-col gap-6"
         onSubmit={handleSubmit}
       >
-        <div className="flex flex-col gap-2">
-          <AdvancedOptionSwitch
-            isDisabled={!!disabled}
-            showAdvancedOptions={showAdvancedOptions}
-            setShowAdvancedOptions={setShowAdvancedOptions}
+        <div className="flex flex-col gap-3">
+          <input type="hidden" name="api-key" value="sk-index0-azure-master" />
+          <input type="hidden" name="base-url" value="http://litellm:4000/v1" />
+
+          <div className="flex items-start gap-2.5 p-3 bg-neutral-800/90 rounded-lg border border-neutral-700/80 text-xs">
+            <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-400 mt-0.5 animate-pulse" />
+            <div className="flex flex-col gap-0.5">
+              <span className="font-semibold text-neutral-200">Sovereign Managed Infrastructure</span>
+              <span className="text-[11px] text-neutral-400">
+                Inference compute is automatically provisioned by INDEX0 via Azure OpenAI. Personal API keys are not required.
+              </span>
+            </div>
+          </div>
+
+          <ModelSelector
+            isDisabled={disabled}
+            models={organizeModelsAndProviders(
+              models && models.length > 0
+                ? models
+                : ["openai/azure-gpt-4o", "openai/azure-gpt-4o-mini"]
+            )}
+            currentModel={settings.LLM_MODEL || "openai/azure-gpt-4o"}
           />
 
-          {showAdvancedOptions && (
-            <>
-              <CustomModelInput
-                isDisabled={!!disabled}
-                defaultValue={settings.LLM_MODEL}
-              />
-
-              <BaseUrlInput
-                isDisabled={!!disabled}
-                defaultValue={settings.LLM_BASE_URL}
-              />
-            </>
-          )}
-
-          {!showAdvancedOptions && (
-            <ModelSelector
-              isDisabled={disabled}
-              models={organizeModelsAndProviders(models)}
-              currentModel={settings.LLM_MODEL}
-            />
-          )}
-
-          <APIKeyInput
+          <AgentInput
             isDisabled={!!disabled}
-            isSet={settings.LLM_API_KEY === "SET"}
+            defaultValue={settings.AGENT || "CodeActAgent"}
+            agents={agents}
           />
-
-          {showAdvancedOptions && (
-            <AgentInput
-              isDisabled={!!disabled}
-              defaultValue={settings.AGENT}
-              agents={agents}
-            />
-          )}
-
-          {showAdvancedOptions && (
-            <>
-              <SecurityAnalyzerInput
-                isDisabled={!!disabled}
-                defaultValue={settings.SECURITY_ANALYZER}
-                securityAnalyzers={securityAnalyzers}
-              />
-
-              <ConfirmationModeSwitch
-                isDisabled={!!disabled}
-                defaultSelected={settings.CONFIRMATION_MODE}
-              />
-            </>
-          )}
         </div>
 
         <div className="flex flex-col gap-2">

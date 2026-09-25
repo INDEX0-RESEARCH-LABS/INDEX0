@@ -110,6 +110,7 @@ ai.index0.in, http://ai.index0.in, http://20.106.136.209, :80, :443, :8000 {
     }
 
     handle /assets* {
+        header Cache-Control "public, max-age=31536000, immutable"
         reverse_proxy openhands:3000 {
             header_up Host {host}
             header_up X-Real-IP {remote_host}
@@ -127,8 +128,9 @@ ai.index0.in, http://ai.index0.in, http://20.106.136.209, :80, :443, :8000 {
         }
     }
 
-    handle /api/options* {
-        reverse_proxy openhands:3000 {
+    # Next.js API Endpoints
+    handle /api/billing* {
+        reverse_proxy host.docker.internal:3005 {
             header_up Host {host}
             header_up X-Real-IP {remote_host}
             header_up X-Forwarded-For {remote_host}
@@ -136,8 +138,8 @@ ai.index0.in, http://ai.index0.in, http://20.106.136.209, :80, :443, :8000 {
         }
     }
 
-    handle /api/conversations* {
-        reverse_proxy openhands:3000 {
+    handle /api/newsletter* {
+        reverse_proxy host.docker.internal:3005 {
             header_up Host {host}
             header_up X-Real-IP {remote_host}
             header_up X-Forwarded-For {remote_host}
@@ -145,7 +147,8 @@ ai.index0.in, http://ai.index0.in, http://20.106.136.209, :80, :443, :8000 {
         }
     }
 
-    handle /api/config* {
+    # OpenHands Workbench APIs (settings, options, conversations, config, etc.)
+    handle /api/* {
         reverse_proxy openhands:3000 {
             header_up Host {host}
             header_up X-Real-IP {remote_host}
@@ -180,6 +183,16 @@ ai.index0.in, http://ai.index0.in, http://20.106.136.209, :80, :443, :8000 {
 canvas.index0.in {
     tls internal
     encode gzip zstd
+
+    handle /assets* {
+        header Cache-Control "public, max-age=31536000, immutable"
+        reverse_proxy openhands:3000 {
+            header_up Host {host}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+            header_up X-Forwarded-Proto {scheme}
+        }
+    }
 
     handle {
         reverse_proxy openhands:3000 {

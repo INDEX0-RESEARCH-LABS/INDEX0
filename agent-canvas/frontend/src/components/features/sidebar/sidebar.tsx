@@ -13,6 +13,7 @@ import { LoadingSpinner } from "#/components/shared/loading-spinner";
 import { AccountSettingsModal } from "#/components/shared/modals/account-settings/account-settings-modal";
 import { ExitProjectConfirmationModal } from "#/components/shared/modals/exit-project-confirmation-modal";
 import { SettingsModal } from "#/components/shared/modals/settings/settings-modal";
+import { DEFAULT_SETTINGS } from "#/services/settings";
 import { useSettingsUpToDate } from "#/context/settings-up-to-date-context";
 import { useSettings } from "#/hooks/query/use-settings";
 import { ConversationPanel } from "../conversation-panel/conversation-panel";
@@ -86,8 +87,7 @@ export function Sidebar() {
     }
   };
 
-  const showSettingsModal =
-    isAuthed && (!settingsAreUpToDate || settingsModalIsOpen);
+  const showSettingsModal = settingsModalIsOpen;
 
   return (
     <>
@@ -151,13 +151,12 @@ export function Sidebar() {
       {accountSettingsModalOpen && (
         <AccountSettingsModal onClose={handleAccountSettingsModalClose} />
       )}
-      {settingsIsError ||
-        (showSettingsModal && (
-          <SettingsModal
-            settings={settings}
-            onClose={() => setSettingsModalIsOpen(false)}
-          />
-        ))}
+      {showSettingsModal && (
+        <SettingsModal
+          settings={settings || DEFAULT_SETTINGS}
+          onClose={() => setSettingsModalIsOpen(false)}
+        />
+      )}
       {startNewProjectModalIsOpen && (
         <ExitProjectConfirmationModal
           onClose={() => setStartNewProjectModalIsOpen(false)}

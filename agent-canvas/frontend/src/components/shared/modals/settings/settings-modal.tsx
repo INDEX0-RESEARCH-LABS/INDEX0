@@ -22,10 +22,10 @@ export function SettingsModal({ onClose, settings }: SettingsModalProps) {
           <p className="text-danger text-xs">{aiConfigOptions.error.message}</p>
         )}
         <span className="text-xl leading-6 font-semibold -tracking-[0.01em]">
-          INDEX0 Model Router & Keys
+          INDEX0 Sovereign AI Settings
         </span>
         <p className="text-xs text-[#A3A3A3]">
-          Configure sovereign inference providers, model router credentials, and agent keys
+          Inference models and router credentials are automatically managed by INDEX0 Sovereign Cloud
         </p>
         <p className="text-xs text-danger">
           Changing settings during an active session will end the session

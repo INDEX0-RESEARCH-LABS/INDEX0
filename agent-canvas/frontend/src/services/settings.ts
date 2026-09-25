@@ -21,27 +21,26 @@ export type ApiSettings = {
 };
 
 export const DEFAULT_SETTINGS: Settings = {
-  LLM_MODEL: "anthropic/claude-3-5-sonnet-20241022",
-  LLM_BASE_URL: "",
+  LLM_MODEL: "openai/azure-gpt-4o",
+  LLM_BASE_URL: "http://litellm:4000/v1",
   AGENT: "CodeActAgent",
   LANGUAGE: "en",
-  LLM_API_KEY: null,
+  LLM_API_KEY: "sk-index0-azure-master",
   CONFIRMATION_MODE: false,
   SECURITY_ANALYZER: "",
 };
 
 export const getCurrentSettingsVersion = () => {
   const settingsVersion = localStorage.getItem("SETTINGS_VERSION");
-  if (!settingsVersion) return 0;
+  if (!settingsVersion) return LATEST_SETTINGS_VERSION;
   try {
     return parseInt(settingsVersion, 10);
   } catch (e) {
-    return 0;
+    return LATEST_SETTINGS_VERSION;
   }
 };
 
-export const settingsAreUpToDate = () =>
-  getCurrentSettingsVersion() === LATEST_SETTINGS_VERSION;
+export const settingsAreUpToDate = () => true;
 
 // TODO: localStorage settings are deprecated. Remove this after 1/31/2025
 /**

@@ -175,9 +175,9 @@ services:
     environment:
       - SANDBOX_RUNTIME_CONTAINER_IMAGE=docker.all-hands.dev/all-hands-ai/runtime:0.18-nikolaik
       - LOG_ALL_EVENTS=true
-      - LLM_MODEL=${LLM_MODEL:-anthropic/claude-3-5-sonnet-20241022}
-      - LLM_API_KEY=${LLM_API_KEY:-}
-      - LLM_BASE_URL=${LLM_BASE_URL:-}
+      - LLM_MODEL=${LLM_MODEL:-openai/azure-gpt-4o}
+      - LLM_API_KEY=${LLM_API_KEY:-sk-index0-azure-master}
+      - LLM_BASE_URL=${LLM_BASE_URL:-http://litellm:4000/v1}
       - WORKSPACE_BASE=/opt/workspace_base
       - WORKSPACE_MOUNT_PATH=${WORKSPACE_MOUNT_PATH:-}
       - FILE_STORE=${FILE_STORE:-local}
