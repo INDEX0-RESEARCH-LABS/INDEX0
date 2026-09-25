@@ -112,7 +112,7 @@ export function ChatInterface() {
       ...(settings || DEFAULT_SETTINGS),
       LLM_MODEL: nextModel,
       LLM_BASE_URL: "http://litellm:4000/v1",
-      LLM_API_KEY: "sk-index0-azure-master",
+      LLM_API_KEY: "sk-index0-litellm-dev",
     });
   };
 

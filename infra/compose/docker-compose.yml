@@ -176,7 +176,7 @@ services:
       - SANDBOX_RUNTIME_CONTAINER_IMAGE=ghcr.io/all-hands-ai/runtime:0.18-nikolaik
       - LOG_ALL_EVENTS=true
       - LLM_MODEL=${LLM_MODEL:-openai/azure-gpt-4o}
-      - LLM_API_KEY=${LLM_API_KEY:-sk-index0-azure-master}
+      - LLM_API_KEY=${LLM_API_KEY:-sk-index0-litellm-dev}
       - LLM_BASE_URL=${LLM_BASE_URL:-http://litellm:4000/v1}
       - WORKSPACE_BASE=/opt/workspace_base
       - WORKSPACE_MOUNT_PATH=${WORKSPACE_MOUNT_PATH:-}

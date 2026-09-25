@@ -96,7 +96,7 @@ export function SettingsForm({
         onSubmit={handleSubmit}
       >
         <div className="flex flex-col gap-3">
-          <input type="hidden" name="api-key" value="sk-index0-azure-master" />
+          <input type="hidden" name="api-key" value="sk-index0-litellm-dev" />
           <input type="hidden" name="base-url" value="http://litellm:4000/v1" />
 
           <div className="flex items-start gap-2.5 p-3 bg-neutral-800/90 rounded-lg border border-neutral-700/80 text-xs">

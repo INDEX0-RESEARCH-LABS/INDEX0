@@ -57,7 +57,7 @@ const extractSettings = (formData: FormData): Partial<Settings> => {
 
   return {
     LLM_MODEL: CUSTOM_LLM_MODEL || LLM_MODEL || "openai/azure-gpt-4o",
-    LLM_API_KEY: "sk-index0-azure-master",
+    LLM_API_KEY: "sk-index0-litellm-dev",
     AGENT: AGENT || "CodeActAgent",
     LANGUAGE: LANGUAGE || "en",
     LLM_BASE_URL: "http://litellm:4000/v1",

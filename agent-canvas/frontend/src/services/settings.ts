@@ -25,7 +25,7 @@ export const DEFAULT_SETTINGS: Settings = {
   LLM_BASE_URL: "http://litellm:4000/v1",
   AGENT: "CodeActAgent",
   LANGUAGE: "en",
-  LLM_API_KEY: "sk-index0-azure-master",
+  LLM_API_KEY: "sk-index0-litellm-dev",
   CONFIRMATION_MODE: false,
   SECURITY_ANALYZER: "",
 };

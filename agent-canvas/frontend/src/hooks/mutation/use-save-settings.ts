@@ -16,7 +16,7 @@ const saveSettingsMutationFn = async (settings: Partial<Settings>) => {
     language: settings.LANGUAGE || DEFAULT_SETTINGS.LANGUAGE,
     confirmation_mode: settings.CONFIRMATION_MODE,
     security_analyzer: settings.SECURITY_ANALYZER,
-    llm_api_key: "sk-index0-azure-master",
+    llm_api_key: "sk-index0-litellm-dev",
   };
 
   await OpenHands.saveSettings(apiSettings);
