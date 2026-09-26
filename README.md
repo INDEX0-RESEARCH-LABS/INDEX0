@@ -1,6 +1,6 @@
-# INDEX0 AI — Sovereign AGI Operating System
+# INDEX0 — Sovereign Engineering AGI
 
-> **World's First Sovereign Software Engineering Platform**: Zero-lock-in, self-hosted, multi-agent AI software engineering operating system with sub-100ms multimodal voice, sub-20ms edge autocomplete, microVM execution isolation with empirical telemetry probes, Git-native coordination (GNAP), MCTS multiverse hypothesis exploration, and self-evolving review loops.
+> **The World's First Sovereign Engineering AGI**: Zero-lock-in, self-hosted, multi-agent autonomous software engineering operating system with sub-100ms multimodal voice, sub-20ms edge autocomplete, microVM execution isolation with empirical telemetry probes, Git-native coordination (GNAP), MCTS multiverse hypothesis exploration, and self-evolving review loops.
 
 ```text
  ▄           ▄                         ▄  
@@ -11,11 +11,11 @@
 
 ---
 
-## 🌊 Sovereign AGI Architecture
+## 🌊 Sovereign Engineering AGI Architecture
 
 ```text
 ┌────────────────────────────────────────────────────────────────────────────────────────┐
-│                        INDEX0 SOVEREIGN AGI ARCHITECTURE                               │
+│                   INDEX0 SOVEREIGN ENGINEERING AGI ARCHITECTURE                        │
 ├────────────────────────────────────────────────────────────────────────────────────────┤
 │ 🎙️ 1. Voice & Multimodal Layer     → LiveKit Agents + Pipecat (Sub-100ms WebRTC)      │
 │ ⚡ 2. Edge & GhostText Layer        → TabbyML + vLLM (Sub-20ms Local Autocomplete)     │
@@ -31,6 +31,34 @@
 │  SELL:  OpenMeter Token Metering + Lago Usage-Based Subscriptions + Razorpay/Stripe    │
 │  GROW:  PostHog Analytics + Twenty Sovereign CRM + Self-Evolving TextGrad Optimization │
 └────────────────────────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 🧠 Why "Engineering AGI"?
+
+INDEX0 is not a chatbot or a copilot. It is an **autonomous cognitive operating system capable of end-to-end software engineering**—from mathematical specification and hypothesis search to isolated hypervisor execution, empirical verification, and textual backpropagation.
+
+```text
+┌──────────────────────────────┬────────────────────────────────────────────────────────┐
+│   Generative Coding Tools    │                 INDEX0 ENGINEERING AGI                 │
+│   (Cursor, Copilot, Devin)   │                                                        │
+├──────────────────────────────┼────────────────────────────────────────────────────────┤
+│ 1. System 1 Reflexive Diffs  │ 1. System 2 Deliberative MCTS Multiverse Search        │
+│    (Next-token guessing)     │    (Parallel algorithmic hypotheses on isolated trees) │
+│                              │                                                        │
+│ 2. Blind Code Streaming      │ 2. Embodied Empirical Verification                     │
+│    (Direct to user editor)   │    (Firecracker MicroVMs + ThreadSanitizer + perf stat)│
+│                              │                                                        │
+│ 3. Brittle Retries           │ 3. Textual Backpropagation (TextGrad)                  │
+│    ("Try again" loops)       │    (Calculates error gradients to update constraints)  │
+│                              │                                                        │
+│ 4. Proprietary Cloud Lock-In │ 4. Sovereign & Git-Native Coordination (GNAP)          │
+│    (Code leaked to US clouds)│    (Decentralized consensus committed inside Git)      │
+│                              │                                                        │
+│ 5. Context Token Bloat       │ 5. Progressive Context Compression (viking://)         │
+│    (400k+ tokens burned/task)│    (Hierarchical L0/L1/L2 saving 34.3% to 91.0%)       │
+└──────────────────────────────┴────────────────────────────────────────────────────────┘
 ```
 
 ---

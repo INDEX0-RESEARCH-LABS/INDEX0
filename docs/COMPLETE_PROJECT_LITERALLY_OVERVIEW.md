@@ -1,5 +1,5 @@
-# INDEX0 AI — Complete Project Overview: Starting to Till Now
-> **The Authoritative End-to-End Platform Blueprint, Chronological History, Architectural Anatomy, and Sovereign Capabilities Manual**
+# INDEX0 — Sovereign Engineering AGI: Starting to Till Now
+> **The Authoritative End-to-End Blueprint, Chronological History, Architectural Anatomy, and Sovereign Capabilities Manual**
 
 ---
 
@@ -44,7 +44,7 @@
 
 ## 1. Executive Summary & Core Philosophy
 
-**INDEX0 AI** is a sovereign, self-hosted, multi-agent AI software engineering operating system designed as a zero-vendor-lock-in alternative to closed AI developer tools (Cursor, Devin, GitHub Copilot Workspace, v0). 
+**INDEX0** is the world's first **Sovereign Engineering AGI**—an autonomous cognitive operating system capable of end-to-end software engineering (from mathematical specification and hypothesis search to isolated hypervisor execution, empirical verification, and textual backpropagation) with zero vendor lock-in.
 
 ### Core Motto
 > **"People Over Tools. Work Verified. Time to Unplug."**
