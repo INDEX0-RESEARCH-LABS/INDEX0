@@ -4,7 +4,7 @@ import re
 import tempfile
 from abc import ABC, abstractmethod
 
-from openhands_aci.utils.diff import get_diff
+from index0_agent.aci.diff import get_diff
 
 from index0_agent.core.config import AppConfig
 from index0_agent.core.logger import openhands_logger as logger

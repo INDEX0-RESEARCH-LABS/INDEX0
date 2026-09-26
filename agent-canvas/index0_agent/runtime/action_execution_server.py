@@ -25,7 +25,7 @@ from fastapi import Depends, FastAPI, HTTPException, Request, UploadFile
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse, StreamingResponse
 from fastapi.security import APIKeyHeader
-from openhands_aci.utils.diff import get_diff
+from index0_agent.aci.diff import get_diff
 from pydantic import BaseModel
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from uvicorn import run

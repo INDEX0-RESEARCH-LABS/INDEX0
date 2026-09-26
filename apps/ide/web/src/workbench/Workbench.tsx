@@ -4,19 +4,19 @@ import { Editor, type IEditorTab } from '../components/Editor.js';
 import { AgentPanel, type IToolInvocation } from '../components/AgentPanel.js';
 import { TerminalViewer, type ITerminalLine } from '../terminal/TerminalViewer.js';
 import { UserNav } from '../components/UserNav.js';
-import { OpenHandsViewer } from '../components/OpenHandsViewer.js';
+
 import { MCPToolsPanel } from '../components/MCPToolsPanel.js';
 import { TelemetryUsagePanel } from '../components/TelemetryUsagePanel.js';
 import { SubscriptionPlanModal } from '../components/SubscriptionPlanModal.js';
 import { VoiceAgentModal } from '../components/VoiceAgentModal.js';
 import { PhoneVerificationModal } from '../components/PhoneVerificationModal.js';
 import type { IAgentPlanStep, IAgentMessagePayload, AgentRunStatus } from '@index0/contracts';
-import { GitBranch, Layers, ShieldCheck, Play, Bot, Code2, Wrench, Activity, CreditCard, Mic, Smartphone } from 'lucide-react';
+import { GitBranch, Layers, ShieldCheck, Play, Wrench, Activity, CreditCard, Mic, Smartphone } from 'lucide-react';
 
 export interface IWorkbenchProps {
   initialFiles?: IWorkspaceFileNode[];
   initialTabs?: IEditorTab[];
-  initialMode?: 'workbench' | 'openhands';
+  initialMode?: 'workbench';
   workspaceId?: string;
   projectName?: string;
   className?: string;
@@ -48,12 +48,11 @@ const DEFAULT_TABS: IEditorTab[] = [
 export const Workbench: React.FC<IWorkbenchProps> = ({
   initialFiles = DEFAULT_FILES,
   initialTabs = DEFAULT_TABS,
-  initialMode = 'workbench',
   workspaceId = 'ws-main-dev',
   projectName = 'index0-core',
   className = ''
 }) => {
-  const [viewMode, setViewMode] = useState<'workbench' | 'openhands'>(initialMode);
+
   const [showMcpPanel, setShowMcpPanel] = useState(false);
   const [showTelemetryPanel, setShowTelemetryPanel] = useState(false);
   const [showBillingModal, setShowBillingModal] = useState(false);
@@ -62,7 +61,7 @@ export const Workbench: React.FC<IWorkbenchProps> = ({
   const [phoneVerified, setPhoneVerified] = useState(false);
   const [verifiedPhone, setVerifiedPhone] = useState<string | null>(null);
   const [currentPlanCode, setCurrentPlanCode] = useState('plan_free');
-  const [theme, setTheme] = useState<'dark' | 'light'>(() => {
+  const [theme, _setTheme] = useState<'dark' | 'light'>(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('index0_theme');
       if (saved === 'light' || saved === 'dark') return saved;
@@ -202,44 +201,6 @@ export const Workbench: React.FC<IWorkbenchProps> = ({
 
         {/* View Mode Switcher */}
         <div style={{ display: 'flex', alignItems: 'center', background: 'rgba(0, 0, 0, 0.3)', borderRadius: '6px', padding: '2px', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
-          <button
-            onClick={() => setViewMode('workbench')}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '5px',
-              padding: '4px 10px',
-              borderRadius: '4px',
-              border: 'none',
-              background: viewMode === 'workbench' ? 'var(--accent-primary, #6366f1)' : 'transparent',
-              color: viewMode === 'workbench' ? '#fff' : '#94a3b8',
-              fontSize: '0.72rem',
-              fontWeight: 600,
-              cursor: 'pointer'
-            }}
-          >
-            <Code2 size={13} />
-            <span>INDEX0 Editor</span>
-          </button>
-          <button
-            onClick={() => setViewMode('openhands')}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '5px',
-              padding: '4px 10px',
-              borderRadius: '4px',
-              border: 'none',
-              background: viewMode === 'openhands' ? 'var(--accent-primary, #6366f1)' : 'transparent',
-              color: viewMode === 'openhands' ? '#fff' : '#94a3b8',
-              fontSize: '0.72rem',
-              fontWeight: 600,
-              cursor: 'pointer'
-            }}
-          >
-            <Bot size={13} />
-            <span>OpenHands Agent</span>
-          </button>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
@@ -383,14 +344,6 @@ export const Workbench: React.FC<IWorkbenchProps> = ({
       </div>
 
       {/* Main Viewport: Either OpenHands Embedded Viewer or Native 3-Pane Body */}
-      {viewMode === 'openhands' ? (
-        <OpenHandsViewer
-          gatewayUrl="http://localhost:8000"
-          workspacePath="/opt/workspace_base"
-          theme={theme}
-          onThemeChange={setTheme}
-        />
-      ) : (
         <div className="index0-workbench-body">
           {/* Left Explorer */}
           <Explorer
@@ -434,7 +387,6 @@ export const Workbench: React.FC<IWorkbenchProps> = ({
             onConfirmStep={handleConfirmStep}
           />
         </div>
-      )}
 
       {/* MCP Tools Modal Overlay */}
       {showMcpPanel && (

@@ -105,13 +105,13 @@ export function ChatInterface() {
   const formattedModel = isMini ? "azure-gpt-4o-mini" : "azure-gpt-4o";
 
   const toggleModel = () => {
-    const nextModel = isMini
-      ? "openai/azure-gpt-4o"
-      : "openai/azure-gpt-4o-mini";
+    // Model names must match LiteLLM config.yaml model_name exactly (no openai/ prefix)
+    const nextModel = isMini ? "azure-gpt-4o" : "azure-gpt-4o-mini";
     saveSettings({
       ...(settings || DEFAULT_SETTINGS),
       LLM_MODEL: nextModel,
-      LLM_BASE_URL: "http://litellm:4000/v1",
+      // Route through Caddy /v1 so this works from browser and server-side
+      LLM_BASE_URL: "/v1",
       LLM_API_KEY: "sk-index0-litellm-dev",
     });
   };

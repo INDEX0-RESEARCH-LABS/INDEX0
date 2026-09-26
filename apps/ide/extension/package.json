@@ -1,38 +1,87 @@
 {
   "name": "@index0/ide-extension",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
   "private": true,
-  "description": "VS Code extension for INDEX0 AI autonomous software engineering platform",
+  "description": "INDEX0 Sovereign AI IDE — Unified VS Code extension for desktop (Electron) and cloud (code-server)",
   "main": "./dist/extension.js",
   "types": "./dist/extension.d.ts",
   "publisher": "index0",
   "engines": {
     "vscode": "^1.88.0"
   },
+  "categories": ["AI", "Programming Languages", "Other"],
   "activationEvents": [
-    "onCommand:index0.startAgentRun",
-    "onCommand:index0.openWorkbench",
-    "onCommand:index0.viewTelemetry"
+    "onStartupFinished"
   ],
   "contributes": {
     "commands": [
       {
         "command": "index0.startAgentRun",
         "title": "INDEX0: Start Autonomous Agent Run",
-        "category": "INDEX0"
+        "category": "INDEX0",
+        "icon": "$(play)"
       },
       {
-        "command": "index0.openWorkbench",
-        "title": "INDEX0: Open Web IDE Workbench",
-        "category": "INDEX0"
+        "command": "index0.openAgentPanel",
+        "title": "INDEX0: Open Agent Execution Pane",
+        "category": "INDEX0",
+        "icon": "$(robot)"
       },
       {
-        "command": "index0.viewTelemetry",
-        "title": "INDEX0: View Execution Telemetry",
-        "category": "INDEX0"
+        "command": "index0.openMcpTools",
+        "title": "INDEX0: Inspect MCP Tools & Sandbox",
+        "category": "INDEX0",
+        "icon": "$(tools)"
+      },
+      {
+        "command": "index0.openTelemetry",
+        "title": "INDEX0: Open Telemetry Dashboard",
+        "category": "INDEX0",
+        "icon": "$(graph)"
+      },
+      {
+        "command": "index0.openVoiceAgent",
+        "title": "INDEX0: Start Voice Agent Session",
+        "category": "INDEX0",
+        "icon": "$(unmute)"
+      },
+      {
+        "command": "index0.toggleGhostText",
+        "title": "INDEX0: Toggle GhostText Autocomplete",
+        "category": "INDEX0",
+        "icon": "$(lightbulb-sparkle)"
+      },
+      {
+        "command": "index0.reviewGnapDiff",
+        "title": "INDEX0: Review GNAP Agent Diff",
+        "category": "INDEX0",
+        "icon": "$(git-compare)"
       }
     ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "index0-sidebar",
+          "title": "INDEX0 AI",
+          "icon": "$(symbol-event)"
+        }
+      ]
+    },
+    "views": {
+      "index0-sidebar": [
+        {
+          "type": "webview",
+          "id": "index0.agentPanel",
+          "name": "Agent Execution"
+        },
+        {
+          "type": "webview",
+          "id": "index0.mcpTools",
+          "name": "MCP Tools"
+        }
+      ]
+    },
     "configuration": {
       "title": "INDEX0 AI",
       "properties": {
@@ -45,6 +94,21 @@
           "type": "string",
           "default": "claude-3-5-sonnet-20241022",
           "description": "Preferred AI model for autonomous coding runs"
+        },
+        "index0.tabbyEndpoint": {
+          "type": "string",
+          "default": "http://localhost:8080",
+          "description": "TabbyML endpoint for GhostText inline completions"
+        },
+        "index0.litellmEndpoint": {
+          "type": "string",
+          "default": "http://localhost:4000/v1",
+          "description": "LiteLLM proxy endpoint for chat completions"
+        },
+        "index0.ghostTextEnabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable GhostText inline code completions (sub-20ms, $0 cloud cost)"
         }
       }
     }

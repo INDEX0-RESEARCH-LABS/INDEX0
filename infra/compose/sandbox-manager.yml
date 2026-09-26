@@ -1,0 +1,35 @@
+services:
+  sandbox-manager:
+    build:
+      context: ../../services/sandbox-manager
+      dockerfile: Dockerfile
+    container_name: index0-sandbox-manager
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - SANDBOX_MANAGER_PORT=4001
+      - SANDBOX_PROVIDER=${SANDBOX_PROVIDER:-mock}
+      - E2B_API_KEY=${E2B_API_KEY:-}
+      - SANDBOX_DEFAULT_TIMEOUT_MS=${SANDBOX_DEFAULT_TIMEOUT_MS:-30000}
+      - SANDBOX_MAX_TIMEOUT_MS=${SANDBOX_MAX_TIMEOUT_MS:-300000}
+      - SANDBOX_MAX_MEMORY_MB=${SANDBOX_MAX_MEMORY_MB:-2048}
+      - SANDBOX_MAX_CPU_CORES=${SANDBOX_MAX_CPU_CORES:-2}
+      # Firecracker MicroVM paths (for self-hosted mode)
+      - FIRECRACKER_BIN=${FIRECRACKER_BIN:-}
+      - FIRECRACKER_KERNEL=${FIRECRACKER_KERNEL:-}
+      - FIRECRACKER_ROOTFS=${FIRECRACKER_ROOTFS:-}
+    volumes:
+      # Needed for docker-based sandbox provider
+      - /var/run/docker.sock:/var/run/docker.sock
+      # Dev hot-reload: mount source for iteration without rebuild
+      - ../../services/sandbox-manager/dist:/app/dist:ro
+    ports:
+      - "4001:4001"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:4001/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    networks:
+      - index0-net

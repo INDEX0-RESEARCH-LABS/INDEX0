@@ -198,20 +198,13 @@ describe('Dev 3: Zitadel OIDC Client & Gateway Authentication (@index0/ide-web)'
       assert.strictEqual(element.props.workspacePath, '/opt/workspace_base');
     });
 
-    it('should construct Workbench React element in openhands and workbench modes', () => {
+    it('should construct Workbench React element in workbench mode', () => {
       const workbenchEl = React.createElement(Workbench, {
         initialMode: 'workbench',
         workspaceId: 'ws-test',
         projectName: 'index0-test'
       });
       assert.ok(React.isValidElement(workbenchEl));
-
-      const openhandsEl = React.createElement(Workbench, {
-        initialMode: 'openhands',
-        workspaceId: 'ws-test',
-        projectName: 'index0-test'
-      });
-      assert.ok(React.isValidElement(openhandsEl));
     });
   });
 });

@@ -1,0 +1,13 @@
+# INDEX0 code-server configuration
+# Sovereign defaults — no telemetry, no phone-home, Open VSX only
+
+bind-addr: 0.0.0.0:8443
+auth: none
+cert: false
+
+# Disable built-in telemetry
+disable-telemetry: true
+disable-update-check: true
+
+# Disable getting started page
+disable-getting-started-override: true

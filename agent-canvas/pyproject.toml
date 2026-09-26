@@ -7,8 +7,7 @@ license = "MIT"
 readme = "README.md"
 repository = "https://github.com/INDEX0-RESEARCH-LABS/INDEX0"
 packages = [
-  { include = "index0_agent/**/*" },
-  { include = "openhands/**/*" }
+  { include = "index0_agent/**/*" }
 ]
 
 [tool.poetry.dependencies]
@@ -65,7 +64,7 @@ modal = ">=0.66.26,<0.71.0"
 runloop-api-client = "0.11.0"
 pygithub = "^2.5.0"
 joblib = "*"
-openhands-aci = "0.1.5"
+
 python-socketio = "^5.11.4"
 redis = "^5.2.0"
 
@@ -155,4 +154,3 @@ style = "semver"
 [tool.poetry.scripts]
 index0-agent = "index0_agent.core.main:main"
 index0 = "index0_agent.core.cli:main"
-openhands = "index0_agent.core.cli:main"
