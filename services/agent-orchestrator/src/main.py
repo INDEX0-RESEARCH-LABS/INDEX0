@@ -10,10 +10,18 @@ from .graph.review_loop import ReviewLoopEngine
 from .graph.state import ReviewLoopState
 from .models import CycleStartRequest, CycleStatusResponse
 from .textgrad.feedback_engine import TextGradFeedbackEngine
+from .reengineering import (
+    CrownJewelExtractor,
+    CodeModernizer,
+    ReEngineerRequest,
+    ElevatedCodeResult
+)
 
 settings = get_settings()
 engine = ReviewLoopEngine()
 feedback_engine = TextGradFeedbackEngine()
+extractor = CrownJewelExtractor()
+modernizer = CodeModernizer()
 
 # In-memory storage for active cycles (in production, backed by Redis/PostgreSQL)
 cycles_store: Dict[str, ReviewLoopState] = {}
@@ -77,6 +85,31 @@ async def start_cycle(req: CycleStartRequest) -> Dict[str, Any]:
     }
 
 
+@app.post("/cycles/mcts/start")
+async def start_mcts_cycle(req: CycleStartRequest) -> Dict[str, Any]:
+    cycle_id = f"mcts-{uuid.uuid4().hex[:12]}"
+    initial_state: ReviewLoopState = {
+        "cycle_id": cycle_id,
+        "task_id": req.task_id,
+        "user_prompt": req.user_prompt,
+        "repository_root": req.repository_root or ".",
+        "context_files": req.context_files,
+        "iteration": 0,
+        "max_iterations": req.max_iterations,
+        "status": "started",
+        "is_complete": False,
+        "history": []
+    }
+
+    mcts_result = await engine.execute_mcts_cycle(initial_state)
+    cycles_store[cycle_id] = mcts_result.get("finalState", initial_state)
+
+    return {
+        "cycleId": cycle_id,
+        **mcts_result
+    }
+
+
 @app.get("/cycles/{cycle_id}")
 async def get_cycle(cycle_id: str) -> Dict[str, Any]:
     state = cycles_store.get(cycle_id)
@@ -96,6 +129,14 @@ async def get_cycle(cycle_id: str) -> Dict[str, Any]:
         "qaResults": state.get("qa_results"),
         "history": state.get("history", [])
     }
+
+
+@app.post("/reengineer/start", response_model=ElevatedCodeResult)
+async def start_reengineering(req: ReEngineerRequest) -> ElevatedCodeResult:
+    """Dissects target repository, isolates Crown Jewel algorithms, and elevates them into modern primitives."""
+    spec = await extractor.extract_crown_jewels(req.repo_url, req.goal)
+    result = await modernizer.elevate_codebase(spec, req.goal, req.target_framework)
+    return result
 
 
 @app.post("/feedback/textgrad")

@@ -121,3 +121,28 @@ class CycleStatusResponse(BaseModel):
     qa_results: Optional[Dict[str, Any]] = Field(None, alias="qaResults")
     created_at: str = Field(..., alias="createdAt")
     updated_at: str = Field(..., alias="updatedAt")
+
+
+class AlgorithmicHypothesis(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
+    hypothesis_id: str = Field(..., alias="hypothesisId")
+    name: str
+    rationale: str
+    tradeoffs: str
+    implementation_strategy: str = Field(..., alias="implementationStrategy")
+
+
+class ArchitectSpec(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
+    task_id: str = Field(..., alias="taskId")
+    summary: str
+    target_symbols: List[str] = Field(default_factory=list, alias="targetSymbols")
+    pre_conditions: List[str] = Field(default_factory=list, alias="preConditions")
+    post_conditions: List[str] = Field(default_factory=list, alias="postConditions")
+    invariants: List[str] = Field(default_factory=list)
+    hypotheses: List[AlgorithmicHypothesis] = Field(default_factory=list)
+    blast_radius_files: List[str] = Field(default_factory=list, alias="blastRadiusFiles")
+    verification_strategy: str = Field("fuzzing_and_sast", alias="verificationStrategy")
+

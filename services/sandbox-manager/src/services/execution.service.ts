@@ -15,6 +15,7 @@ import type { ISandboxProvider, ISandboxSession } from "../sandbox/types.js";
 import { MockSandboxProvider } from "../sandbox/mock-provider.js";
 import { E2BSandboxProvider } from "../sandbox/e2b-provider.js";
 import { FirecrackerSandboxProvider } from "../sandbox/firecracker-provider.js";
+import { ProbeManager } from "../sandbox/probes/index.js";
 import { config } from "../config.js";
 
 export class ExecutionService {
@@ -143,6 +144,10 @@ export class ExecutionService {
           timedOut: output.timedOut || false
         };
       }
+
+      // Attach empirical probe telemetry (sanitizers, perf, fuzzing)
+      const combinedOutput = `${result.stdout}\n${result.stderr}`;
+      (result as any).probes = ProbeManager.evaluate(combinedOutput, result.exitCode);
 
       // 3. TELEMETRY: Record execution metrics log (Principle 13)
       this.emitTelemetry(request, result, durationMs);

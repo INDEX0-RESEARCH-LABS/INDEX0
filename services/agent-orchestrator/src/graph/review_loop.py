@@ -102,6 +102,13 @@ class ReviewLoopEngine:
 
         return state
 
+    async def execute_mcts_cycle(self, initial_state: ReviewLoopState) -> Dict[str, Any]:
+        """Execute multi-hypothesis MCTS search with Pareto ranking."""
+        from .mcts.engine import MCTSEngine
+        mcts = MCTSEngine()
+        return await mcts.execute_mcts(initial_state)
+
+
     async def step_cycle(self, state: ReviewLoopState, target_node: str) -> ReviewLoopState:
         """Execute a single step/node transition manually."""
         handlers: Dict[str, Callable] = {

@@ -12,6 +12,8 @@ class ReviewLoopState(TypedDict, total=False):
 
     # Node artifacts
     architecture_plan: Optional[str]
+    architect_spec: Optional[Dict[str, Any]]
+    active_hypothesis: Optional[Dict[str, Any]]
     implementation_diff: Optional[str]
     generated_code: Dict[str, str]
 

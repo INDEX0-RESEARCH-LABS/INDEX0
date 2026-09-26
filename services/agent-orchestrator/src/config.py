@@ -18,15 +18,16 @@ class Settings(BaseSettings):
     # External Service URLs
     sandbox_manager_url: str = "http://localhost:3002"
     litellm_proxy_url: str = "http://localhost:4000"
+    litellm_api_key: str = "sk-index0-litellm-dev"
     openhands_url: str = "http://localhost:3000"
     letta_url: str = "http://localhost:8283"
 
     # Orchestrator Policy Defaults
     max_review_iterations: int = 5
-    architect_model: str = "claude-3-7-sonnet"
-    developer_model: str = "claude-3-5-sonnet"
-    critic_model: str = "claude-3-5-sonnet"
-    qa_model: str = "claude-3-5-haiku"
+    architect_model: str = "azure-gpt-4o"
+    developer_model: str = "azure-gpt-4o"
+    critic_model: str = "azure-gpt-4o"
+    qa_model: str = "azure-gpt-4o-mini"
 
 
 @lru_cache
