@@ -1,0 +1,74 @@
+INDEX0 PROPRIETARY & CONFIDENTIAL COMMERCIAL SOFTWARE LICENSE
+Copyright (c) 2026 INDEX0 RESEARCH LABS. All rights reserved.
+
+==============================================================================
+NOTICE TO USER: PLEASE READ THIS DOCUMENT CAREFULLY. THIS IS A LEGAL AGREEMENT
+BETWEEN YOU ("LICENSEE") AND INDEX0 RESEARCH LABS ("INDEX0"). BY ACCESSING,
+VIEWING, COMPILING, OR USING THIS SOFTWARE, YOU AGREE TO BE BOUND BY THE TERMS
+OF THIS PROPRIETARY LICENSE.
+==============================================================================
+
+1. PROPRIETARY RIGHTS & INTELLECTUAL PROPERTY OWNERSHIP
+The INDEX0 software, codebase, architecture, documentation, models, weights,
+prompt specifications, system designs, and algorithms—including without
+limitation:
+  (a) Monte Carlo Tree Search (MCTS) Multiverse Exploration across isolated
+      Git worktrees (IPC G06F 8/00, G06N 3/00);
+  (b) Empirical MicroVM Hardware-in-the-Loop Probes (ThreadSanitizer,
+      AddressSanitizer, and Kernel IPC latency enclaves);
+  (c) TextGrad Automated Error-Gradient Backpropagation for self-healing
+      code synthesis;
+  (d) Git-Native Agent Protocol (GNAP) for multi-agent decentralized consensus;
+  (e) AST Spatial Graph Diffing and autonomous repository re-engineering pipelines;
+and all worldwide patents, copyrights, trade secrets, trademarks, and other
+intellectual property rights associated therewith are and shall remain the sole
+and exclusive property of INDEX0 RESEARCH LABS. All rights not expressly granted
+herein are reserved.
+
+2. CONFIDENTIALITY & TRADE SECRETS
+This software contains valuable trade secrets and confidential information
+proprietary to INDEX0 RESEARCH LABS. You agree to hold this software and all
+associated technical specifications in strict confidence and to prevent any
+unauthorized copying, disclosure, dissemination, or utilization thereof.
+
+3. LICENSE RESTRICTIONS
+Except as expressly authorized in writing pursuant to a signed commercial
+enterprise agreement with INDEX0 RESEARCH LABS, you may NOT:
+  (a) Copy, duplicate, reproduce, distribute, publicly display, or create
+      derivative works of this software or any portion thereof;
+  (b) Sell, rent, lease, license, sublicense, assign, or transfer this software;
+  (c) Reverse engineer, decompile, disassemble, or attempt to derive the source
+      code, underlying structure, ideas, or algorithms of any binary or compiled
+      component;
+  (d) Ingest, scrape, or utilize this codebase, prompt templates, architectures,
+      or generated synthetic datasets to train, fine-tune, distill, evaluate,
+      or benchmark any competing artificial intelligence model, machine learning
+      system, or software engineering automation tool;
+  (e) Host, serve, or make available this software or any derivative work as a
+      Software-as-a-Service (SaaS), Platform-as-a-Service (PaaS), application
+      service provider (ASP), or managed cloud service;
+  (f) Remove, alter, or obscure any copyright, trademark, patent, or other
+      proprietary rights notices contained on or within the software or documentation.
+
+4. NO WARRANTY & LIMITATION OF LIABILITY
+THIS SOFTWARE IS PROVIDED BY INDEX0 RESEARCH LABS "AS IS" AND ANY EXPRESS OR
+IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT ARE
+DISCLAIMED. IN NO EVENT SHALL INDEX0 RESEARCH LABS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+5. TERMINATION & INJUNCTIVE RELIEF
+Any breach of this agreement immediately terminates any evaluation rights and
+constitutes willful infringement of intellectual property and trade secret rights.
+INDEX0 RESEARCH LABS shall be entitled to seek immediate injunctive relief,
+monetary damages, and attorney fees across any applicable jurisdiction.
+
+==============================================================================
+For commercial licensing, enterprise deployment inquiries, or partnership agreements:
+INDEX0 RESEARCH LABS — legal@index0.in / enterprise@index0.in
+==============================================================================

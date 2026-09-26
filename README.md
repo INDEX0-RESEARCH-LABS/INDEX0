@@ -260,5 +260,6 @@ cd packages/client-harness && pnpm test
 
 ---
 
-## 📄 License
-Apache 2.0 / Sovereign Open Source — INDEX0 AI Research Labs.
+## 📄 License & Proprietary Rights
+**Proprietary & Confidential Commercial License — All Rights Reserved © 2026 INDEX0 RESEARCH LABS.**  
+This software, source code, cognitive architectures, and algorithms are proprietary to INDEX0 RESEARCH LABS. Unauthorized copying, reproduction, distribution, reverse engineering, model distillation/scraping, or commercial hosting is strictly prohibited. See [`LICENSE`](LICENSE) for complete legal terms.
