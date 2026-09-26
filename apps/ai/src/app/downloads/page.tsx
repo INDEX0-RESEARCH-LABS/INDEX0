@@ -107,14 +107,14 @@ export default function DownloadsPage() {
         <div className="p-4 rounded-xl bg-[var(--surface-100)] border-oklab flex items-center justify-between font-mono text-xs text-[var(--fg)]">
           <div className="flex items-center gap-2 truncate mr-3">
             <span className="text-[var(--accent)] font-bold">$</span>
-            <span className="truncate">curl -fsSL https://dl.ai.index0.in/install.sh | sh</span>
+            <span className="truncate">curl -fsSL https://ai.index0.in/install.sh | bash</span>
           </div>
           <button
             type="button"
-            onClick={() => copySha("curl -fsSL https://dl.ai.index0.in/install.sh | sh")}
+            onClick={() => copySha("curl -fsSL https://ai.index0.in/install.sh | bash")}
             className="pill-btn px-4 py-1.5 bg-[var(--accent)] text-[var(--accent-fg)] font-medium hover:bg-[var(--accent-hover)] transition-colors cursor-pointer shrink-0"
           >
-            {copiedSha === "curl -fsSL https://dl.ai.index0.in/install.sh | sh" ? "COPIED" : "COPY SCRIPT"}
+            {copiedSha === "curl -fsSL https://ai.index0.in/install.sh | bash" ? "COPIED" : "COPY SCRIPT"}
           </button>
         </div>
       </div>
