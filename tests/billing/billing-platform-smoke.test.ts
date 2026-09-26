@@ -36,7 +36,7 @@ describe("Dev 2 Platform: Billing Platform Smoke & Lago / 4-Pillars Verification
         "temporal-ui",
         "zitadel",
         "gateway",
-        "openhands",
+        "kafka",
       ];
 
       for (const service of expectedServices) {
@@ -65,19 +65,13 @@ describe("Dev 2 Platform: Billing Platform Smoke & Lago / 4-Pillars Verification
       );
     });
 
-    it("should map lago container port to 3001:3000 to prevent collision with openhands", () => {
+    it("should map lago container port to 3001:3000", () => {
       const composeContent = fs.readFileSync(composePath, "utf-8");
 
       assert.match(
         composeContent,
-        /openhands:[\s\S]*?ports:[\s\S]*?"3000:3000"/,
-        "openhands must publish port 3000"
-      );
-
-      assert.match(
-        composeContent,
         /lago:[\s\S]*?ports:[\s\S]*?"3001:3000"/,
-        "lago must publish port 3001:3000 avoiding collision with openhands"
+        "lago must publish port 3001:3000"
       );
     });
 
@@ -218,10 +212,10 @@ describe("Dev 2 Platform: Billing Platform Smoke & Lago / 4-Pillars Verification
         pillars: {
           build: [
             {
-              name: "OpenHands Autonomous Agent Container",
-              containerName: "index0-openhands",
-              port: 3000,
-              healthEndpoint: "http://localhost:3000/",
+              name: "Code-OSS Cloud IDE Container",
+              containerName: "index0-code-server",
+              port: 8443,
+              healthEndpoint: "http://localhost:8443/healthz",
               protocol: "http",
             },
           ],
@@ -295,7 +289,7 @@ describe("Dev 2 Platform: Billing Platform Smoke & Lago / 4-Pillars Verification
         manifest.pillars.grow.length;
 
       assert.equal(totalServices, 9, "Total services across all 4 pillars must equal 9");
-      assert.equal(manifest.pillars.build[0].containerName, "index0-openhands");
+      assert.equal(manifest.pillars.build[0].containerName, "index0-code-server");
       assert.equal(manifest.pillars.sell[1].containerName, "index0-lago");
     });
   });

@@ -70,35 +70,14 @@ describe("Dev 2 Platform: MCP Tool Registry & Container Sandbox Conformance", ()
   // 2. Docker Compose & Sandbox Confinement Alignment
   // -------------------------------------------------------------------------
   describe("Docker Compose Workspace Mount Alignment", () => {
-    it("should match boundaryRules.workspaceRoot with openhands container mount", () => {
-      assert.ok(fs.existsSync(composePath), "docker-compose.yml must exist");
-      const compose = fs.readFileSync(composePath, "utf-8");
-      const registry: IMCPToolRegistry = JSON.parse(fs.readFileSync(registryPath, "utf-8"));
-
-      const expectedRoot = registry.boundaryRules.workspaceRoot; // /opt/workspace_base
+    it("should match workspace mount with cloud IDE container mount", () => {
+      const codeServerPath = path.join(rootDir, "infra/compose/code-server.yml");
+      assert.ok(fs.existsSync(codeServerPath), "code-server.yml must exist");
+      const compose = fs.readFileSync(codeServerPath, "utf-8");
       assert.match(
         compose,
-        new RegExp(`\\.\\.\\/\\.\\.\\/workspace:${expectedRoot}`),
-        `Compose workspace mount must target ${expectedRoot}`
-      );
-      assert.match(
-        compose,
-        new RegExp(`WORKSPACE_BASE=${expectedRoot}`),
-        `WORKSPACE_BASE environment variable must be set to ${expectedRoot}`
-      );
-    });
-
-    it("should ensure docker socket is mounted for sibling sandbox container execution", () => {
-      const compose = fs.readFileSync(composePath, "utf-8");
-      assert.match(
-        compose,
-        /\/var\/run\/docker\.sock:\/var\/run\/docker\.sock/,
-        "Must mount Docker socket for sandboxed runtime container execution"
-      );
-      assert.match(
-        compose,
-        /SANDBOX_RUNTIME_CONTAINER_IMAGE=docker\.all-hands\.dev\/all-hands-ai\/runtime:0\.18-nikolaik/,
-        "Must configure official local sandbox runtime container image"
+        /\.\.\/\.\.\/workspace:\/workspace/,
+        "code-server workspace mount must target /workspace"
       );
     });
 

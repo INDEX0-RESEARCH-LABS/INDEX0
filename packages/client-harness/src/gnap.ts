@@ -13,7 +13,7 @@ import {
   type IPostcardEnvelope,
   type AgentRole,
   type PostcardMessageType
-} from '@index0/contracts';
+} from './contracts.js';
 
 export interface IGNAPWorkerOptions {
   repoRoot?: string;

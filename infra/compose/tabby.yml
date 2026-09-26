@@ -13,11 +13,14 @@ services:
       - ../tabby/config.toml:/data/config.toml:ro
     command: serve --device cpu
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8080/v1/health || exit 1"]
+      # Tabby /v1/health returns 401 (auth required) when running — 401 is proof-of-life.
+      # We accept HTTP 200 OR 401; only connection refused / 5xx = unhealthy.
+      test: ["CMD-SHELL", "curl -s -o /dev/null -w '%{http_code}' http://localhost:8080/v1/health | grep -qE '^(200|401)$'"]
       interval: 15s
       timeout: 5s
       retries: 5
       start_period: 30s
+
     networks:
       - index0-net
 

@@ -8,15 +8,17 @@ services:
     environment:
       - PORT=8000
       - ORCHESTRATOR_ENVIRONMENT=production
-      - ORCHESTRATOR_DEBUG=false
       - ORCHESTRATOR_SANDBOX_MANAGER_URL=http://sandbox-manager:3002
       - ORCHESTRATOR_LITELLM_PROXY_URL=http://litellm:4000
-      - ORCHESTRATOR_OPENHANDS_URL=http://openhands:3000
+      - ORCHESTRATOR_CODE_SERVER_URL=http://code-server:8443
       - ORCHESTRATOR_MAX_REVIEW_ITERATIONS=5
       - ORCHESTRATOR_ARCHITECT_MODEL=${ORCHESTRATOR_ARCHITECT_MODEL:-claude-3-7-sonnet}
       - ORCHESTRATOR_DEVELOPER_MODEL=${ORCHESTRATOR_DEVELOPER_MODEL:-claude-3-5-sonnet}
       - ORCHESTRATOR_CRITIC_MODEL=${ORCHESTRATOR_CRITIC_MODEL:-claude-3-5-sonnet}
       - ORCHESTRATOR_QA_MODEL=${ORCHESTRATOR_QA_MODEL:-claude-3-5-haiku}
+    volumes:
+      # Dev hot-reload: mount source so Python changes apply without image rebuild
+      - ../../services/agent-orchestrator/src:/app/src:ro
     ports:
       - "8010:8000"
     healthcheck:

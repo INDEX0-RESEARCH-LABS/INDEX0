@@ -21,12 +21,51 @@ ai.index0.in, http://ai.index0.in, http://20.106.136.209, :80, :443, :8000 {
         X-XSS-Protection "1; mode=block"
         Referrer-Policy "strict-origin-when-cross-origin"
         -Server
+        Access-Control-Allow-Origin "http://localhost:5173"
+        Access-Control-Allow-Methods "GET, POST, PUT, PATCH, DELETE, OPTIONS"
+        Access-Control-Allow-Headers "Authorization, Content-Type, X-Request-ID"
     }
 
     # Health check endpoint for Gateway
     handle /health {
         header Content-Type "application/json"
-        respond `{"status":"ok","gateway":"caddy","domain":"ai.index0.in","engine":"index0-gateway"}` 200
+        respond `{"status":"ok","gateway":"caddy","engine":"index0-gateway"}` 200
+    }
+
+    # Universal One-Line Installer & Distribution Artifacts
+    handle /install.sh {
+        header Content-Type "text/x-shellscript; charset=utf-8"
+        header Cache-Control "no-cache, no-store, must-revalidate"
+        root * /srv
+        file_server
+    }
+
+    handle /install.ps1 {
+        header Content-Type "text/plain; charset=utf-8"
+        header Cache-Control "no-cache, no-store, must-revalidate"
+        root * /srv
+        file_server
+    }
+
+    handle /index0-cli.tar.gz {
+        header Content-Type "application/gzip"
+        header Cache-Control "public, max-age=3600"
+        root * /srv
+        file_server
+    }
+
+    handle /index0-engine* {
+        header Content-Type "application/gzip"
+        header Cache-Control "public, max-age=86400"
+        root * /srv
+        file_server
+    }
+
+    handle /releases/* {
+        header Content-Type "application/gzip"
+        header Cache-Control "public, max-age=86400"
+        root * /srv
+        file_server
     }
 
     # Zitadel Identity Provider & Admin Console
@@ -78,6 +117,16 @@ ai.index0.in, http://ai.index0.in, http://20.106.136.209, :80, :443, :8000 {
         }
     }
 
+    # Sandbox Manager (MicroVM / E2B / Docker execution engine)
+    handle /sandbox* {
+        reverse_proxy sandbox-manager:4001 {
+            header_up Host {host}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+            header_up X-Forwarded-Proto {scheme}
+        }
+    }
+
     # ClickHouse Analytics HTTP Interface
     handle /analytics* {
         reverse_proxy clickhouse:8123 {
@@ -98,33 +147,28 @@ ai.index0.in, http://ai.index0.in, http://20.106.136.209, :80, :443, :8000 {
         }
     }
 
-    # OpenHands Monaco Workbench & Static Assets
+    # Sovereign Cloud IDE (code-server / Code-OSS Web)
     handle /canvas* {
-        reverse_proxy openhands:3000 {
+        reverse_proxy code-server:8443 {
             flush_interval -1
             header_up Host {host}
             header_up X-Real-IP {remote_host}
             header_up X-Forwarded-For {remote_host}
             header_up X-Forwarded-Proto {scheme}
+            header_up Upgrade {>Upgrade}
+            header_up Connection {>Connection}
         }
     }
 
-    handle /assets* {
-        header Cache-Control "public, max-age=31536000, immutable"
-        reverse_proxy openhands:3000 {
+    handle /code* {
+        reverse_proxy code-server:8443 {
+            flush_interval -1
             header_up Host {host}
             header_up X-Real-IP {remote_host}
             header_up X-Forwarded-For {remote_host}
             header_up X-Forwarded-Proto {scheme}
-        }
-    }
-
-    handle /locales* {
-        reverse_proxy openhands:3000 {
-            header_up Host {host}
-            header_up X-Real-IP {remote_host}
-            header_up X-Forwarded-For {remote_host}
-            header_up X-Forwarded-Proto {scheme}
+            header_up Upgrade {>Upgrade}
+            header_up Connection {>Connection}
         }
     }
 
@@ -147,25 +191,6 @@ ai.index0.in, http://ai.index0.in, http://20.106.136.209, :80, :443, :8000 {
         }
     }
 
-    # OpenHands Workbench APIs (settings, options, conversations, config, etc.)
-    handle /api/* {
-        reverse_proxy openhands:3000 {
-            header_up Host {host}
-            header_up X-Real-IP {remote_host}
-            header_up X-Forwarded-For {remote_host}
-            header_up X-Forwarded-Proto {scheme}
-        }
-    }
-
-    handle /ws* {
-        reverse_proxy openhands:3000 {
-            header_up Host {host}
-            header_up X-Real-IP {remote_host}
-            header_up X-Forwarded-For {remote_host}
-            header_up X-Forwarded-Proto {scheme}
-        }
-    }
-
     # Next.js Landing Platform (Port 3005 on host)
     handle {
         reverse_proxy host.docker.internal:3005 {
@@ -178,29 +203,22 @@ ai.index0.in, http://ai.index0.in, http://20.106.136.209, :80, :443, :8000 {
 }
 
 # ==============================================================================
-# 2. Dedicated OpenHands Subdomain (canvas.index0.in)
+# 2. Dedicated Sovereign Cloud IDE Subdomain (ide.index0.in, canvas.index0.in)
 # ==============================================================================
-canvas.index0.in {
+ide.index0.in, canvas.index0.in, ide.index0.in:8000, canvas.index0.in:8000 {
     tls internal
     encode gzip zstd
 
-    handle /assets* {
-        header Cache-Control "public, max-age=31536000, immutable"
-        reverse_proxy openhands:3000 {
-            header_up Host {host}
-            header_up X-Real-IP {remote_host}
-            header_up X-Forwarded-For {remote_host}
-            header_up X-Forwarded-Proto {scheme}
-        }
-    }
-
     handle {
-        reverse_proxy openhands:3000 {
+        reverse_proxy code-server:8443 {
             flush_interval -1
             header_up Host {host}
             header_up X-Real-IP {remote_host}
             header_up X-Forwarded-For {remote_host}
             header_up X-Forwarded-Proto {scheme}
+            header_up Upgrade {>Upgrade}
+            header_up Connection {>Connection}
         }
     }
 }
+

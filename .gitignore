@@ -41,11 +41,14 @@ Thumbs.db
 *.swo
 *~
 
-# OpenHands agent runtime state
-workspace/.openhands-state/
-
 # Python bytecode & cache
 __pycache__/
 *.py[cod]
 *$py.class
 .pytest_cache/
+
+# OpenHands agent runtime state
+workspace/.openhands-state/
+
+# Local distribution archives
+/index0-cli.tar.gz

@@ -394,7 +394,7 @@ describe("Dev 2 Platform: Telemetry Platform Smoke & ClickHouse/OpenMeter Verifi
         "temporal",
         "temporal-ui",
         "zitadel",
-        "openhands",
+        "lago",
         "gateway",
       ];
 

@@ -9,7 +9,7 @@ import {
   type ISandboxExecutionResult,
   type ISandboxHealthResponse,
   type IApiResponse
-} from '@index0/contracts';
+} from './contracts.js';
 
 export interface ISandboxClientOptions {
   baseUrl?: string;
@@ -154,5 +154,7 @@ export class SandboxClient {
 export * from './gnap.js';
 export * from './filter.js';
 export * from './worktree.js';
-export * from './opencode.js';
+export * from './engine.js';
+export * from './auth.js';
+export * from './launcher.js';
 

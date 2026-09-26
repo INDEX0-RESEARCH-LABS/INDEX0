@@ -1,15 +1,13 @@
 {
-  "name": "@index0/client-harness",
+  "name": "index0",
   "version": "0.1.0",
   "type": "module",
-  "private": true,
-  "description": "Developer client harness and execution CLI for INDEX0 AI Sandbox Manager",
+  "private": false,
+  "description": "INDEX0 AI — Sovereign Software Engineering CLI",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "bin": {
-    "opencode": "./dist/cli.js",
-    "index0": "./dist/cli.js",
-    "index0-sandbox": "./dist/cli.js"
+    "index0": "./dist/cli.js"
   },
   "exports": {
     ".": {
@@ -18,13 +16,36 @@
       "default": "./dist/index.js"
     }
   },
-  "scripts": {
-    "build": "tsc",
-    "typecheck": "tsc --noEmit",
-    "test": "tsc && node --test test/*.test.ts"
+  "files": [
+    "dist/",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "access": "public"
   },
-  "dependencies": {
-    "@index0/contracts": "workspace:*"
+  "keywords": [
+    "index0",
+    "ai",
+    "cli",
+    "sovereign",
+    "software-engineering",
+    "agent",
+    "code-review",
+    "terminal"
+  ],
+  "homepage": "https://ai.index0.in",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/INDEX0-RESEARCH-LABS/INDEX0"
+  },
+  "license": "AGPL-3.0",
+  "author": "INDEX0 AI Inc.",
+  "scripts": {
+    "build": "tsc && chmod +x dist/cli.js",
+    "typecheck": "tsc --noEmit",
+    "test": "tsc && chmod +x dist/cli.js && node --test test/*.test.ts",
+    "prepublishOnly": "pnpm build"
   },
   "devDependencies": {
     "@types/node": "^20.12.0",

@@ -58,13 +58,45 @@ services:
     networks:
       - index0-net
 
+  kafka:
+    image: apache/kafka:3.8.0
+    container_name: index0-kafka
+    restart: unless-stopped
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@localhost:9093
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_NUM_PARTITIONS: 4
+    networks:
+      - index0-net
+
   openmeter:
     image: ghcr.io/openmeterio/openmeter:latest
     container_name: index0-openmeter
     restart: unless-stopped
     depends_on:
+      postgres:
+        condition: service_healthy
       clickhouse:
         condition: service_healthy
+      kafka:
+        condition: service_started
+    environment:
+      - KAFKA_BROKERS=kafka:9092
+      - POSTGRES_URL=postgresql://${POSTGRES_USER:-index0}:${POSTGRES_PASSWORD:-index0_secret}@postgres:5432/openmeter_dev?sslmode=disable
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-index0}:${POSTGRES_PASSWORD:-index0_secret}@postgres:5432/openmeter_dev?sslmode=disable
+    command:
+      - openmeter
+      - --config
+      - /etc/openmeter/config.yaml
     ports:
       - "8888:8888"
     volumes:
@@ -95,9 +127,8 @@ services:
       - "3001:3000"
     volumes:
       - ../lago/plans.json:/etc/lago/plans.json:ro
-      - ../openhands/wget:/usr/local/bin/wget:ro
     healthcheck:
-      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:3000/health || exit 1"]
+      test: ["CMD-SHELL", "curl -sf http://localhost:3000/health || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -168,38 +199,6 @@ services:
     networks:
       - index0-net
 
-  openhands:
-    image: ghcr.io/all-hands-ai/openhands:0.18
-    container_name: index0-openhands
-    restart: unless-stopped
-    environment:
-      - SANDBOX_RUNTIME_CONTAINER_IMAGE=ghcr.io/all-hands-ai/runtime:0.18-nikolaik
-      - LOG_ALL_EVENTS=true
-      - LLM_MODEL=${LLM_MODEL:-openai/azure-gpt-4o}
-      - LLM_API_KEY=${LLM_API_KEY:-sk-index0-litellm-dev}
-      - LLM_BASE_URL=${LLM_BASE_URL:-http://litellm:4000/v1}
-      - WORKSPACE_BASE=/opt/workspace_base
-      - WORKSPACE_MOUNT_PATH=${WORKSPACE_MOUNT_PATH:-}
-      - FILE_STORE=${FILE_STORE:-local}
-      - FILE_STORE_PATH=${FILE_STORE_PATH:-/opt/workspace_base/.openhands-state}
-    ports:
-      - "3000:3000"
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ../../workspace:/opt/workspace_base
-      - ../../agent-canvas/frontend/build:/app/frontend/build:ro
-      - ../openhands/wget:/usr/local/bin/wget:ro
-    healthcheck:
-      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:3000/ || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 15s
-    networks:
-      - index0-net
-
   gateway:
     image: caddy:2-alpine
     container_name: index0-gateway
@@ -214,6 +213,5 @@ services:
       - ../gateway/Caddyfile:/etc/caddy/Caddyfile:ro
     depends_on:
       - zitadel
-      - openhands
     networks:
       - index0-net

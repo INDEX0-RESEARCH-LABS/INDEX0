@@ -22,14 +22,16 @@
         }
     }
 
-    # OpenHands Monaco Autonomous Agent Canvas
+    # Sovereign Cloud IDE (code-server / Code-OSS Web)
     handle /canvas* {
-        reverse_proxy openhands:3000 {
+        reverse_proxy code-server:8443 {
             flush_interval -1
             header_up Host {host}
             header_up X-Real-IP {remote_host}
             header_up X-Forwarded-For {remote_host}
             header_up X-Forwarded-Proto {scheme}
+            header_up Upgrade {>Upgrade}
+            header_up Connection {>Connection}
         }
     }
 

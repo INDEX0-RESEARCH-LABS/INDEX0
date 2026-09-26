@@ -100,13 +100,15 @@ describe("Sovereign Billing & 4-Pillars Platform Lifecycle Conformance", () => {
   });
 
   describe("4-Pillars Platform Lifecycle & Compose Conformance", () => {
-    it("should declare all 4 platform pillars across 9 services in docker-compose.yml", () => {
+    it("should declare all 4 platform pillars across services in compose stack", () => {
       assert.ok(fs.existsSync(composePath), "docker-compose.yml must exist");
       const content = fs.readFileSync(composePath, "utf-8");
+      const codeServerPath = path.join(rootDir, "infra/compose/code-server.yml");
+      const codeServerContent = fs.readFileSync(codeServerPath, "utf-8");
 
       // BUILD Pillar
-      assert.match(content, /openhands:/, "BUILD pillar: openhands must be defined");
-      assert.match(content, /"3000:3000"/, "OpenHands must publish port 3000");
+      assert.match(codeServerContent, /code-server:/, "BUILD pillar: code-server must be defined");
+      assert.match(codeServerContent, /"8443:8443"/, "code-server must publish port 8443");
 
       // SHIP Pillar
       assert.match(content, /temporal:/, "SHIP pillar: temporal must be defined");

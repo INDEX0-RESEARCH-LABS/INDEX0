@@ -1,8 +1,0 @@
-#!/bin/sh
-# INDEX0 AI — OpenHands wget compatibility shim delegating to curl
-for arg in "$@"; do
-  case "$arg" in
-    http://*|https://*) exec curl -sSf "$arg" > /dev/null 2>&1 ;;
-  esac
-done
-exec curl -sSf "$@" > /dev/null 2>&1

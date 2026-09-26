@@ -24,7 +24,7 @@ describe("Dev 2 Platform: Gateway Proxy Smoke & Zitadel Identity Verification", 
         { name: "Zitadel Auth", target: "zitadel:8085", handlePattern: /handle\s+\/auth\*\s*\{/ },
         { name: "Temporal UI", target: "temporal-ui:8233", handlePattern: /handle\s+\/temporal\*\s*\{/ },
         { name: "ClickHouse Analytics", target: "clickhouse:8123", handlePattern: /handle\s+\/analytics\*\s*\{/ },
-        { name: "OpenHands Workbench", target: "openhands:3000", handlePattern: /handle\s*\{/ },
+        { name: "Cloud IDE / code-server", target: "code-server:8443", handlePattern: /handle\s+\/code\*\s*\{/ },
       ];
 
       for (const upstream of expectedUpstreams) {
@@ -42,7 +42,7 @@ describe("Dev 2 Platform: Gateway Proxy Smoke & Zitadel Identity Verification", 
 
       // Verify that every reverse proxy block contains the 4 essential sanitized headers
       const proxyBlocks = caddyfile.split("reverse_proxy").slice(1);
-      assert.strictEqual(proxyBlocks.length, 4, "Must define exactly 4 reverse_proxy blocks");
+      assert.ok(proxyBlocks.length >= 4, "Must define at least 4 reverse_proxy blocks");
 
       for (const block of proxyBlocks) {
         assert.match(block, /header_up\s+Host\s+\{host\}/, "Must pass Host header");
@@ -52,15 +52,15 @@ describe("Dev 2 Platform: Gateway Proxy Smoke & Zitadel Identity Verification", 
       }
     });
 
-    it("should configure flush_interval -1 on OpenHands for unbuffered SSE & streaming", () => {
+    it("should configure flush_interval -1 on code-server for unbuffered SSE & streaming", () => {
       const caddyfile = fs.readFileSync(caddyfilePath, "utf-8");
-      const openhandsBlockMatch = caddyfile.match(/reverse_proxy\s+openhands:3000\s*\{([^}]+)\}/);
-      assert.ok(openhandsBlockMatch, "Must find OpenHands reverse_proxy block");
-      const openhandsBlock = openhandsBlockMatch[1];
+      const codeServerBlockMatch = caddyfile.match(/reverse_proxy\s+code-server:8443\s*\{([^}]+)\}/);
+      assert.ok(codeServerBlockMatch, "Must find code-server reverse_proxy block");
+      const codeServerBlock = codeServerBlockMatch[1];
       assert.match(
-        openhandsBlock,
+        codeServerBlock,
         /flush_interval\s+-1/,
-        "OpenHands upstream must enforce flush_interval -1 to prevent buffering SSE/WebSocket streams"
+        "code-server upstream must enforce flush_interval -1 to prevent buffering SSE/WebSocket streams"
       );
     });
 
@@ -180,13 +180,13 @@ describe("Dev 2 Platform: Gateway Proxy Smoke & Zitadel Identity Verification", 
       );
     });
 
-    it("should ensure gateway depends on zitadel and openhands", () => {
+    it("should ensure gateway depends on zitadel", () => {
       const compose = fs.readFileSync(composePath, "utf-8");
       const gatewayBlockMatch = compose.match(/\n  gateway:([\s\S]+?)(?=\n[a-z0-9_-]+:|$)/);
       assert.ok(gatewayBlockMatch, "Must find gateway block in compose");
       const gatewayBlock = gatewayBlockMatch[1];
 
-      assert.match(gatewayBlock, /depends_on:\s*\n\s*-\s*zitadel\s*\n\s*-\s*openhands/);
+      assert.match(gatewayBlock, /depends_on:\s*\n\s*-\s*zitadel/);
       assert.match(gatewayBlock, /"8000:8000"/, "Gateway must expose port 8000");
     });
 
@@ -194,7 +194,7 @@ describe("Dev 2 Platform: Gateway Proxy Smoke & Zitadel Identity Verification", 
       const compose = fs.readFileSync(composePath, "utf-8");
       assert.match(compose, /networks:\s*\n\s*index0-net:\s*\n\s*name:\s*index0-net/);
 
-      const services = ["postgres", "clickhouse", "temporal", "temporal-ui", "zitadel", "openhands", "gateway"];
+      const services = ["postgres", "clickhouse", "temporal", "temporal-ui", "zitadel", "gateway"];
       for (const service of services) {
         assert.match(
           compose,

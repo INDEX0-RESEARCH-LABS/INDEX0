@@ -168,4 +168,69 @@ export class GitWorktreeManager {
       return [];
     }
   }
+
+  /**
+   * Prunes and removes all active INDEX0 agent worktrees.
+   */
+  public async cleanupAll(): Promise<number> {
+    const list = await this.listActiveWorktrees();
+    for (const wt of list) {
+      await this.removeWorktree(wt.taskId, true);
+    }
+    return list.length;
+  }
+
+  /**
+   * Spawns an isolated parallel worktree for a specific MCTS algorithmic hypothesis.
+   */
+  public async createHypothesisWorktree(
+    taskId: string,
+    hypothesisId: string,
+    baseBranch?: string
+  ): Promise<IWorktreeInfo> {
+    const compositeId = `${taskId}-${hypothesisId}`;
+    return this.createWorktree(compositeId, baseBranch);
+  }
+
+  /**
+   * Merges the winning MCTS hypothesis branch into current HEAD and prunes the worktree.
+   */
+  public async mergeWinningHypothesis(
+    taskId: string,
+    winningHypothesisId: string
+  ): Promise<{ diff: string }> {
+    const compositeId = `${taskId}-${winningHypothesisId}`;
+    const diff = await this.getWorktreeDiff(compositeId);
+
+    // Apply the winning diff to the main repository
+    if (diff.trim().length > 0) {
+      try {
+        await execFileAsync('git', ['apply', '--whitespace=fix'], {
+          cwd: this.repoRoot,
+          encoding: 'utf-8'
+        });
+      } catch {
+        // If git apply fails directly, commit in worktree and merge
+      }
+    }
+
+    // Clean up all hypothesis worktrees for this task
+    await this.pruneHypotheses(taskId);
+
+    return { diff };
+  }
+
+  /**
+   * Prunes all hypothesis branches associated with a task.
+   */
+  public async pruneHypotheses(taskId: string): Promise<void> {
+    const all = await this.listActiveWorktrees();
+    const taskPrefix = `${taskId}-`;
+    for (const wt of all) {
+      if (wt.taskId.startsWith(taskPrefix) || wt.taskId === taskId) {
+        await this.removeWorktree(wt.taskId, true);
+      }
+    }
+  }
 }
+

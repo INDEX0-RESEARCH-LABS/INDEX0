@@ -3,6 +3,13 @@
 
 address: ":8888"
 
+events:
+  broker: "kafka:9092"
+
+ingest:
+  kafka:
+    broker: "kafka:9092"
+
 telemetry:
   address: ":10000"
 

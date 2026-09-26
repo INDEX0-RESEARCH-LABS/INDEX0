@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { OpenCodeEngine } from '../dist/opencode.js';
+import { Index0Engine } from '../dist/engine.js';
 import { GitWorktreeManager } from '../dist/worktree.js';
 
 test('GitWorktreeManager — Repo Verification', async () => {
@@ -9,8 +9,8 @@ test('GitWorktreeManager — Repo Verification', async () => {
   assert.equal(isRepo, true, 'Current workspace must be a valid git repository');
 });
 
-test('OpenCodeEngine — 4-Tier Matrix Review', async () => {
-  const engine = new OpenCodeEngine();
+test('Index0Engine — 4-Tier Matrix Review', async () => {
+  const engine = new Index0Engine();
   const steps = await engine.runReviewMatrix('Implement secure JWT claims validation');
 
   assert.equal(steps.length, 4);
@@ -23,8 +23,8 @@ test('OpenCodeEngine — 4-Tier Matrix Review', async () => {
   assert.equal(steps[2].status, 'passed');
 });
 
-test('OpenCodeEngine — Terminal Output Sanitization', () => {
-  const engine = new OpenCodeEngine();
+test('Index0Engine — Terminal Output Sanitization', () => {
+  const engine = new Index0Engine();
   const noisy = '\x1b[32m✔ Built target successfully\x1b[0m\n\rProgress: 100%\n';
   const { sanitized, tokensSaved } = engine.sanitizeTerminalOutput(noisy);
 

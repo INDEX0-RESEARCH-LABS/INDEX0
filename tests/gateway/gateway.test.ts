@@ -44,9 +44,9 @@ describe("Declarative Caddy API Gateway & Container Orchestration", () => {
       assert.match(content, /reverse_proxy\s+clickhouse:8123/, "Must proxy to clickhouse:8123");
     });
 
-    it("should reverse-proxy root /* to OpenHands (port 3000) with unbuffered flush", () => {
+    it("should reverse-proxy Cloud IDE / code-server (port 8443) with unbuffered flush", () => {
       const content = fs.readFileSync(caddyfilePath, "utf-8");
-      assert.match(content, /reverse_proxy\s+openhands:3000/, "Must proxy default traffic to openhands:3000");
+      assert.match(content, /reverse_proxy\s+code-server:8443/, "Must proxy traffic to code-server:8443");
       assert.match(content, /flush_interval\s+-1/, "Must set flush_interval -1 for real-time SSE & terminal streaming");
     });
 
@@ -70,7 +70,7 @@ describe("Declarative Caddy API Gateway & Container Orchestration", () => {
       assert.match(content, /\.\.\/gateway\/Caddyfile:\/etc\/caddy\/Caddyfile:ro/, "Must mount Caddyfile read-only");
     });
 
-    it("should wire all 7 core services to index0-net", () => {
+    it("should wire core services to index0-net", () => {
       const content = fs.readFileSync(composePath, "utf-8");
       const requiredServices = [
         "postgres:",
@@ -78,7 +78,6 @@ describe("Declarative Caddy API Gateway & Container Orchestration", () => {
         "temporal:",
         "temporal-ui:",
         "zitadel:",
-        "openhands:",
         "gateway:"
       ];
       for (const svc of requiredServices) {
@@ -87,12 +86,12 @@ describe("Declarative Caddy API Gateway & Container Orchestration", () => {
       assert.match(content, /name:\s*index0-net/, "Must declare index0-net bridge network");
     });
 
-    it("should declare openhands with workspace mount and docker socket", () => {
-      const content = fs.readFileSync(composePath, "utf-8");
-      assert.match(content, /openhands:/);
-      assert.match(content, /ghcr\.io\/all-hands-ai\/openhands:0\.18/);
-      assert.match(content, /\/var\/run\/docker\.sock:\/var\/run\/docker\.sock/);
-      assert.match(content, /\.\.\/\.\.\/workspace:\/opt\/workspace_base/);
+    it("should declare code-server in compose overlay with workspace mount", () => {
+      const codeServerComposePath = path.join(rootDir, "infra/compose/code-server.yml");
+      assert.ok(fs.existsSync(codeServerComposePath), "code-server.yml must exist");
+      const content = fs.readFileSync(codeServerComposePath, "utf-8");
+      assert.match(content, /code-server:/);
+      assert.match(content, /\.\.\/\.\.\/workspace:\/workspace/);
     });
   });
 

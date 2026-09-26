@@ -79,11 +79,13 @@ check_http_endpoint() {
 check_http_endpoint "LiteLLM Gateway" "${LITELLM_PROXY_URL:-http://localhost:4000}/health" "200" false || \
 check_http_endpoint "LiteLLM Gateway" "http://localhost:4000" "200" false
 
-# 2. OpenHands Autonomous Workbench
-check_http_endpoint "OpenHands MicroVM Workbench" "http://localhost:3000" "200" false
+# 2. TabbyML Local Edge Engine (GhostText Autocomplete)
 
 # 3. TabbyML Local Edge Engine
 check_http_endpoint "TabbyML Edge Engine" "${TABBY_ENDPOINT:-http://localhost:8080}/v1/health" "200" false
+
+# 3. Code-OSS Cloud IDE (code-server)
+check_http_endpoint "Code-OSS Cloud IDE (code-server)" "${CODE_SERVER_URL:-http://localhost:8443}" "302" false
 
 # 4. LiveKit WebRTC Voice SFU
 check_http_endpoint "LiveKit WebRTC Voice SFU" "http://localhost:7880" "200" false

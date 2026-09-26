@@ -279,10 +279,6 @@ importers:
         version: 5.4.21(@types/node@20.19.43)(lightningcss@1.32.0)
 
   packages/client-harness:
-    dependencies:
-      '@index0/contracts':
-        specifier: workspace:*
-        version: link:../contracts
     devDependencies:
       '@types/node':
         specifier: ^20.12.0
