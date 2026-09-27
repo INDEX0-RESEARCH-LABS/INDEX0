@@ -1,0 +1,93 @@
+{
+  "runId": "bench-1790535684379-1d92be22",
+  "timestamp": "2026-09-27T19:01:24.380Z",
+  "benchmarkCommit": "361dad10bd09543beff92582dba4a3db1cf2f345",
+  "config": {
+    "sweBench": {
+      "enabled": true,
+      "dataset": "princeton-nlp/SWE-bench_Lite",
+      "maxInstances": 3,
+      "maxIterations": 30,
+      "numWorkers": 2,
+      "llmConfig": "llm.eval_azure_gpt4o",
+      "runtime": "docker"
+    },
+    "aiderBench": {
+      "enabled": false,
+      "maxInstances": 10,
+      "maxIterations": 25,
+      "numWorkers": 2,
+      "llmConfig": "llm.eval_test",
+      "useUnitTests": true
+    },
+    "agent": {
+      "model": "test-model",
+      "provider": "test",
+      "version": "1.0.0",
+      "temperature": 0,
+      "maxTokens": 4096,
+      "toolBudget": 50,
+      "timeBudgetMs": 300000
+    },
+    "outputDir": "/home/darion-dev/Dev/Incubator/INDEX0/benchmarks/runs",
+    "benchmarkCommit": "361dad10bd09543beff92582dba4a3db1cf2f345"
+  },
+  "taskManifest": {
+    "version": "1.0.0",
+    "createdAt": "2026-09-27T19:01:24.382Z",
+    "benchmarkCommit": "361dad10bd09543beff92582dba4a3db1cf2f345",
+    "dataset": {
+      "name": "multi-benchmark",
+      "version": "1.0.0",
+      "source": "official",
+      "taskIds": [
+        "swe-bench-tasks-placeholder"
+      ]
+    },
+    "evaluationCriteria": {
+      "successLevels": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F"
+      ],
+      "primaryMetric": "Level F success rate (verified engineering task success)",
+      "antiCheatChecks": [
+        "test_file_integrity",
+        "assertion_strength_analysis",
+        "evaluator_code_integrity",
+        "benchmark_infra_integrity",
+        "network_access_monitoring",
+        "hardcoded_output_detection"
+      ]
+    },
+    "environment": {
+      "platform": "linux",
+      "arch": "x64",
+      "nodeVersion": "v26.8.1",
+      "runtime": "node"
+    },
+    "hash": "c875d79b840614ce42a18a7ebda56fa914572645da1d596aac44fdefc194ed81"
+  },
+  "integrity": {
+    "claimFirewallActive": true,
+    "taskManifestFrozen": true,
+    "taskManifestHash": "c875d79b840614ce42a18a7ebda56fa914572645da1d596aac44fdefc194ed81",
+    "perRunArtifactsGenerated": true,
+    "antiCheatEnabled": true,
+    "evaluatorIndependent": true
+  },
+  "sweBench": {
+    "feasible": true,
+    "result": {
+      "success": false,
+      "outputDir": "",
+      "outputFile": "",
+      "error": "SWE-bench evaluation failed: Command failed: ./evaluation/benchmarks/swe_bench/scripts/run_infer.sh llm.eval_azure_gpt4o HEAD CodeActAgent 3 30 2 princeton-nlp/SWE-bench_Lite test\n\u001b[92m00:31:31 - openhands:DEBUG\u001b[0m: logger.py:269 - Logging initialized\n\u001b[92m00:31:31 - openhands:DEBUG\u001b[0m: logger.py:281 - Logging to file in: /home/darion-dev/Dev/Incubator/INDEX0/agent-canvas/logs\n\u001b[92m00:31:31 - openhands:INFO\u001b[0m: run_infer.py:92 - Using docker image prefix: docker.io/xingyaoww/\n\u001b[92m00:31:31 - openhands:INFO\u001b[0m: run_infer.py:92 - Using docker image prefix: docker.io/xingyaoww/\nWarning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.\nWARNING:huggingface_hub.utils._http:Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.\n\u001b[92m00:31:35 - openhands:INFO\u001b[0m: run_infer.py:493 - Loaded dataset princeton-nlp/SWE-bench_Lite with split test\n\u001b[92m00:31:35 - openhands:INFO\u001b[0m: run_infer.py:493 - Loaded dataset princeton-nlp/SWE-bench_Lite with split test\n\u001b[92m00:31:35 - openhands:DEBUG\u001b[0m: utils.py:284 - Loading llm config from eval_azure_gpt4o\nERROR:root:  File \"/home/darion-dev/Dev/Incubator/INDEX0/agent-canvas/evaluation/benchmarks/swe_bench/run_infer.py\", line 498, in <module>\n    llm_config = get_llm_config_arg(args.llm_config)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/darion-dev/Dev/Incubator/INDEX0/agent-canvas/index0_agent/core/config/utils.py\", line 301, in get_llm_config_arg\n    return LLMConfig.from_dict(toml_config['llm'][llm_config_arg])\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/darion-dev/Dev/Incubator/INDEX0/agent-canvas/index0_agent/core/config/llm_config.py\", line 143, in from_dict\n    return cls(**args)\n           ^^^^^^^^^^^\n\nERROR:root:<class 'TypeError'>: LLMConfig.__init__() got an unexpected keyword argument 'api_base'\n\nThe given hash is equivalent to the current HEAD\nUSE_INSTANCE_IMAGE: false\nRUN_WITH_BROWSING: false\nAGENT: CodeActAgent\nOPENHANDS_VERSION: v1.0.0\nMODEL_CONFIG: llm.eval_azure_gpt4o\nDATASET: princeton-nlp/SWE-bench_Lite\nSPLIT: test\nUSE_HINT_TEXT: false\nN_RUNS not specified, use default 1\nEVAL_NOTE: v1.0.0-no-hint-run_1\nEVAL_LIMIT: 3\n\n\u001b[92m00:31:31 - openhands:DEBUG\u001b[0m: logger.py:269 - Logging initialized\n\u001b[92m00:31:31 - openhands:DEBUG\u001b[0m: logger.py:281 - Logging to file in: /home/darion-dev/Dev/Incubator/INDEX0/agent-canvas/logs\n\u001b[92m00:31:31 - openhands:INFO\u001b[0m: run_infer.py:92 - Using docker image prefix: docker.io/xingyaoww/\n\u001b[92m00:31:31 - openhands:INFO\u001b[0m: run_infer.py:92 - Using docker image prefix: docker.io/xingyaoww/\nWarning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.\nWARNING:huggingface_hub.utils._http:Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.\n\u001b[92m00:31:35 - openhands:INFO\u001b[0m: run_infer.py:493 - Loaded dataset princeton-nlp/SWE-bench_Lite with split test\n\u001b[92m00:31:35 - openhands:INFO\u001b[0m: run_infer.py:493 - Loaded dataset princeton-nlp/SWE-bench_Lite with split test\n\u001b[92m00:31:35 - openhands:DEBUG\u001b[0m: utils.py:284 - Loading llm config from eval_azure_gpt4o\nERROR:root:  File \"/home/darion-dev/Dev/Incubator/INDEX0/agent-canvas/evaluation/benchmarks/swe_bench/run_infer.py\", line 498, in <module>\n    llm_config = get_llm_config_arg(args.llm_config)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/darion-dev/Dev/Incubator/INDEX0/agent-canvas/index0_agent/core/config/utils.py\", line 301, in get_llm_config_arg\n    return LLMConfig.from_dict(toml_config['llm'][llm_config_arg])\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/darion-dev/Dev/Incubator/INDEX0/agent-canvas/index0_agent/core/config/llm_config.py\", line 143, in from_dict\n    return cls(**args)\n           ^^^^^^^^^^^\n\nERROR:root:<class 'TypeError'>: LLMConfig.__init__() got an unexpected keyword argument 'api_base'\n",
+      "durationMs": 10876
+    },
+    "blockedReasons": []
+  }
+}

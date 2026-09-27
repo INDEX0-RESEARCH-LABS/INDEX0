@@ -117,6 +117,16 @@ def get_config(
         base_container_image = SWE_BENCH_CONTAINER_IMAGE
         logger.info(f'Using swe-bench container image: {base_container_image}')
 
+    # Collect Azure OpenAI credentials to pass to container
+    runtime_env_vars = {}
+    if os.environ.get('AZURE_OPENAI_API_KEY'):
+        runtime_env_vars['AZURE_OPENAI_API_KEY'] = os.environ['AZURE_OPENAI_API_KEY']
+    if os.environ.get('AZURE_OPENAI_ENDPOINT'):
+        runtime_env_vars['AZURE_OPENAI_ENDPOINT'] = os.environ['AZURE_OPENAI_ENDPOINT']
+    # Also pass generic OPENAI_API_KEY for compatibility
+    if os.environ.get('OPENAI_API_KEY'):
+        runtime_env_vars['OPENAI_API_KEY'] = os.environ['OPENAI_API_KEY']
+
     config = AppConfig(
         default_agent=metadata.agent_class,
         run_as_openhands=False,
@@ -134,6 +144,7 @@ def get_config(
             remote_runtime_api_url=os.environ.get('SANDBOX_REMOTE_RUNTIME_API_URL'),
             keep_runtime_alive=False,
             remote_runtime_init_timeout=3600,
+            runtime_startup_env_vars=runtime_env_vars,
         ),
         # do not mount workspace
         workspace_base=None,

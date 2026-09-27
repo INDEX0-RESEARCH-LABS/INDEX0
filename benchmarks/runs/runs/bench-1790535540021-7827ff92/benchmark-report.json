@@ -1,0 +1,95 @@
+{
+  "runId": "bench-1790535540021-7827ff92",
+  "timestamp": "2026-09-27T18:59:00.021Z",
+  "benchmarkCommit": "361dad10bd09543beff92582dba4a3db1cf2f345",
+  "config": {
+    "sweBench": {
+      "enabled": true,
+      "dataset": "princeton-nlp/SWE-bench_Lite",
+      "maxInstances": 10,
+      "maxIterations": 30,
+      "numWorkers": 2,
+      "llmConfig": "llm.eval_claude_35_sonnet",
+      "runtime": "docker"
+    },
+    "aiderBench": {
+      "enabled": false,
+      "maxInstances": 10,
+      "maxIterations": 25,
+      "numWorkers": 2,
+      "llmConfig": "llm.eval_test",
+      "useUnitTests": true
+    },
+    "agent": {
+      "model": "test-model",
+      "provider": "test",
+      "version": "1.0.0",
+      "temperature": 0,
+      "maxTokens": 4096,
+      "toolBudget": 50,
+      "timeBudgetMs": 300000
+    },
+    "outputDir": "/home/darion-dev/Dev/Incubator/INDEX0/benchmarks/runs",
+    "benchmarkCommit": "361dad10bd09543beff92582dba4a3db1cf2f345"
+  },
+  "taskManifest": {
+    "version": "1.0.0",
+    "createdAt": "2026-09-27T18:59:00.025Z",
+    "benchmarkCommit": "361dad10bd09543beff92582dba4a3db1cf2f345",
+    "dataset": {
+      "name": "multi-benchmark",
+      "version": "1.0.0",
+      "source": "official",
+      "taskIds": [
+        "swe-bench-tasks-placeholder"
+      ]
+    },
+    "evaluationCriteria": {
+      "successLevels": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F"
+      ],
+      "primaryMetric": "Level F success rate (verified engineering task success)",
+      "antiCheatChecks": [
+        "test_file_integrity",
+        "assertion_strength_analysis",
+        "evaluator_code_integrity",
+        "benchmark_infra_integrity",
+        "network_access_monitoring",
+        "hardcoded_output_detection"
+      ]
+    },
+    "environment": {
+      "platform": "linux",
+      "arch": "x64",
+      "nodeVersion": "v26.8.1",
+      "runtime": "node"
+    },
+    "hash": "c79f0371f9af99cda50356ffc926f9f70712a9083c38615986b544abf3d4ad9e"
+  },
+  "integrity": {
+    "claimFirewallActive": true,
+    "taskManifestFrozen": true,
+    "taskManifestHash": "c79f0371f9af99cda50356ffc926f9f70712a9083c38615986b544abf3d4ad9e",
+    "perRunArtifactsGenerated": true,
+    "antiCheatEnabled": true,
+    "evaluatorIndependent": true
+  },
+  "sweBench": {
+    "feasible": false,
+    "result": {
+      "success": false,
+      "outputDir": "",
+      "outputFile": "",
+      "error": "BLOCKED: Infrastructure not available for official SWE-bench run",
+      "durationMs": 0
+    },
+    "blockedReasons": [
+      "No LLM API credentials found (need ALLHANDS_API_KEY for remote runtime, or ANTHROPIC_API_KEY/OPENAI_API_KEY for local, or AZURE_OPENAI_API_KEY+AZURE_OPENAI_ENDPOINT for Azure)"
+    ]
+  }
+}

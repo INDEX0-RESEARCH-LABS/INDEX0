@@ -1,0 +1,93 @@
+{
+  "runId": "bench-1790535579970-964fe543",
+  "timestamp": "2026-09-27T18:59:39.970Z",
+  "benchmarkCommit": "361dad10bd09543beff92582dba4a3db1cf2f345",
+  "config": {
+    "sweBench": {
+      "enabled": true,
+      "dataset": "princeton-nlp/SWE-bench_Lite",
+      "maxInstances": 10,
+      "maxIterations": 30,
+      "numWorkers": 2,
+      "llmConfig": "llm.eval_claude_35_sonnet",
+      "runtime": "docker"
+    },
+    "aiderBench": {
+      "enabled": false,
+      "maxInstances": 10,
+      "maxIterations": 25,
+      "numWorkers": 2,
+      "llmConfig": "llm.eval_test",
+      "useUnitTests": true
+    },
+    "agent": {
+      "model": "test-model",
+      "provider": "test",
+      "version": "1.0.0",
+      "temperature": 0,
+      "maxTokens": 4096,
+      "toolBudget": 50,
+      "timeBudgetMs": 300000
+    },
+    "outputDir": "/home/darion-dev/Dev/Incubator/INDEX0/benchmarks/runs",
+    "benchmarkCommit": "361dad10bd09543beff92582dba4a3db1cf2f345"
+  },
+  "taskManifest": {
+    "version": "1.0.0",
+    "createdAt": "2026-09-27T18:59:39.973Z",
+    "benchmarkCommit": "361dad10bd09543beff92582dba4a3db1cf2f345",
+    "dataset": {
+      "name": "multi-benchmark",
+      "version": "1.0.0",
+      "source": "official",
+      "taskIds": [
+        "swe-bench-tasks-placeholder"
+      ]
+    },
+    "evaluationCriteria": {
+      "successLevels": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F"
+      ],
+      "primaryMetric": "Level F success rate (verified engineering task success)",
+      "antiCheatChecks": [
+        "test_file_integrity",
+        "assertion_strength_analysis",
+        "evaluator_code_integrity",
+        "benchmark_infra_integrity",
+        "network_access_monitoring",
+        "hardcoded_output_detection"
+      ]
+    },
+    "environment": {
+      "platform": "linux",
+      "arch": "x64",
+      "nodeVersion": "v26.8.1",
+      "runtime": "node"
+    },
+    "hash": "dedadbd6c4d2529013232005f98032daea56deaad687ba872b71a5d1087abdf7"
+  },
+  "integrity": {
+    "claimFirewallActive": true,
+    "taskManifestFrozen": true,
+    "taskManifestHash": "dedadbd6c4d2529013232005f98032daea56deaad687ba872b71a5d1087abdf7",
+    "perRunArtifactsGenerated": true,
+    "antiCheatEnabled": true,
+    "evaluatorIndependent": true
+  },
+  "sweBench": {
+    "feasible": true,
+    "result": {
+      "success": false,
+      "outputDir": "",
+      "outputFile": "",
+      "error": "SWE-bench evaluation failed: Command failed: ./evaluation/benchmarks/swe_bench/scripts/run_infer.sh llm.eval_claude_35_sonnet HEAD CodeActAgent 10 30 2 princeton-nlp/SWE-bench_Lite test\n\u001b[92m00:29:49 - openhands:DEBUG\u001b[0m: logger.py:269 - Logging initialized\n\u001b[92m00:29:49 - openhands:DEBUG\u001b[0m: logger.py:281 - Logging to file in: /home/darion-dev/Dev/Incubator/INDEX0/agent-canvas/logs\n\u001b[92m00:29:49 - openhands:INFO\u001b[0m: run_infer.py:92 - Using docker image prefix: docker.io/xingyaoww/\n\u001b[92m00:29:49 - openhands:INFO\u001b[0m: run_infer.py:92 - Using docker image prefix: docker.io/xingyaoww/\nWarning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.\nWARNING:huggingface_hub.utils._http:Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.\n\u001b[92m00:29:53 - openhands:INFO\u001b[0m: run_infer.py:493 - Loaded dataset princeton-nlp/SWE-bench_Lite with split test\n\u001b[92m00:29:53 - openhands:INFO\u001b[0m: run_infer.py:493 - Loaded dataset princeton-nlp/SWE-bench_Lite with split test\n\u001b[92m00:29:53 - openhands:DEBUG\u001b[0m: utils.py:284 - Loading llm config from eval_claude_35_sonnet\n\u001b[92m00:29:53 - openhands:DEBUG\u001b[0m: utils.py:302 - Loading from toml failed for eval_claude_35_sonnet\nERROR:root:  File \"/home/darion-dev/Dev/Incubator/INDEX0/agent-canvas/evaluation/benchmarks/swe_bench/run_infer.py\", line 499, in <module>\n    llm_config.log_completions = True\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^\n\nERROR:root:<class 'AttributeError'>: 'NoneType' object has no attribute 'log_completions'\n\nThe given hash is equivalent to the current HEAD\nUSE_INSTANCE_IMAGE: false\nRUN_WITH_BROWSING: false\nAGENT: CodeActAgent\nOPENHANDS_VERSION: v1.0.0\nMODEL_CONFIG: llm.eval_claude_35_sonnet\nDATASET: princeton-nlp/SWE-bench_Lite\nSPLIT: test\nUSE_HINT_TEXT: false\nN_RUNS not specified, use default 1\nEVAL_NOTE: v1.0.0-no-hint-run_1\nEVAL_LIMIT: 10\n\n\u001b[92m00:29:49 - openhands:DEBUG\u001b[0m: logger.py:269 - Logging initialized\n\u001b[92m00:29:49 - openhands:DEBUG\u001b[0m: logger.py:281 - Logging to file in: /home/darion-dev/Dev/Incubator/INDEX0/agent-canvas/logs\n\u001b[92m00:29:49 - openhands:INFO\u001b[0m: run_infer.py:92 - Using docker image prefix: docker.io/xingyaoww/\n\u001b[92m00:29:49 - openhands:INFO\u001b[0m: run_infer.py:92 - Using docker image prefix: docker.io/xingyaoww/\nWarning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.\nWARNING:huggingface_hub.utils._http:Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.\n\u001b[92m00:29:53 - openhands:INFO\u001b[0m: run_infer.py:493 - Loaded dataset princeton-nlp/SWE-bench_Lite with split test\n\u001b[92m00:29:53 - openhands:INFO\u001b[0m: run_infer.py:493 - Loaded dataset princeton-nlp/SWE-bench_Lite with split test\n\u001b[92m00:29:53 - openhands:DEBUG\u001b[0m: utils.py:284 - Loading llm config from eval_claude_35_sonnet\n\u001b[92m00:29:53 - openhands:DEBUG\u001b[0m: utils.py:302 - Loading from toml failed for eval_claude_35_sonnet\nERROR:root:  File \"/home/darion-dev/Dev/Incubator/INDEX0/agent-canvas/evaluation/benchmarks/swe_bench/run_infer.py\", line 499, in <module>\n    llm_config.log_completions = True\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^\n\nERROR:root:<class 'AttributeError'>: 'NoneType' object has no attribute 'log_completions'\n",
+      "durationMs": 13117
+    },
+    "blockedReasons": []
+  }
+}

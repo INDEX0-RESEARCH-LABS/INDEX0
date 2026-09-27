@@ -235,18 +235,24 @@ cd packages/client-harness && pnpm test
 
 ---
 
-## 📊 Competitor Benchmarks
+## 📊 Competitor Benchmarks — QUARANTINED
 
-| Metric / Dimension | Cursor AI | Claude Code | GitHub Copilot | Devin / OpenHands | INDEX0 AI | Auditor Verdict & Delta |
+> **⚠️ Integrity Firewall Active:** The following comparison table contains **UNVERIFIED claims** that are blocked from publication per the benchmark claim firewall. See [`benchmarks/CLAIM_AUDIT.md`](benchmarks/CLAIM_AUDIT.md) for full disposition.
+
+| Metric / Dimension | Cursor AI | Claude Code | GitHub Copilot | Devin / OpenHands | INDEX0 AI | Status |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **SWE-bench Verified** | 73.4% | 80.9% – 95.0% | ~80.0% | 74.0% – 80.8% | **96.2% – 97.0%** | **Industry Lead (+1.2% to +23.6%)**: 4-Tier Review Loop |
-| **SWE-bench Pro (Multi-File)** | 59.1% – 67.2% | 69.2% – 80.0% | 56.8% | 45.9% – 61.5% | **82.5%** | **Enterprise Superiority (+2.5% to +23.4%)** |
-| **Terminal-Bench 4.0** | 37.3% | 52.3% – 55.8% | ~37.3% | ~42.0% | **58.5%** | **Highest Autonomy (+2.7% to +21.2%)** |
-| **Context Token Reduction** | 0% (Raw code) | Cache pricing only | 0% | 0% | **34.3% – 91.0%** | **OpenViking Protocol (`viking://`)** |
-| **Autocomplete Latency** | 80ms – 150ms | N/A (CLI only) | 100ms – 200ms | N/A | **< 20ms** | **Sub-perceptual velocity on edge** |
-| **Local Compute / Token Cost** | Cloud billed | Cloud billed | Cloud billed | Usage billed | **$0.00 Token COGS** | **88.7% Edge offloading via TabbyML** |
-| **Security & Review Model** | Manual diffs | Terminal prompt | Basic PR check | Sandbox | **4-Tier Matrix + Semgrep/TSan**| **Zero-Slop Guarantee** |
-| **Human Interventions/Task** | 3.9 | 1.4 | ~3.0 | 2.5 | **0.2** | **Massive reduction in review friction** |
+| **SWE-bench Verified** | 73.4% | 80.9% – 95.0% | ~80.0% | 74.0% – 80.8% | **96.2% – 97.0%** | **UNVERIFIED** |
+| **SWE-bench Pro (Multi-File)** | 59.1% – 67.2% | 69.2% – 80.0% | 56.8% | 45.9% – 61.5% | **82.5%** | **UNVERIFIED** |
+| **Terminal-Bench 4.0** | 37.3% | 52.3% – 55.8% | ~37.3% | ~42.0% | **58.5%** | **UNVERIFIED** |
+| **Context Token Reduction** | 0% (Raw code) | Cache pricing only | 0% | 0% | **34.3% – 91.0%** | **PARTIALLY VERIFIED (transform ratio only)** |
+| **Autocomplete Latency** | 80ms – 150ms | N/A (CLI only) | 100ms – 200ms | N/A | **< 20ms** | **UNVERIFIED (cross-product)** |
+| **Local Compute / Token Cost** | Cloud billed | Cloud billed | Cloud billed | Usage billed | **$0.00 Token COGS** | **UNVERIFIED** |
+| **Security & Review Model** | Manual diffs | Terminal prompt | Basic PR check | Sandbox | **4-Tier Matrix + Semgrep/TSan**| **UNVERIFIED** |
+| **Human Interventions/Task** | 3.9 | 1.4 | ~3.0 | 2.5 | **0.2** | **UNVERIFIED** |
+
+**All claims require:** Frozen task manifest, official evaluator output, complete per-run artifacts, anti-cheat passing, 95% CI, reproduction command.
+
+See [`benchmarks/REPRODUCIBILITY.md`](benchmarks/REPRODUCIBILITY.md) for running official evaluations.
 
 ---
 

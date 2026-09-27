@@ -1,0 +1,39 @@
+{
+  "version": "1.0.0",
+  "createdAt": "2026-09-27T18:51:55.808Z",
+  "benchmarkCommit": "361dad10bd09543beff92582dba4a3db1cf2f345",
+  "dataset": {
+    "name": "multi-benchmark",
+    "version": "1.0.0",
+    "source": "official",
+    "taskIds": [
+      "swe-bench-tasks-placeholder"
+    ]
+  },
+  "evaluationCriteria": {
+    "successLevels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F"
+    ],
+    "primaryMetric": "Level F success rate (verified engineering task success)",
+    "antiCheatChecks": [
+      "test_file_integrity",
+      "assertion_strength_analysis",
+      "evaluator_code_integrity",
+      "benchmark_infra_integrity",
+      "network_access_monitoring",
+      "hardcoded_output_detection"
+    ]
+  },
+  "environment": {
+    "platform": "linux",
+    "arch": "x64",
+    "nodeVersion": "v26.8.1",
+    "runtime": "node"
+  },
+  "hash": "2ec102f680170ea201661c024efc2f84e03c600e50ad4601b4a95aef83006671"
+}

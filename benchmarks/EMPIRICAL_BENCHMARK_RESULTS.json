@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-27T15:10:44.067Z",
+  "timestamp": "2026-09-27T20:24:37.783Z",
   "hardware": {
     "platform": "linux",
     "arch": "x64",
@@ -8,52 +8,57 @@
   },
   "cliPerformance": {
     "coldStartMs": 42.05,
-    "warmExecutionMs": 0.014,
-    "memoryRssMb": 58.95,
-    "heapUsedMb": 6.09,
-    "heapTotalMb": 8.38
+    "warmExecutionMs": 0.016,
+    "memoryRssMb": 58.27,
+    "heapUsedMb": 7.1,
+    "heapTotalMb": 9.38,
+    "measurementNote": "INTERNAL TIMING ONLY: Measures TerminalTokenFilter.filter() in-process latency, not actual CLI process startup. Formula: first_iteration * 8.5 + 42.0ms. Does not measure competitor processes. NOT comparable to Electron/IDE startup times."
   },
   "vikingCompression": {
-    "totalFilesScanned": 50,
-    "rawBytes": 311246,
-    "rawEstimatedTokens": 82204,
-    "l0AbstractBytes": 32210,
-    "l0EstimatedTokens": 8598,
-    "l0ReductionPct": 89.5,
-    "l1StructuralBytes": 67089,
-    "l1EstimatedTokens": 17820,
-    "l1ReductionPct": 78.3,
-    "weightedEffectiveTokens": 18725,
-    "weightedReductionPct": 77.2,
-    "costPer100kTurnsRawUsd": 24661.2,
-    "costPer100kTurnsCompressedUsd": 5617.56,
-    "costSavingsPct": 77.2
+    "totalFilesScanned": 56,
+    "rawBytes": 410208,
+    "rawEstimatedTokens": 108593,
+    "l0AbstractBytes": 38308,
+    "l0EstimatedTokens": 10224,
+    "l0ReductionPct": 90.6,
+    "l1StructuralBytes": 81540,
+    "l1EstimatedTokens": 21676,
+    "l1ReductionPct": 80,
+    "weightedEffectiveTokens": 23497,
+    "weightedReductionPct": 78.4,
+    "costPer100kTurnsRawUsd": 32577.9,
+    "costPer100kTurnsCompressedUsd": 7048.95,
+    "costSavingsPct": 78.4,
+    "measurementNote": "CHARACTER-RATIO ESTIMATE ONLY: Uses line-based string filters (not production Viking retrieval). Token estimate: text.length/3.75 (not model tokenizer). Weighting (60/30/10) and pricing ($3/1M) are stipulated. No retrieval relevance labels, task queries, paired control runs, or agent outcome measurements. Does not establish actual model token savings, dollar savings, or maintained engineering success."
   },
   "terminalFilter": {
     "rawChars": 77600,
     "filteredChars": 11799,
     "tokensSaved": 16451,
     "reductionPct": 84.8,
-    "processingTimeUs": 2476.42
+    "processingTimeUs": 2563.77,
+    "measurementNote": "SYNTHETIC INPUT: Measures ANSI/spinner stripping on generated test data. Not measured on actual agent tool output. Token savings estimated via character ratio. Does not establish token reduction in agent workflows."
   },
   "gnapConsensus": {
     "totalCycles": 25,
     "totalSteps": 100,
-    "wallClockMs": 45.48,
-    "throughputStepsPerSec": 2199,
-    "latencyP50Ms": 0.41,
-    "latencyP95Ms": 0.71,
-    "latencyP99Ms": 2
+    "wallClockMs": 59.6,
+    "throughputStepsPerSec": 1678,
+    "latencyP50Ms": 0.48,
+    "latencyP95Ms": 1.42,
+    "latencyP99Ms": 4.79,
+    "measurementNote": "SYNTHETIC MICROBENCHMARK: 100 sequential signed steps in temporary repository. No task-level coordination, multi-agent task completion, or competitor baseline measured. Does not establish GNAP benefit for engineering tasks."
   },
   "contractValidation": {
     "totalValidations": 10000,
-    "wallClockMs": 21.98,
-    "throughputOpsPerSec": 454981,
-    "latencyMicrosecondsPerOp": 2.2
+    "wallClockMs": 22.21,
+    "throughputOpsPerSec": 450149,
+    "latencyMicrosecondsPerOp": 2.22,
+    "measurementNote": "LOCAL SERIALIZATION LOOP: JSON stringify/parse + field checks only. Does not invoke authoritative runtime schema validator (e.g., Zod, JSON Schema). Not a measure of contract validation in production path."
   },
   "realMarketCases": {
     "sweBenchLite": {
-      "status": "VERIFIED_GOLD_STANDARD",
+      "status": "SMOKE_CHECK_ONLY",
       "dataset": "princeton-nlp/SWE-bench_Lite (Real GitHub Issues)",
       "pilotTasksSampled": 4,
       "tasksPassed": 4,
@@ -83,10 +88,11 @@
           "issueTitle": "Viewcode extension isolation for epub builders",
           "resolvedStatus": "RESOLVED_PASS"
         }
-      ]
+      ],
+      "measurementNote": "SMOKE CHECK ONLY: Runs 4 hardcoded Python scripts that implement miniature standalone logic, not actual SWE-bench instances. Does not load Django/SymPy/Flask/Sphinx repositories, does not invoke INDEX0 agent, does not produce patches, does not run official test environment. Pass rate is over inline scripts, not SWE-bench score. NOT an SWE-bench result."
     },
     "aiderExercism": {
-      "status": "VERIFIED_GOLD_STANDARD",
+      "status": "SMOKE_CHECK_ONLY",
       "dataset": "RajMaheshwari/Exercism-Python (Real Code Editing)",
       "exercisesEvaluated": 5,
       "exercisesPassed": 5,
@@ -117,71 +123,44 @@
           "language": "python",
           "firstTurnPass": true
         }
-      ]
+      ],
+      "measurementNote": "SMOKE CHECK ONLY: Writes hand-authored implementations and tests together into generated files, then runs pytest. No model/agent receives AiderBench instruction. No patch produced. Implementation and assertions coexist in same file. Hamming test compares identical strings. Measures hand-written example execution, not agent code-editing accuracy."
     },
     "realRepoSurgery": {
       "targetRepo": "xyflow/xyflow (100k+ LOC)",
       "crownJewelsIsolated": 1,
       "cruftEliminatedCount": 3,
-      "perfGain": "8.2x throughput improvement, 80% memory reduction"
+      "perfGain": "8.2x throughput improvement, 80% memory reduction",
+      "measurementNote": "UNVERIFIED: Invokes engine.reengineerRepo() on network URL. No cloned commit, environment, task patch, test run, baseline, raw logs, or independent confirmation recorded. Fallback defaults produce plausible output when result fields absent. Does not demonstrate reproducible performance experiment or correct repository change."
     }
   },
-  "competitorComparison": [
-    {
-      "dimension": "SWE-bench Verified %",
-      "cursorAi": "73.4%",
-      "claudeCode": "80.9% – 95.0%",
-      "devinOpenHands": "74.0% – 80.8%",
-      "index0Ai": "96.2% – 97.0%"
-    },
-    {
-      "dimension": "SWE-bench Pro (Multi-File)",
-      "cursorAi": "59.1% – 67.2%",
-      "claudeCode": "69.2% – 80.0%",
-      "devinOpenHands": "45.9% – 61.5%",
-      "index0Ai": "82.5%"
-    },
-    {
-      "dimension": "AiderBench (Exercism)",
-      "cursorAi": "74.2%",
-      "claudeCode": "78.5%",
-      "devinOpenHands": "72.0%",
-      "index0Ai": "84.2% – 92.0%"
-    },
-    {
-      "dimension": "Terminal Autonomy (TB-4.0)",
-      "cursorAi": "37.3%",
-      "claudeCode": "52.3% – 55.8%",
-      "devinOpenHands": "~42.0%",
-      "index0Ai": "58.5%"
-    },
-    {
-      "dimension": "Context Token Reduction",
-      "cursorAi": "0% (Raw code)",
-      "claudeCode": "Cache pricing only",
-      "devinOpenHands": "0%",
-      "index0Ai": "76.9% – 91.0%"
-    },
-    {
-      "dimension": "CLI Cold Start Latency",
-      "cursorAi": "> 1,200ms",
-      "claudeCode": "~350ms",
-      "devinOpenHands": "N/A (Cloud)",
-      "index0Ai": "< 85ms"
-    },
-    {
-      "dimension": "Process Memory (RSS)",
-      "cursorAi": "800MB – 1.4GB",
-      "claudeCode": "~120MB",
-      "devinOpenHands": "> 2GB",
-      "index0Ai": "< 50MB"
-    },
-    {
-      "dimension": "Human Edits per Task",
-      "cursorAi": "3.9 edits",
-      "claudeCode": "1.4 edits",
-      "devinOpenHands": "2.5 edits",
-      "index0Ai": "0.2 edits"
-    }
-  ]
+  "integrity": {
+    "claimFirewallActive": true,
+    "unverifiedClaimsQuarantined": [
+      "SWE-bench Verified 96.2–97.0%",
+      "SWE-bench Pro 82.5%",
+      "Terminal-Bench 58.5%",
+      "AiderBench 84.2–100% / 92%",
+      "Viking Context Reduction 34.3–91.0% (end-to-end claim)",
+      "CLI Cold-Start 42ms (cross-product comparison)",
+      "Memory Comparison vs Cursor/Claude/Devin",
+      "GNAP Throughput as Task Coordination Benefit",
+      "Repository Surgery 8.2x / 80%",
+      "Human Interventions 0.2/task",
+      "Cursor/Claude/Copilot/Devin Outcome Comparisons"
+    ],
+    "blockedFromPublication": [
+      "SWE-bench Verified 96.2–97.0%",
+      "SWE-bench Pro 82.5%",
+      "Terminal-Bench 58.5%",
+      "AiderBench 84.2–100% / 92%",
+      "Viking Context Reduction 34.3–91.0% (end-to-end claim)",
+      "CLI Cold-Start 42ms (cross-product comparison)",
+      "Memory Comparison vs Cursor/Claude/Devin",
+      "GNAP Throughput as Task Coordination Benefit",
+      "Repository Surgery 8.2x / 80%",
+      "Human Interventions 0.2/task",
+      "Cursor/Claude/Copilot/Devin Outcome Comparisons"
+    ]
+  }
 }

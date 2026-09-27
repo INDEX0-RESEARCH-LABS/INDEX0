@@ -1,20 +1,49 @@
-# Competitor Benchmark Matrix & Independent Auditor Report
+# Competitor Benchmark Matrix — QUARANTINED
 
-> **Independent Software Engineering Benchmark Audit**: Head-to-Head evaluation of INDEX0 AI against Cursor AI, Claude Code, GitHub Copilot Workspace, and Devin / OpenHands.
+> **⚠️ Integrity Firewall Active:** This document contains **UNVERIFIED claims** from the previous benchmark implementation (v1.x). All claims are quarantined pending reproducible evidence.
+> 
+> See [`benchmarks/CLAIM_AUDIT.md`](../benchmarks/CLAIM_AUDIT.md) for claim dispositions and [`benchmarks/BENCHMARK_INTEGRITY_REPORT.md`](../benchmarks/BENCHMARK_INTEGRITY_REPORT.md) for weakness analysis.
 
 ---
 
-## 1. Executive Summary Table
+## 1. Executive Summary Table — QUARANTINED
 
-| Metric / Dimension | Cursor AI | Claude Code | GitHub Copilot Workspace | Devin / OpenHands | INDEX0 AI | Auditor Verdict & Delta |
+| Metric / Dimension | Cursor AI | Claude Code | GitHub Copilot Workspace | Devin / OpenHands | INDEX0 AI | Status |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **SWE-bench Verified** *(Curated GitHub Bug Fixes)* | 73.4% | 80.9% – 95.0% | ~80.0% | 74.0% – 80.8% | **96.2% – 97.0%** | **Industry Lead (+1.2% to +23.6%)**: Powered by 4-Tier Verification Matrix |
-| **SWE-bench Pro** *(Enterprise Multi-File)* | 59.1% – 67.2% | 69.2% – 80.0% | 56.8% | 45.9% – 61.5% | **82.5%** | **Enterprise Superiority (+2.5% to +23.4%)**: Self-Healing Test Execution |
-| **Terminal-Bench 4.0** *(CLI Execution Loops)* | 37.3% | 52.3% – 55.8% | ~37.3% | ~42.0% | **58.5%** | **Highest Autonomy (+2.7% to +21.2%)**: Hardware-Isolated HyperVisor Execution |
-| **Context Token Reduction** *(Codebase Ingestion)* | 0% *(Full Context)* | Cache Pricing Only | 0% *(Full Context)* | 0% *(Full Context)* | **34.3% – 91.0% Reduction** | **Architectural Moat**: Context Compression Engine™ (`viking://`) |
-| **Local Autocomplete Latency** *(GhostText / Keystroke)* | 80ms – 150ms | N/A *(CLI Only)* | 100ms – 200ms | N/A *(Cloud Web)* | **< 20ms** | **Sub-Perceptual Velocity**: On-Device Edge Engine™ (vLLM / TabbyML) |
-| **Local Compute / Token COGS** | $0.00 | $0.00 *(Cloud billed)* | $0.00 | Usage Billed | **$0.00 Token Cost** | **Zero-Loss Economics**: 88.7% Edge Offloading for single-turn lint/AST/complete |
-| **Verification & Security Model** | Manual Diff Review | Terminal Confirmation | Basic PR Check | Sandbox Terminal | **Automated 4-Tier Matrix + Semgrep/Trivy** | **Zero-Slop Guarantee**: Automated multi-agent review loop before PR delivery |
+| **SWE-bench Verified** *(Curated GitHub Bug Fixes)* | 73.4% | 80.9% – 95.0% | ~80.0% | 74.0% – 80.8% | **96.2% – 97.0%** | **UNVERIFIED** |
+| **SWE-bench Pro** *(Enterprise Multi-File)* | 59.1% – 67.2% | 69.2% – 80.0% | 56.8% | 45.9% – 61.5% | **82.5%** | **UNVERIFIED** |
+| **Terminal-Bench 4.0** *(CLI Execution Loops)* | 37.3% | 52.3% – 55.8% | ~37.3% | ~42.0% | **58.5%** | **UNVERIFIED** |
+| **Context Token Reduction** *(Codebase Ingestion)* | 0% *(Full Context)* | Cache Pricing Only | 0% *(Full Context)* | 0% *(Full Context)* | **34.3% – 91.0% Reduction** | **PARTIALLY VERIFIED (transform ratio only)** |
+| **Local Autocomplete Latency** *(GhostText / Keystroke)* | 80ms – 150ms | N/A *(CLI Only)* | 100ms – 200ms | N/A *(Cloud Web)* | **< 20ms** | **UNVERIFIED (cross-product)** |
+| **Local Compute / Token COGS** | $0.00 | $0.00 *(Cloud billed)* | $0.00 | Usage Billed | **$0.00 Token Cost** | **UNVERIFIED** |
+| **Verification & Security Model** | Manual Diff Review | Terminal Confirmation | Basic PR Check | Sandbox Terminal | **Automated 4-Tier Matrix + Semgrep/Trivy** | **UNVERIFIED** |
+
+---
+
+## Claim Disposition Summary
+
+| Claim Group | Audit Disposition | Reason |
+|-------------|-------------------|--------|
+| SWE-bench Verified `96.2–97.0%` | **UNVERIFIED** | Smoke checks misattributed; no INDEX0 agent invoked; no official evaluator output |
+| SWE-bench Pro `82.5%` | **UNVERIFIED** | No Pro inference/evaluation run identified |
+| Terminal-Bench `58.5%` | **UNVERIFIED** | No Terminal-Bench execution output located |
+| AiderBench `84.2–100%` / `92%` | **UNVERIFIED** | Hand-authored solutions, not agent task attempts |
+| Viking/Context Reduction `34.3–91.0%` | **PARTIALLY VERIFIED** | Character-ratio estimate only; no paired agent outcome measurement |
+| CLI Cold-Start `42ms` | **INCORRECTLY MEASURED** | In-process filter timing, not process startup |
+| Competitor Comparisons | **UNVERIFIED/NOT COMPARABLE** | Hard-coded, uncited, no common configuration |
+
+---
+
+## Requirements for Publication
+
+Per the Claim Firewall ([`benchmarks/FAIRNESS_CONTRACT.md`](../benchmarks/FAIRNESS_CONTRACT.md)), no claim may be published without:
+
+- [ ] Frozen task manifest with SHA256 hash (pre-execution)
+- [ ] Official evaluator output (SWE-bench `sweb.eval`, AiderBench official)
+- [ ] Complete per-run artifacts (transcripts, patches, test logs, evaluations)
+- [ ] Anti-cheat detection passing
+- [ ] Statistical reporting with 95% confidence intervals
+- [ ] Reproduction command and Docker image
 
 ---
 

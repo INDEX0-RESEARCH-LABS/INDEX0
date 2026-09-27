@@ -1,0 +1,36 @@
+{
+  "runId": "bench-1790534832163-d08fc14d",
+  "taskId": "multi-benchmark",
+  "startedAt": "2026-09-27T18:47:12.168Z",
+  "agentConfig": {
+    "model": "test-model",
+    "provider": "test",
+    "version": "1.0.0",
+    "temperature": 0,
+    "maxTokens": 4096,
+    "toolBudget": 50,
+    "timeBudgetMs": 300000
+  },
+  "environment": {
+    "platform": "linux",
+    "arch": "x64",
+    "cpus": 4,
+    "totalMemoryGb": 15.5,
+    "networkPolicy": "restricted",
+    "sandboxConfig": "firecracker-microvm"
+  },
+  "repository": {
+    "url": "local",
+    "commit": "361dad10bd09543beff92582dba4a3db1cf2f345"
+  },
+  "task": {
+    "id": "multi-benchmark",
+    "description": "Multi-benchmark suite",
+    "difficulty": "D3",
+    "filesEstimated": 0
+  },
+  "checksums": {
+    "manifest": "c76301b3c3c360ed268d1d5a3e9b59bc964497f0716773e9ff743f4a1874bce9",
+    "config": "5e9251964198c59cc780b73638667cd408f50f44947e1046b6b11dcc279d0800"
+  }
+}
