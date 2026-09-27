@@ -41,7 +41,9 @@
 
     "canvas:dev": "cd agent-canvas/frontend && pnpm dev",
     "canvas:mock": "cd agent-canvas/frontend && pnpm dev:mock",
-    "gnap:cycle": "node packages/client-harness/dist/cli.js --gnap"
+    "gnap:cycle": "node packages/client-harness/dist/cli.js --gnap",
+    "benchmark": "node packages/client-harness/dist/cli.js benchmark",
+    "benchmark:market": "node packages/client-harness/dist/cli.js benchmark --market"
   },
   "devDependencies": {
     "@index0/contracts": "workspace:*",

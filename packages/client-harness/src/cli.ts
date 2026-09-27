@@ -16,6 +16,7 @@ import { TerminalTokenFilter } from './filter.js';
 import { GitWorktreeManager } from './worktree.js';
 import { Index0Engine } from './engine.js';
 import { launchTui } from './launcher.js';
+import { executeFullBenchmarkSuite } from './benchmark.js';
 import {
   performDeviceFlowLogin,
   loadCredentials,
@@ -79,6 +80,12 @@ function printHelp(): void {
         command: 'index0 models',
         args: '',
         description: 'list all available models from sovereign gateway'
+      },
+      {
+        command: 'index0 benchmark',
+        args: '[--market|--json]',
+        description: 'run real market benchmarks (SWE-bench, AiderExercism, Viking, GNAP)',
+        badge: 'bench'
       },
       {
         command: 'index0 stats',
@@ -231,6 +238,10 @@ async function runContinuousShell(engine: Index0Engine): Promise<void> {
         await executeModelsCommand();
         continue;
       }
+      if (trimmed === '/benchmark' || trimmed === 'benchmark') {
+        await executeFullBenchmarkSuite({ market: true });
+        continue;
+      }
       if (trimmed === '/stats') {
         await executeStatsCommand();
         continue;
@@ -335,6 +346,9 @@ async function handlePaletteAction(
     const count = await manager.cleanupAll();
     console.log(`\n  ${symbol.tick} Pruned ${count} isolated agent worktrees.\n`);
     await waitForAnyKey();
+  } else if (choice === 'benchmark') {
+    await executeFullBenchmarkSuite({ market: true });
+    await waitForAnyKey();
   } else if (choice === 'stats') {
     await executeStatsCommand();
     await waitForAnyKey();
@@ -400,6 +414,7 @@ export async function startInteractiveSession(engine: Index0Engine): Promise<voi
         { id: 'models', label: '/models', description: 'Switch active sovereign model (F2)' },
         { id: 'worktrees', label: '/worktrees', description: 'List active isolated agent git worktrees' },
         { id: 'clean', label: '/clean', description: 'Prune and remove all agent git worktrees' },
+        { id: 'benchmark', label: '/benchmark', description: 'Run real market empirical benchmarks (SWE-bench, Aider, Viking)' },
         { id: 'stats', label: '/stats', description: 'Show token reduction, viking:// metrics & spend caps' },
         { id: 'health', label: '/health', description: 'Verify sovereign gateway, orchestrator, and edge engine' },
         { id: 'clear', label: '/clear', description: 'Clear terminal screen and redraw cockpit' },
@@ -864,6 +879,21 @@ async function main(): Promise<void> {
   // 6. Stats Command
   if (command === 'stats') {
     await executeStatsCommand();
+    return;
+  }
+
+  // 6b. Real Market Benchmark Command
+  if (command === 'benchmark' || command === 'bench') {
+    const isMarket = args.includes('--market') || args.includes('-m');
+    const isSwe = args.includes('--swe-bench') || args.includes('--swe');
+    const isAider = args.includes('--aider');
+    const isJson = args.includes('--json');
+    await executeFullBenchmarkSuite({
+      market: isMarket || isSwe || isAider || true, // default to including real market cases
+      sweBench: isSwe,
+      aider: isAider,
+      json: isJson
+    });
     return;
   }
 

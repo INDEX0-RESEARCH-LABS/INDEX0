@@ -341,8 +341,17 @@ async function main() {
     contractValidation: validation
   };
 
-  const outputPath = path.join(repoRoot, 'docs/EMPIRICAL_BENCHMARK_RESULTS.json');
+  const benchmarksDir = path.join(repoRoot, 'benchmarks');
+  await fs.mkdir(benchmarksDir, { recursive: true });
+  const outputPath = path.join(benchmarksDir, 'EMPIRICAL_BENCHMARK_RESULTS.json');
   await fs.writeFile(outputPath, JSON.stringify(report, null, 2), 'utf-8');
+
+  // Keep docs copy synchronized
+  const docsPath = path.join(repoRoot, 'docs/EMPIRICAL_BENCHMARK_RESULTS.json');
+  try {
+    await fs.writeFile(docsPath, JSON.stringify(report, null, 2), 'utf-8');
+  } catch {}
+
   console.log(`[+] Empirical benchmark report generated at: ${outputPath}`);
 }
 

@@ -426,6 +426,7 @@ export interface SlashCommand {
 }
 
 export const DEFAULT_SLASH_COMMANDS: SlashCommand[] = [
+  { name: '/benchmark', description: 'Run real market empirical benchmark suite (SWE-bench, Viking, GNAP)' },
   { name: '/review', args: '<task>', description: 'Run 4-tier LangGraph anti-slop review matrix' },
   { name: '/prompt', args: '<task>', description: 'Stream prompt directly to Azure OpenAI via LiteLLM' },
   { name: '/models', description: 'Interactive sovereign model selector' },

@@ -157,4 +157,5 @@ export * from './worktree.js';
 export * from './engine.js';
 export * from './auth.js';
 export * from './launcher.js';
+export * from './benchmark.js';
 
