@@ -97,7 +97,7 @@ function printHelp(): void {
       {
         command: 'index0 benchmark',
         args: '[--market|--json|--official-swe-bench|--official-aider]',
-        description: 'run benchmarks: --market (microbenchmarks), --official-swe-bench (official SWE-bench), --official-aider (official AiderBench)',
+        description: 'run benchmarks: --market (microbenchmarks), --official-swe-bench (official SWE-bench, experimental, not yet validated), --official-aider (official AiderBench, experimental, not yet validated)',
         badge: 'bench'
       },
       {
@@ -140,16 +140,16 @@ function printHelp(): void {
   );
 
   console.log('\n' + renderCommandCatalog('Protocol & Sandbox Flags', [
-{
-        command: '--official-swe-bench',
-        args: '[--dataset=Lite|Verified|Pro] [--max-instances=N] [--llm-config=NAME] [--runtime=docker|remote] [--workers=N]',
-        description: 'run OFFICIAL SWE-bench evaluation (Princeton harness, Docker, real tests)'
-      },
-      {
-        command: '--official-aider',
-        args: '[--max-instances=N] [--llm-config=NAME] [--workers=N] [--unit-tests]',
-        description: 'run OFFICIAL AiderBench evaluation (Exercism, real pytest)'
-      },
+    {
+      command: '--official-swe-bench',
+      args: '[--dataset=Lite|Verified|Pro] [--max-instances=N] [--llm-config=NAME] [--runtime=docker|remote] [--workers=N]',
+      description: 'run official SWE-bench evaluation: Princeton harness, Docker, real tests (experimental, not yet validated)'
+    },
+    {
+      command: '--official-aider',
+      args: '[--max-instances=N] [--llm-config=NAME] [--workers=N] [--unit-tests]',
+      description: 'run official AiderBench evaluation: Exercism, real pytest (experimental, not yet validated)'
+    },
       {
         command: '--filter',
         args: '=<text>',

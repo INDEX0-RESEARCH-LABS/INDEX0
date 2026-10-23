@@ -25,7 +25,7 @@ cat << 'EOF'
    ▀▀  ▀  ▀ ▀▀▀▀ ▀▀▀▀ █  █ ▀▀▀▀    ▀  ▀  ▀▀ 
 EOF
 echo -e "${WHITE}SOVEREIGN TERMINAL COCKPIT & AI HARNESS${NC}"
-echo -e "${GRAY}World's First Sovereign Software Engineering Platform${NC}\n"
+echo -e "${GRAY}Self-hosted multi-agent software engineering CLI with sandboxed execution and context compression${NC}\n"
 
 # 1. Detect OS & Architecture
 echo -e "${WHITE}[1/4]${NC} Detecting system architecture..."
