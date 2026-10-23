@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-27T20:24:37.783Z",
+  "timestamp": "2026-10-23T08:07:22.396Z",
   "hardware": {
     "platform": "linux",
     "arch": "x64",
@@ -7,28 +7,28 @@
     "totalMemoryGb": "15.5 GB"
   },
   "cliPerformance": {
-    "coldStartMs": 42.05,
-    "warmExecutionMs": 0.016,
-    "memoryRssMb": 58.27,
-    "heapUsedMb": 7.1,
-    "heapTotalMb": 9.38,
+    "coldStartMs": 42.1,
+    "warmExecutionMs": 0.012,
+    "memoryRssMb": 84.18,
+    "heapUsedMb": 9.38,
+    "heapTotalMb": 10.63,
     "measurementNote": "INTERNAL TIMING ONLY: Measures TerminalTokenFilter.filter() in-process latency, not actual CLI process startup. Formula: first_iteration * 8.5 + 42.0ms. Does not measure competitor processes. NOT comparable to Electron/IDE startup times."
   },
   "vikingCompression": {
-    "totalFilesScanned": 56,
-    "rawBytes": 410208,
-    "rawEstimatedTokens": 108593,
-    "l0AbstractBytes": 38308,
-    "l0EstimatedTokens": 10224,
-    "l0ReductionPct": 90.6,
-    "l1StructuralBytes": 81540,
-    "l1EstimatedTokens": 21676,
-    "l1ReductionPct": 80,
-    "weightedEffectiveTokens": 23497,
-    "weightedReductionPct": 78.4,
-    "costPer100kTurnsRawUsd": 32577.9,
-    "costPer100kTurnsCompressedUsd": 7048.95,
-    "costSavingsPct": 78.4,
+    "totalFilesScanned": 59,
+    "rawBytes": 425565,
+    "rawEstimatedTokens": 112700,
+    "l0AbstractBytes": 39252,
+    "l0EstimatedTokens": 10479,
+    "l0ReductionPct": 90.7,
+    "l1StructuralBytes": 82540,
+    "l1EstimatedTokens": 21944,
+    "l1ReductionPct": 80.5,
+    "weightedEffectiveTokens": 24141,
+    "weightedReductionPct": 78.6,
+    "costPer100kTurnsRawUsd": 33810,
+    "costPer100kTurnsCompressedUsd": 7242.18,
+    "costSavingsPct": 78.6,
     "measurementNote": "CHARACTER-RATIO ESTIMATE ONLY: Uses line-based string filters (not production Viking retrieval). Token estimate: text.length/3.75 (not model tokenizer). Weighting (60/30/10) and pricing ($3/1M) are stipulated. No retrieval relevance labels, task queries, paired control runs, or agent outcome measurements. Does not establish actual model token savings, dollar savings, or maintained engineering success."
   },
   "terminalFilter": {
@@ -36,24 +36,24 @@
     "filteredChars": 11799,
     "tokensSaved": 16451,
     "reductionPct": 84.8,
-    "processingTimeUs": 2563.77,
+    "processingTimeUs": 3344.41,
     "measurementNote": "SYNTHETIC INPUT: Measures ANSI/spinner stripping on generated test data. Not measured on actual agent tool output. Token savings estimated via character ratio. Does not establish token reduction in agent workflows."
   },
   "gnapConsensus": {
     "totalCycles": 25,
     "totalSteps": 100,
-    "wallClockMs": 59.6,
-    "throughputStepsPerSec": 1678,
-    "latencyP50Ms": 0.48,
-    "latencyP95Ms": 1.42,
-    "latencyP99Ms": 4.79,
+    "wallClockMs": 77.43,
+    "throughputStepsPerSec": 1291.5,
+    "latencyP50Ms": 0.65,
+    "latencyP95Ms": 1.91,
+    "latencyP99Ms": 3.52,
     "measurementNote": "SYNTHETIC MICROBENCHMARK: 100 sequential signed steps in temporary repository. No task-level coordination, multi-agent task completion, or competitor baseline measured. Does not establish GNAP benefit for engineering tasks."
   },
   "contractValidation": {
     "totalValidations": 10000,
-    "wallClockMs": 22.21,
-    "throughputOpsPerSec": 450149,
-    "latencyMicrosecondsPerOp": 2.22,
+    "wallClockMs": 39.28,
+    "throughputOpsPerSec": 254551,
+    "latencyMicrosecondsPerOp": 3.93,
     "measurementNote": "LOCAL SERIALIZATION LOOP: JSON stringify/parse + field checks only. Does not invoke authoritative runtime schema validator (e.g., Zod, JSON Schema). Not a measure of contract validation in production path."
   },
   "realMarketCases": {
@@ -95,33 +95,33 @@
       "status": "SMOKE_CHECK_ONLY",
       "dataset": "RajMaheshwari/Exercism-Python (Real Code Editing)",
       "exercisesEvaluated": 5,
-      "exercisesPassed": 5,
-      "passRatePct": 100,
+      "exercisesPassed": 0,
+      "passRatePct": 0,
       "sampleExercises": [
         {
           "name": "two-fer",
           "language": "python",
-          "firstTurnPass": true
+          "firstTurnPass": false
         },
         {
           "name": "leap-year",
           "language": "python",
-          "firstTurnPass": true
+          "firstTurnPass": false
         },
         {
           "name": "matrix",
           "language": "python",
-          "firstTurnPass": true
+          "firstTurnPass": false
         },
         {
           "name": "word-count",
           "language": "python",
-          "firstTurnPass": true
+          "firstTurnPass": false
         },
         {
           "name": "hamming",
           "language": "python",
-          "firstTurnPass": true
+          "firstTurnPass": false
         }
       ],
       "measurementNote": "SMOKE CHECK ONLY: Writes hand-authored implementations and tests together into generated files, then runs pytest. No model/agent receives AiderBench instruction. No patch produced. Implementation and assertions coexist in same file. Hamming test compares identical strings. Measures hand-written example execution, not agent code-editing accuracy."

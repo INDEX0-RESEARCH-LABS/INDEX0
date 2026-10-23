@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "type": "module",
   "private": false,
-  "description": "INDEX0 AI — Sovereign Software Engineering CLI",
+  "description": "INDEX0 AI: Sovereign Software Engineering CLI",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "bin": {
@@ -44,7 +44,7 @@
   "scripts": {
     "build": "tsc && chmod +x dist/cli.js",
     "typecheck": "tsc --noEmit",
-    "test": "tsc && chmod +x dist/cli.js && node --test test/*.test.ts",
+    "test": "tsc && chmod +x dist/cli.js && npx tsx --test test/*.test.ts",
     "prepublishOnly": "pnpm build"
   },
   "devDependencies": {

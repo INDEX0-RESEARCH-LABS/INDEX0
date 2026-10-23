@@ -11,7 +11,7 @@ import {
   getQuarantinedClaims
 } from '../dist/benchmark.js';
 
-describe('Benchmark Suite — Mechanics Verification', () => {
+describe('Benchmark Suite: Mechanics Verification', () => {
   it('should measure CLI process latency and memory footprint', async () => {
     const perf = await runCliPerformanceBenchmark();
     assert.ok(perf.coldStartMs > 0);
@@ -22,7 +22,9 @@ describe('Benchmark Suite — Mechanics Verification', () => {
   });
 
   it('should measure Viking context compression across real files', async () => {
-    const repoRoot = path.resolve(process.cwd(), '../..');
+    const repoRoot = process.cwd().includes('packages/client-harness')
+      ? path.resolve(process.cwd(), '../..')
+      : process.cwd();
     const viking = await runVikingCompressionBenchmark(repoRoot);
     assert.ok(viking.totalFilesScanned > 0);
     assert.ok(viking.rawEstimatedTokens > 0);

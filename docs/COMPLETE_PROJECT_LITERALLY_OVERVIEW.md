@@ -1,7 +1,7 @@
 > **Status: UNVERIFIED claims. See [benchmarks/CLAIM_AUDIT.md](../benchmarks/CLAIM_AUDIT.md).**
 > Benchmark numbers and capability claims in this document are unverified. History is preserved for audit purposes only.
 
-# INDEX0 — Platform History and Architecture Blueprint: From Start to Now
+# INDEX0: Platform History and Architecture Blueprint: From Start to Now
 > **The End-to-End Blueprint, Chronological History, and Architectural Manual**
 
 
@@ -48,13 +48,13 @@
 
 ## 1. Executive Summary & Core Philosophy
 
-**INDEX0** is the world's first **Sovereign Engineering AGI**—an autonomous cognitive operating system capable of end-to-end software engineering (from mathematical specification and hypothesis search to isolated hypervisor execution, empirical verification, and textual backpropagation) with zero vendor lock-in.
+**INDEX0** is a self-hosted multi-agent software engineering platform with a CLI, sandboxed execution, and context compression: an autonomous system capable of end-to-end software engineering (from specification and hypothesis search to isolated execution, verification, and review) with zero vendor lock-in.
 
 ### Core Motto
 > **"People Over Tools. Work Verified. Time to Unplug."**
 
 ### Foundational Differentiators
-1. **Zero Vendor Lock-in & Full Self-Hosting**: Every layer—from code completion to autonomous agent sandboxes, telemetry, identity, and billing—can be run fully on sovereign hardware or private cloud VMs with zero proprietary cloud dependencies.
+1. **Zero Vendor Lock-in & Full Self-Hosting**: Every layer, from code completion to autonomous agent sandboxes, telemetry, identity, and billing, can be run fully on sovereign hardware or private cloud VMs with zero proprietary cloud dependencies.
 2. **Deterministic Code Quality via Anti-Slop Matrix**: While commercial AI tools stream unchecked, hallucinatory code diffs directly into user projects, INDEX0 enforces a strict **4-Tier Autonomous Review Loop** (`Architect` → `Developer` → `Critic` → `QA`) with automated textual backpropagation via **TextGrad** and isolated hypervisor testing.
 3. **MCTS Multiverse Search Engine**: Explores parallel algorithmic hypotheses across isolated Git branches, evaluating competing solutions on an automated multi-dimensional Pareto frontier (correctness, safety, performance, TextGrad loss).
 4. **Autonomous Repository Reverse-Engineering (`index0 re-engineer`)**: Dissects production open-source repositories (e.g., xyflow, tldraw), isolates the 10-20% core mathematical, spatial, and state machine "Crown Jewels", discards legacy cruft (Webpack polyfills, Redux boilerplate), and elevates the core into zero-allocation modern TypeScript (Float64Array, fine-grained Signals, WebGL/OffscreenCanvas).
@@ -620,21 +620,21 @@ The production stack runs on a dedicated Microsoft Azure host:
 
 | Metric / Dimension | Cursor AI | Claude Code | GitHub Copilot | Devin / OpenHands | INDEX0 AI | Auditor Verdict & Delta |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **SWE-bench Verified** | 73.4% | 80.9% – 95.0% | ~80.0% | 74.0% – 80.8% | **96.2% – 97.0%** | **Industry Lead (+1.2% to +23.6%)**: 4-Tier Review Loop |
-| **SWE-bench Pro (Multi-File)** | 59.1% – 67.2% | 69.2% – 80.0% | 56.8% | 45.9% – 61.5% | **82.5%** | **Enterprise Superiority (+2.5% to +23.4%)** |
-| **Terminal-Bench 4.0** | 37.3% | 52.3% – 55.8% | ~37.3% | ~42.0% | **58.5%** | **Highest Autonomy (+2.7% to +21.2%)** |
-| **Context Token Reduction** | 0% (Raw code) | Cache pricing only | 0% | 0% | **34.3% – 91.0%** | **OpenViking Protocol (`viking://`)** |
-| **Autocomplete Latency** | 80ms – 150ms | N/A (CLI only) | 100ms – 200ms | N/A | **< 20ms** | **Sub-perceptual velocity on edge** |
-| **Local Compute / Token Cost** | Cloud billed | Cloud billed | Cloud billed | Usage billed | **$0.00 Token COGS** | **88.7% Edge offloading via TabbyML** |
-| **Security & Review Model** | Manual diffs | Terminal prompt | Basic PR check | Sandbox | **4-Tier Matrix + Semgrep/TSan**| **Zero-Slop Guarantee** |
-| **Human Interventions/Task** | 3.9 | 1.4 | ~3.0 | 2.5 | **0.2** | **Massive reduction in review friction** |
+| **SWE-bench Verified** | 73.4% (UNVERIFIED) | 80.9% - 95.0% (UNVERIFIED) | ~80.0% (UNVERIFIED) | 74.0% - 80.8% (UNVERIFIED) | **96.2% - 97.0% (UNVERIFIED)** | **UNVERIFIED**: 4-Tier Review Loop |
+| **SWE-bench Pro (Multi-File)** | 59.1% - 67.2% (UNVERIFIED) | 69.2% - 80.0% (UNVERIFIED) | 56.8% (UNVERIFIED) | 45.9% - 61.5% (UNVERIFIED) | **82.5% (UNVERIFIED)** | **UNVERIFIED** |
+| **Terminal-Bench 4.0** | 37.3% (UNVERIFIED) | 52.3% - 55.8% (UNVERIFIED) | ~37.3% (UNVERIFIED) | ~42.0% (UNVERIFIED) | **58.5% (UNVERIFIED)** | **UNVERIFIED** |
+| **Context Token Reduction** | 0% (Raw code) | Cache pricing only | 0% | 0% | **34.3% - 91.0%** | **OpenViking Protocol (`viking://`)** (measured transform ratio on local string transforms, not end-to-end task results) |
+| **Autocomplete Latency** | 80ms - 150ms (UNVERIFIED) | N/A (CLI only) | 100ms - 200ms (UNVERIFIED) | N/A | **< 20ms (UNVERIFIED)** | **Edge autocomplete** |
+| **Local Compute / Token Cost** | Cloud billed | Cloud billed | Cloud billed | Usage billed | **$0.00 Token COGS (UNVERIFIED)** | **Edge offloading via TabbyML (UNVERIFIED)** |
+| **Security & Review Model** | Manual diffs | Terminal prompt | Basic PR check | Sandbox | **4-Tier Matrix + Semgrep/TSan**| **Multi-Tier Review** |
+| **Human Interventions/Task** | 3.9 (UNVERIFIED) | 1.4 (UNVERIFIED) | ~3.0 (UNVERIFIED) | 2.5 (UNVERIFIED) | **0.2 (UNVERIFIED)** | **UNVERIFIED** |
 
 ### 9.2 Unit Economics & Gross Margins
 - **Subscription Price**: $20.00 / month per seat.
-- **Estimated Monthly Compute COGS**: ~$4.50 per active seat (blended Azure OpenAI + Firecracker runtime).
-- **Target Gross Margin**: **77.5%+**, enabled by:
-  - 88.7% of keystroke completions offloaded to edge hardware at $0.00.
-  - OpenViking progressive context loading reducing LLM prompt tokens by up to 91.0%.
+- **Estimated Monthly Compute COGS**: ~$4.50 (UNVERIFIED) per active seat (blended Azure OpenAI + Firecracker runtime).
+- **Target Gross Margin**: **77.5%+ (UNVERIFIED)**, enabled by:
+  - 88.7% (UNVERIFIED) of keystroke completions offloaded to edge hardware at $0.00.
+  - OpenViking progressive context loading reducing LLM prompt tokens by up to 91.0% (measured transform ratio on local string transforms).
   - Intelligent LiteLLM model cascading (routing simple tasks to `azure-gpt-4o-mini`).
 
 ---

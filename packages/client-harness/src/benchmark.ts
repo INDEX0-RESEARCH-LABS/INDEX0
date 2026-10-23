@@ -1,5 +1,5 @@
 /**
- * INDEX0 AI — Real Market Benchmark Measurement Suite
+ * INDEX0 AI: Real Market Benchmark Measurement Suite
  * 
  * Conducts verifiable, empirical performance evaluations against industry gold-standard
  * software engineering benchmarks (SWE-bench, AiderBench, Viking context compression,
@@ -16,11 +16,12 @@ import { execSync } from 'node:child_process';
 import { GNAPWorker } from './gnap.js';
 import { TerminalTokenFilter } from './filter.js';
 import { Index0Engine } from './engine.js';
-import { color, symbol, drawBox } from './ui.js';
+import { color, symbol } from './ui.js';
 import {
   SANDBOX_QUOTAS,
   type ISandboxRequest
 } from './contracts.js';
+import { runOfficialBenchmarks, createTestConfig, IBenchmarkRunReport } from './benchmark-runner.js';
 
 export interface IBenchmarkOptions {
   market?: boolean;
@@ -28,6 +29,23 @@ export interface IBenchmarkOptions {
   aider?: boolean;
   json?: boolean;
   repoRoot?: string;
+  // Official benchmark options
+  official?: boolean;
+  officialSweBench?: {
+    dataset?: 'princeton-nlp/SWE-bench_Lite' | 'princeton-nlp/SWE-bench_Verified' | 'princeton-nlp/SWE-bench_Pro';
+    maxInstances?: number;
+    maxIterations?: number;
+    numWorkers?: number;
+    llmConfig?: string;
+    runtime?: 'docker' | 'remote';
+  };
+  officialAiderBench?: {
+    maxInstances?: number;
+    maxIterations?: number;
+    numWorkers?: number;
+    llmConfig?: string;
+    useUnitTests?: boolean;
+  };
 }
 
 export interface IEmpiricalBenchmarkReport {
@@ -44,6 +62,7 @@ export interface IEmpiricalBenchmarkReport {
     memoryRssMb: number;
     heapUsedMb: number;
     heapTotalMb: number;
+    measurementNote: string;
   };
   vikingCompression: {
     totalFilesScanned: number;
@@ -60,6 +79,7 @@ export interface IEmpiricalBenchmarkReport {
     costPer100kTurnsRawUsd: number;
     costPer100kTurnsCompressedUsd: number;
     costSavingsPct: number;
+    measurementNote: string;
   };
   terminalFilter: {
     rawChars: number;
@@ -67,6 +87,7 @@ export interface IEmpiricalBenchmarkReport {
     tokensSaved: number;
     reductionPct: number;
     processingTimeUs: number;
+    measurementNote: string;
   };
   gnapConsensus: {
     totalCycles: number;
@@ -76,12 +97,14 @@ export interface IEmpiricalBenchmarkReport {
     latencyP50Ms: number;
     latencyP95Ms: number;
     latencyP99Ms: number;
+    measurementNote: string;
   };
   contractValidation: {
     totalValidations: number;
     wallClockMs: number;
     throughputOpsPerSec: number;
     latencyMicrosecondsPerOp: number;
+    measurementNote: string;
   };
   realMarketCases: {
     sweBenchLite: {
@@ -96,6 +119,7 @@ export interface IEmpiricalBenchmarkReport {
         issueTitle: string;
         resolvedStatus: string;
       }>;
+      measurementNote: string;
     };
     aiderExercism: {
       status: string;
@@ -108,21 +132,21 @@ export interface IEmpiricalBenchmarkReport {
         language: string;
         firstTurnPass: boolean;
       }>;
+      measurementNote: string;
     };
     realRepoSurgery: {
       targetRepo: string;
       crownJewelsIsolated: number;
       cruftEliminatedCount: number;
       perfGain: string;
+      measurementNote: string;
     };
   };
-  competitorComparison: Array<{
-    dimension: string;
-    cursorAi: string;
-    claudeCode: string;
-    devinOpenHands: string;
-    index0Ai: string;
-  }>;
+  integrity: {
+    claimFirewallActive: boolean;
+    unverifiedClaimsQuarantined: string[];
+    blockedFromPublication: string[];
+  };
 }
 
 // Token approximation heuristic: ~3.75 characters per token in standard code
@@ -212,11 +236,12 @@ export async function runCliPerformanceBenchmark(): Promise<IEmpiricalBenchmarkR
   const warmMs = latencies[Math.floor(latencies.length / 2)];
 
   return {
-    coldStartMs: parseFloat((latencies[0] * 8.5 + 42.0).toFixed(2)), // real CLI Node/Bun load time ~45-80ms
+    coldStartMs: parseFloat((latencies[0] * 8.5 + 42.0).toFixed(2)),
     warmExecutionMs: parseFloat(warmMs.toFixed(3)),
     memoryRssMb: parseFloat((mem.rss / (1024 * 1024)).toFixed(2)),
     heapUsedMb: parseFloat((mem.heapUsed / (1024 * 1024)).toFixed(2)),
-    heapTotalMb: parseFloat((mem.heapTotal / (1024 * 1024)).toFixed(2))
+    heapTotalMb: parseFloat((mem.heapTotal / (1024 * 1024)).toFixed(2)),
+    measurementNote: 'INTERNAL TIMING ONLY: Measures TerminalTokenFilter.filter() in-process latency, not actual CLI process startup. Formula: first_iteration * 8.5 + 42.0ms. Does not measure competitor processes. NOT comparable to Electron/IDE startup times.'
   };
 }
 
@@ -303,7 +328,8 @@ export async function runVikingCompressionBenchmark(repoRoot: string): Promise<I
     weightedReductionPct: parseFloat(weightedReduction.toFixed(1)),
     costPer100kTurnsRawUsd: parseFloat(rawCost.toFixed(2)),
     costPer100kTurnsCompressedUsd: parseFloat(compressedCost.toFixed(2)),
-    costSavingsPct: parseFloat((((rawCost - compressedCost) / rawCost) * 100).toFixed(1))
+    costSavingsPct: parseFloat((((rawCost - compressedCost) / rawCost) * 100).toFixed(1)),
+    measurementNote: 'CHARACTER-RATIO ESTIMATE ONLY: Uses line-based string filters (not production Viking retrieval). Token estimate: text.length/3.75 (not model tokenizer). Weighting (60/30/10) and pricing ($3/1M) are stipulated. No retrieval relevance labels, task queries, paired control runs, or agent outcome measurements. Does not establish actual model token savings, dollar savings, or maintained engineering success.'
   };
 }
 
@@ -332,7 +358,8 @@ export function runTerminalFilterBenchmark(): IEmpiricalBenchmarkReport['termina
     filteredChars: filtered.stats.filteredLength,
     tokensSaved: filtered.stats.estimatedTokensSaved,
     reductionPct: parseFloat(filtered.stats.reductionPercentage.toFixed(1)),
-    processingTimeUs: parseFloat(elapsedUs.toFixed(2))
+    processingTimeUs: parseFloat(elapsedUs.toFixed(2)),
+    measurementNote: 'SYNTHETIC INPUT: Measures ANSI/spinner stripping on generated test data. Not measured on actual agent tool output. Token savings estimated via character ratio. Does not establish token reduction in agent workflows.'
   };
 }
 
@@ -393,7 +420,8 @@ export async function runGNAPConsensusBenchmark(): Promise<IEmpiricalBenchmarkRe
       throughputStepsPerSec: parseFloat(((latencies.length / totalTimeMs) * 1000).toFixed(1)),
       latencyP50Ms: parseFloat(p50.toFixed(2)),
       latencyP95Ms: parseFloat(p95.toFixed(2)),
-      latencyP99Ms: parseFloat(p99.toFixed(2))
+      latencyP99Ms: parseFloat(p99.toFixed(2)),
+      measurementNote: 'SYNTHETIC MICROBENCHMARK: 100 sequential signed steps in temporary repository. No task-level coordination, multi-agent task completion, or competitor baseline measured. Does not establish GNAP benefit for engineering tasks.'
     };
   } finally {
     await fs.rm(tmpDir, { recursive: true, force: true });
@@ -438,7 +466,8 @@ export function runContractValidationBenchmark(): IEmpiricalBenchmarkReport['con
     totalValidations: ITERATIONS,
     wallClockMs: parseFloat(totalTimeMs.toFixed(2)),
     throughputOpsPerSec: Math.round((ITERATIONS / totalTimeMs) * 1000),
-    latencyMicrosecondsPerOp: parseFloat(latencyMicros.toFixed(2))
+    latencyMicrosecondsPerOp: parseFloat(latencyMicros.toFixed(2)),
+    measurementNote: 'LOCAL SERIALIZATION LOOP: JSON stringify/parse + field checks only. Does not invoke authoritative runtime schema validator (e.g., Zod, JSON Schema). Not a measure of contract validation in production path.'
   };
 }
 
@@ -648,15 +677,16 @@ print('OK')
 
   return {
     sweBenchLite: {
-      status: 'VERIFIED_GOLD_STANDARD',
+      status: 'SMOKE_CHECK_ONLY',
       dataset: 'princeton-nlp/SWE-bench_Lite (Real GitHub Issues)',
       pilotTasksSampled: executedSweCases.length,
       tasksPassed: swePassed,
       passRatePct: parseFloat(((swePassed / executedSweCases.length) * 100).toFixed(1)),
-      curatedSampleCases: executedSweCases
+      curatedSampleCases: executedSweCases,
+      measurementNote: 'SMOKE CHECK ONLY: Runs 4 hardcoded Python scripts that implement miniature standalone logic, not actual SWE-bench instances. Does not load Django/SymPy/Flask/Sphinx repositories, does not invoke INDEX0 agent, does not produce patches, does not run official test environment. Pass rate is over inline scripts, not SWE-bench score. NOT an SWE-bench result.'
     },
     aiderExercism: {
-      status: 'VERIFIED_GOLD_STANDARD',
+      status: 'SMOKE_CHECK_ONLY',
       dataset: 'RajMaheshwari/Exercism-Python (Real Code Editing)',
       exercisesEvaluated: executedExercism.length,
       exercisesPassed: aiderPassed,
@@ -665,79 +695,36 @@ print('OK')
         name: e.name,
         language: e.language,
         firstTurnPass: e.firstTurnPass
-      }))
+      })),
+      measurementNote: 'SMOKE CHECK ONLY: Writes hand-authored implementations and tests together into generated files, then runs pytest. No model/agent receives AiderBench instruction. No patch produced. Implementation and assertions coexist in same file. Hamming test compares identical strings. Measures hand-written example execution, not agent code-editing accuracy.'
     },
     realRepoSurgery: {
       targetRepo: 'xyflow/xyflow (100k+ LOC)',
       crownJewelsIsolated: surgeryResult.spec?.crownJewels?.length ?? 1,
       cruftEliminatedCount: surgeryResult.spec?.cruftEliminated?.length ?? 3,
-      perfGain: surgeryResult.estimatedPerfGain
+      perfGain: surgeryResult.estimatedPerfGain,
+      measurementNote: 'UNVERIFIED: Invokes engine.reengineerRepo() on network URL. No cloned commit, environment, task patch, test run, baseline, raw logs, or independent confirmation recorded. Fallback defaults produce plausible output when result fields absent. Does not demonstrate reproducible performance experiment or correct repository change.'
     }
   };
 }
 
 
 /**
- * 7. Head-to-Head Market Competitor Matrix
+ * Integrity Firewall: List of claims quarantined as unverified
  */
-export function getCompetitorMatrix(): IEmpiricalBenchmarkReport['competitorComparison'] {
+export function getQuarantinedClaims(): string[] {
   return [
-    {
-      dimension: 'SWE-bench Verified %',
-      cursorAi: '73.4%',
-      claudeCode: '80.9% – 95.0%',
-      devinOpenHands: '74.0% – 80.8%',
-      index0Ai: '96.2% – 97.0%'
-    },
-    {
-      dimension: 'SWE-bench Pro (Multi-File)',
-      cursorAi: '59.1% – 67.2%',
-      claudeCode: '69.2% – 80.0%',
-      devinOpenHands: '45.9% – 61.5%',
-      index0Ai: '82.5%'
-    },
-    {
-      dimension: 'AiderBench (Exercism)',
-      cursorAi: '74.2%',
-      claudeCode: '78.5%',
-      devinOpenHands: '72.0%',
-      index0Ai: '84.2% – 92.0%'
-    },
-    {
-      dimension: 'Terminal Autonomy (TB-4.0)',
-      cursorAi: '37.3%',
-      claudeCode: '52.3% – 55.8%',
-      devinOpenHands: '~42.0%',
-      index0Ai: '58.5%'
-    },
-    {
-      dimension: 'Context Token Reduction',
-      cursorAi: '0% (Raw code)',
-      claudeCode: 'Cache pricing only',
-      devinOpenHands: '0%',
-      index0Ai: '76.9% – 91.0%'
-    },
-    {
-      dimension: 'CLI Cold Start Latency',
-      cursorAi: '> 1,200ms',
-      claudeCode: '~350ms',
-      devinOpenHands: 'N/A (Cloud)',
-      index0Ai: '< 85ms'
-    },
-    {
-      dimension: 'Process Memory (RSS)',
-      cursorAi: '800MB – 1.4GB',
-      claudeCode: '~120MB',
-      devinOpenHands: '> 2GB',
-      index0Ai: '< 50MB'
-    },
-    {
-      dimension: 'Human Edits per Task',
-      cursorAi: '3.9 edits',
-      claudeCode: '1.4 edits',
-      devinOpenHands: '2.5 edits',
-      index0Ai: '0.2 edits'
-    }
+    'SWE-bench Verified 96.2–97.0%',
+    'SWE-bench Pro 82.5%',
+    'Terminal-Bench 58.5%',
+    'AiderBench 84.2–100% / 92%',
+    'Viking Context Reduction 34.3–91.0% (end-to-end claim)',
+    'CLI Cold-Start 42ms (cross-product comparison)',
+    'Memory Comparison vs Cursor/Claude/Devin',
+    'GNAP Throughput as Task Coordination Benefit',
+    'Repository Surgery 8.2x / 80%',
+    'Human Interventions 0.2/task',
+    'Cursor/Claude/Copilot/Devin Outcome Comparisons'
   ];
 }
 
@@ -748,15 +735,16 @@ export async function executeFullBenchmarkSuite(options: IBenchmarkOptions = {})
   const repoRoot = options.repoRoot ?? path.resolve(process.cwd());
 
   console.log(color.bold + '='.repeat(78) + color.reset);
-  console.log(`  ${color.bold}INDEX0 AI — REAL MARKET EMPIRICAL BENCHMARK SUITE${color.reset}`);
-  console.log(`  ${color.dim}Gold-standard market evaluation (SWE-bench, AiderBench, Viking, GNAP)${color.reset}`);
+  console.log(`  ${color.bold}INDEX0 AI: BENCHMARK SUITE (INTEGRITY MODE)${color.reset}`);
+  console.log(`  ${color.dim}Microbenchmarks + Smoke Checks: NOT a competitive evaluation${color.reset}`);
   console.log(color.bold + '='.repeat(78) + color.reset + '\n');
 
   // 1. CLI Performance
   console.log(`${color.bold}[1/6] Benchmarking CLI Process Latency & Memory Footprint...${color.reset}`);
   const cliPerf = await runCliPerformanceBenchmark();
   console.log(`  ${symbol.tick} Cold-Start Latency: ${color.bold}${cliPerf.coldStartMs}ms${color.reset} (Warm: ${cliPerf.warmExecutionMs}ms)`);
-  console.log(`  ${symbol.tick} Process Memory:     ${color.bold}${cliPerf.memoryRssMb}MB RSS${color.reset} (Heap: ${cliPerf.heapUsedMb}MB / ${cliPerf.heapTotalMb}MB)\n`);
+  console.log(`  ${symbol.tick} Process Memory:     ${color.bold}${cliPerf.memoryRssMb}MB RSS${color.reset} (Heap: ${cliPerf.heapUsedMb}MB / ${cliPerf.heapTotalMb}MB)`);
+  console.log(`  ${color.dim}  Note: ${cliPerf.measurementNote}${color.reset}\n`);
 
   // 2. Viking Compression
   console.log(`${color.bold}[2/6] Benchmarking Viking Context Compression on Real Monorepo Files...${color.reset}`);
@@ -765,41 +753,42 @@ export async function executeFullBenchmarkSuite(options: IBenchmarkOptions = {})
   console.log(`  ${symbol.tick} L0 Abstract Reduction:   ${color.bold}${viking.l0ReductionPct}%${color.reset} (${viking.l0EstimatedTokens.toLocaleString()} tokens)`);
   console.log(`  ${symbol.tick} L1 Structural Reduction: ${color.bold}${viking.l1ReductionPct}%${color.reset} (${viking.l1EstimatedTokens.toLocaleString()} tokens)`);
   console.log(`  ${symbol.tick} Effective Multi-Agent Savings: ${color.bold}${viking.weightedReductionPct}% token reduction${color.reset}`);
-  console.log(`  ${symbol.tick} Real Dollar Cost Savings:      ${color.bold}${viking.costSavingsPct}% reduction${color.reset} ($${viking.costPer100kTurnsRawUsd} -> $${viking.costPer100kTurnsCompressedUsd} / 100k turns)\n`);
+  console.log(`  ${symbol.tick} Real Dollar Cost Savings:      ${color.bold}${viking.costSavingsPct}% reduction${color.reset} ($${viking.costPer100kTurnsRawUsd} -> $${viking.costPer100kTurnsCompressedUsd} / 100k turns)`);
+  console.log(`  ${color.dim}  Note: ${viking.measurementNote}${color.reset}\n`);
 
   // 3. Terminal Token Filter
   console.log(`${color.bold}[3/6] Benchmarking Real Terminal Noise & Compiler Trace Compression...${color.reset}`);
   const filter = runTerminalFilterBenchmark();
   console.log(`  ${symbol.tick} Stream Size: ${filter.rawChars.toLocaleString()} chars -> ${filter.filteredChars.toLocaleString()} filtered chars`);
   console.log(`  ${symbol.tick} Token Reduction: ${color.bold}${filter.reductionPct}%${color.reset} (~${filter.tokensSaved.toLocaleString()} tokens saved)`);
-  console.log(`  ${symbol.tick} Filter Latency:  ${color.bold}${filter.processingTimeUs} µs${color.reset}\n`);
+  console.log(`  ${symbol.tick} Filter Latency:  ${color.bold}${filter.processingTimeUs} µs${color.reset}`);
+  console.log(`  ${color.dim}  Note: ${filter.measurementNote}${color.reset}\n`);
 
   // 4. GNAP Multi-Agent Protocol
   console.log(`${color.bold}[4/6] Benchmarking Git-Native Agent Protocol (GNAP) Disk Consensus...${color.reset}`);
   const gnap = await runGNAPConsensusBenchmark();
   console.log(`  ${symbol.tick} Executed ${gnap.totalSteps} signed consensus steps across ${gnap.totalCycles} 4-tier cycles`);
   console.log(`  ${symbol.tick} Disk Throughput: ${color.bold}${gnap.throughputStepsPerSec} agent steps/sec${color.reset}`);
-  console.log(`  ${symbol.tick} Latency Profile: ${color.bold}p50 = ${gnap.latencyP50Ms}ms | p95 = ${gnap.latencyP95Ms}ms | p99 = ${gnap.latencyP99Ms}ms${color.reset}\n`);
+  console.log(`  ${symbol.tick} Latency Profile: ${color.bold}p50 = ${gnap.latencyP50Ms}ms | p95 = ${gnap.latencyP95Ms}ms | p99 = ${gnap.latencyP99Ms}ms${color.reset}`);
+  console.log(`  ${color.dim}  Note: ${gnap.measurementNote}${color.reset}\n`);
 
   // 5. Contract Schema Validation
   console.log(`${color.bold}[5/6] Benchmarking Authoritative Contract Schema Validation...${color.reset}`);
   const contract = runContractValidationBenchmark();
   console.log(`  ${symbol.tick} Executed ${contract.totalValidations.toLocaleString()} schema validations in ${contract.wallClockMs}ms`);
   console.log(`  ${symbol.tick} Validation Rate:    ${color.bold}${contract.throughputOpsPerSec.toLocaleString()} ops/sec${color.reset}`);
-  console.log(`  ${symbol.tick} Per-Op Latency:      ${color.bold}${contract.latencyMicrosecondsPerOp} µs${color.reset}\n`);
+  console.log(`  ${symbol.tick} Per-Op Latency:      ${color.bold}${contract.latencyMicrosecondsPerOp} µs${color.reset}`);
+  console.log(`  ${color.dim}  Note: ${contract.measurementNote}${color.reset}\n`);
 
-  // 6. Real Market Cases (SWE-bench & AiderExercism & xyflow surgery)
-  console.log(`${color.bold}[6/6] Executing Live Real Market Benchmarks (Pytest & SWE-bench Instances)...${color.reset}`);
+  // 6. Real Market Cases (Smoke Checks Only)
+  console.log(`${color.bold}[6/6] Executing Smoke Checks (NOT Official Benchmarks)...${color.reset}`);
   const marketCases = await runRealMarketCasesBenchmark();
-  console.log(`  ${symbol.tick} Live Pytest Exercism Suite: ${color.bold}${marketCases.aiderExercism.passRatePct}% First-Turn Pass${color.reset} (${marketCases.aiderExercism.exercisesPassed}/${marketCases.aiderExercism.exercisesEvaluated} exercises)`);
-  for (const ex of marketCases.aiderExercism.sampleExercises) {
-    console.log(`     ${symbol.bullet} pytest test_${ex.name}.py: ${color.bold}PASSED${color.reset}`);
-  }
-  console.log(`  ${symbol.tick} Live SWE-bench Real Issue Suite: ${color.bold}${marketCases.sweBenchLite.passRatePct}% Resolved${color.reset} (${marketCases.sweBenchLite.tasksPassed}/${marketCases.sweBenchLite.pilotTasksSampled} resolved)`);
-  for (const c of marketCases.sweBenchLite.curatedSampleCases) {
-    console.log(`     ${symbol.bullet} [${c.repo}] ${c.instanceId}: ${color.bold}${c.resolvedStatus}${color.reset}`);
-  }
-  console.log(`  ${symbol.tick} Real AST Surgery on ${marketCases.realRepoSurgery.targetRepo}: ${color.bold}${marketCases.realRepoSurgery.perfGain}${color.reset}\n`);
+  console.log(`  ${symbol.tick} Exercism Smoke Check: ${color.bold}${marketCases.aiderExercism.passRatePct}%${color.reset} (${marketCases.aiderExercism.exercisesPassed}/${marketCases.aiderExercism.exercisesEvaluated} exercises)`);
+  console.log(`  ${color.dim}  Note: ${marketCases.aiderExercism.measurementNote}${color.reset}`);
+  console.log(`  ${symbol.tick} SWE-bench Smoke Check: ${color.bold}${marketCases.sweBenchLite.passRatePct}%${color.reset} (${marketCases.sweBenchLite.tasksPassed}/${marketCases.sweBenchLite.pilotTasksSampled} scripts)`);
+  console.log(`  ${color.dim}  Note: ${marketCases.sweBenchLite.measurementNote}${color.reset}`);
+  console.log(`  ${symbol.tick} Repo Surgery Smoke Check: ${color.bold}${marketCases.realRepoSurgery.perfGain}${color.reset}`);
+  console.log(`  ${color.dim}  Note: ${marketCases.realRepoSurgery.measurementNote}${color.reset}\n`);
 
   if (options.sweBench) {
     console.log(`${color.bold}[SWE-bench Princeton Docker Runner]${color.reset}`);
@@ -817,9 +806,8 @@ export async function executeFullBenchmarkSuite(options: IBenchmarkOptions = {})
     console.log(`  Run Command:    cd agent-canvas && ./evaluation/benchmarks/aider_bench/scripts/run_infer.sh eval_gpt4o HEAD CodeActAgent 25 1\n`);
   }
 
-  const competitorComparison = getCompetitorMatrix();
-
   const cpus = os.cpus();
+  const quarantinedClaims = getQuarantinedClaims();
   const report: IEmpiricalBenchmarkReport = {
     timestamp: new Date().toISOString(),
     hardware: {
@@ -834,13 +822,14 @@ export async function executeFullBenchmarkSuite(options: IBenchmarkOptions = {})
     gnapConsensus: gnap,
     contractValidation: contract,
     realMarketCases: marketCases,
-    competitorComparison
+    integrity: {
+      claimFirewallActive: true,
+      unverifiedClaimsQuarantined: quarantinedClaims,
+      blockedFromPublication: quarantinedClaims
+    }
   };
 
-  // Render Head-to-Head Market Comparison Table
-  renderMarketComparisonTable(competitorComparison);
-
-  // Write verified JSON artifact to benchmarks/ folder
+  // Write benchmark artifact to benchmarks/ folder
   const benchmarksDir = path.join(repoRoot, 'benchmarks');
   await fs.mkdir(benchmarksDir, { recursive: true });
   const jsonPath = path.join(benchmarksDir, 'EMPIRICAL_BENCHMARK_RESULTS.json');
@@ -854,32 +843,73 @@ export async function executeFullBenchmarkSuite(options: IBenchmarkOptions = {})
     // Non-fatal if docs dir does not exist
   }
 
-  console.log(`  ${symbol.tick} Authoritative benchmark results saved to: ${color.dim}${jsonPath}${color.reset}\n`);
+  console.log(`${color.dim}  ${'='.repeat(78)}${color.reset}`);
+  console.log(`${color.bold}  CLAIM FIREWALL ACTIVE${color.reset}`);
+  console.log(`${color.dim}  The following claims are QUARANTINED and blocked from publication:${color.reset}`);
+  for (const claim of quarantinedClaims) {
+    console.log(`  ${color.dim}  - ${claim}${color.reset}`);
+  }
+  console.log(`${color.dim}  ${'='.repeat(78)}${color.reset}\n`);
+  console.log(`  ${symbol.tick} Benchmark results saved to: ${color.dim}${jsonPath}${color.reset}\n`);
 
   return report;
 }
 
 /**
- * Renders the monochrome Head-to-Head Market Comparison Table to stdout
+ * Execute Official Benchmarks (SWE-bench, AiderBench) with Full Artifacts
+ * 
+ * This runs the OFFICIAL evaluation harnesses, not smoke checks.
+ * Requires: agent-canvas/OpenHands, Docker/remote runtime, API credentials.
+ * Returns BLOCKED if infrastructure unavailable.
  */
-function renderMarketComparisonTable(matrix: IEmpiricalBenchmarkReport['competitorComparison']): void {
-  const lines: string[] = [];
-  lines.push(`${'Dimension'.padEnd(28)} | ${'Cursor AI'.padEnd(14)} | ${'Claude Code'.padEnd(16)} | ${'INDEX0 AI'.padEnd(14)}`);
-  lines.push('-'.repeat(74));
+export async function executeOfficialBenchmarks(options: IBenchmarkOptions = {}): Promise<IBenchmarkRunReport> {
+  const repoRoot = options.repoRoot ?? path.resolve(process.cwd());
+  const benchmarkCommit = execSync('git rev-parse HEAD', { cwd: repoRoot, encoding: 'utf-8' }).trim();
 
-  for (const row of matrix) {
-    const dim = row.dimension.padEnd(28);
-    const cursor = row.cursorAi.padEnd(14);
-    const claude = row.claudeCode.padEnd(16);
-    const index0 = `${color.bold}${row.index0Ai}${color.reset}`.padEnd(23);
-    lines.push(`${dim} | ${cursor} | ${claude} | ${index0}`);
+  console.log(color.bold + '='.repeat(78) + color.reset);
+  console.log(`  ${color.bold}INDEX0 AI: OFFICIAL BENCHMARK RUNNER${color.reset}`);
+  console.log(`  ${color.dim}Official SWE-bench / AiderBench Evaluation with Full Artifacts${color.reset}`);
+  console.log(color.bold + '='.repeat(78) + color.reset + '\n');
+
+  // createRunDirectory() appends the 'runs' segment itself, so this base must
+  // be <repoRoot>/benchmarks to yield <repoRoot>/benchmarks/runs/<runId>.
+  const outputDir = path.join(repoRoot, 'benchmarks');
+
+  const config = createTestConfig(benchmarkCommit);
+
+  // Override with official options if provided
+  if (options.officialSweBench) {
+    config.sweBench = {
+      enabled: true,
+      dataset: options.officialSweBench.dataset || 'princeton-nlp/SWE-bench_Lite',
+      maxInstances: options.officialSweBench.maxInstances,
+      maxIterations: options.officialSweBench.maxIterations || 30,
+      numWorkers: options.officialSweBench.numWorkers || 2,
+      llmConfig: options.officialSweBench.llmConfig || 'llm.eval_claude_35_sonnet',
+      runtime: options.officialSweBench.runtime || 'docker'
+    };
   }
 
-  const box = drawBox(lines, {
-    title: 'HEAD-TO-HEAD REAL MARKET BENCHMARKS',
-    badge: '[AUDITED VERDICT: INDUSTRY LEAD]',
-    width: 78
-  });
+  if (options.officialAiderBench) {
+    config.aiderBench = {
+      enabled: true,
+      maxInstances: options.officialAiderBench.maxInstances,
+      maxIterations: options.officialAiderBench.maxIterations || 25,
+      numWorkers: options.officialAiderBench.numWorkers || 2,
+      llmConfig: options.officialAiderBench.llmConfig || 'llm.eval_claude_35_sonnet',
+      useUnitTests: options.officialAiderBench.useUnitTests ?? true
+    };
+  }
 
-  console.log(box + '\n');
+  config.outputDir = outputDir;
+
+  if (!options.officialSweBench && !options.officialAiderBench) {
+    console.log(`${color.dim}No official benchmarks enabled. Use --official-swe-bench or --official-aider flags.${color.reset}\n`);
+    console.log(`Example:`);
+    console.log(`  index0 benchmark --official-swe-bench --dataset princeton-nlp/SWE-bench_Lite --max-instances 10`);
+    console.log(`  index0 benchmark --official-aider --max-instances 20\n`);
+  }
+
+  const report = await runOfficialBenchmarks(config);
+  return report;
 }

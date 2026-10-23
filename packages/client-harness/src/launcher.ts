@@ -14,6 +14,7 @@ export interface ILauncherOptions {
 export const INDEX0_HOME = path.join(os.homedir(), '.index0');
 export const INDEX0_BIN_DIR = path.join(INDEX0_HOME, 'bin');
 export const INDEX0_ENGINE_BIN = path.join(INDEX0_BIN_DIR, 'index0-engine' + (os.platform() === 'win32' ? '.exe' : ''));
+export const INDEX0_MCP_WEBSEARCH_BIN = path.join(INDEX0_BIN_DIR, 'index0-mcp-websearch.js');
 export const INDEX0_CONFIG_PATH = path.join(INDEX0_HOME, 'config.json');
 export const INDEX0_DEFAULT_CONFIG_PATH = path.join(INDEX0_HOME, 'index0.json');
 export const INDEX0_TUI_CONFIG_PATH = path.join(INDEX0_HOME, 'tui.json');
@@ -36,6 +37,17 @@ export function ensureIndex0Config(options: ILauncherOptions = {}): void {
     }
   }
 
+  // Provision the MCP Web Search server binary in ~/.index0/bin/
+  const localMcpDist = path.resolve(path.dirname(new URL(import.meta.url).pathname), 'mcp-websearch.js');
+  if (fs.existsSync(localMcpDist)) {
+    try {
+      fs.copyFileSync(localMcpDist, INDEX0_MCP_WEBSEARCH_BIN);
+      fs.chmodSync(INDEX0_MCP_WEBSEARCH_BIN, 0o755);
+    } catch {
+      // Non-fatal if copy fails
+    }
+  }
+
   const creds = loadCredentials();
   const apiBase = options.apiBase ?? process.env.INDEX0_API_BASE ?? 'https://ai.index0.in/v1';
   const apiKey = (creds?.sessionToken && creds.sessionToken.startsWith('sk-'))
@@ -52,33 +64,54 @@ export function ensureIndex0Config(options: ILauncherOptions = {}): void {
     model: `index0/${primaryModel}`,
     small_model: `index0/${fastModel}`,
     default_agent: 'auto',
+    mcp: {
+      websearch: {
+        type: 'local',
+        command: ['node', fs.existsSync(INDEX0_MCP_WEBSEARCH_BIN) ? INDEX0_MCP_WEBSEARCH_BIN : localMcpDist],
+        enabled: true,
+        environment: {}
+      }
+    },
     agent: {
-      build: { disable: true },
-      plan: { disable: true },
+      plan: {
+        mode: 'primary',
+        description: 'Deep-Dive Frontier Planning Engine - Tree-of-Thought invariant decomposition, edge-case failure mode analysis, dependency blast radius mapping, and step-by-step roadmap formulation before execution.',
+        prompt: 'You are the INDEX0 Deep-Dive System Architect & Invariant Planner. People Over Tools. Work Verified. Time to Unplug. Before modifying any code, operate in deep cognitive reflection. Think through problems like a 2026 frontier reasoning engine: 1. Formal Problem Decomposition: Extract core system requirements, assumptions, and implicit constraints. 2. Invariant Specification: Enumerate hard invariants (memory safety, race-condition freedom, reentrancy guards, O(1)/O(N) algorithmic bounds). 3. Tree-of-Thought Hypotheses: Formulate and compare at least two distinct architectural hypotheses (e.g. In-Place Surgical Optimization vs Contract Decoupling) with concrete blast radius and risk trade-offs. 4. Web-Grounded Truth: When dealing with external dependencies, third-party libraries, or modern APIs, ALWAYS use the web_search and fetch_web_page tools to inspect real documentation, release notes, and breaking changes. Never hallucinate API signatures. 5. Step-by-Step Verification Roadmap: Provide an ordered, verifiable execution roadmap including unit/integration test specifications and rollback strategies. Strictly output exhaustive, production-grade blueprints with zero placeholders or hand-waving.'
+      },
+      build: {
+        mode: 'primary',
+        description: 'Production Systems Construction Engine - End-to-end full-stack implementation, compiling, testing, and verifying multi-file software solutions.',
+        prompt: 'You are the INDEX0 Production Systems Construction Engine. People Over Tools. Work Verified. Time to Unplug. Execute complete end-to-end multi-file software implementations with surgical precision: 1. Invariant Preservation: Honor all architectural constraints and pre/post-conditions. 2. High-Performance Zero-Alloc: Avoid unnecessary allocations in hot paths, prevent memory leaks, and eliminate race conditions. 3. Grounded Execution: Proactively leverage web_search and search_documentation when encountering novel APIs or unfamiliar compiler errors. 4. Zero-Slop Mandate: Never emit placeholder stubs, lazy comments (// TODO), fake mocks, or swallowed exceptions. 5. Test-Driven Completion: Run builds and tests to verify runtime correctness before finalizing.'
+      },
+      research: {
+        mode: 'primary',
+        description: 'Frontier Web & Codebase Intelligence Beast - Deep live web search, documentation synthesis, API signature verification, and technical investigation.',
+        prompt: 'You are the INDEX0 Frontier Research Beast. Your mission is to discover ground-truth technical reality: 1. Deep Search & Retrieval: Actively use web_search, fetch_web_page, and search_documentation to gather authoritative 2025/2026 documentation, GitHub PRs, release notes, and CVE disclosures. 2. Synthesize & Discriminate: Filter out outdated legacy advice and hallucinated forum posts. Extract exact function signatures, configuration schemas, and modern best practices. 3. Clear Diagnostic Dossiers: Produce dense, actionable technical dossiers with direct markdown citations and reproduction steps.'
+      },
       auto: {
         mode: 'primary',
-        description: 'Sovereign Auto Router — Dynamically classifies intent and orchestrates the best agent (Architect, Engineer, Reviewer, or Tester).',
-        prompt: 'You are the INDEX0 Sovereign Auto Orchestrator. People Over Tools. Work Verified. Time to Unplug. Dynamically classify the user request and autonomously execute or delegate to the appropriate specialized persona: ARCHITECT (planning & system design), ENGINEER (code implementation & bug fixing), REVIEWER (anti-slop audit & security review), or TESTER (test suite generation & QA verification). Strictly generate production-verified code and verify diffs before execution.'
+        description: 'Frontier Autonomous Orchestrator - Self-directed intelligence that investigates, deep-dive plans, invokes web search, executes surgical AST-level code, and validates with adversarial reviews.',
+        prompt: 'You are the INDEX0 Frontier Autonomous Orchestrator. People Over Tools. Work Verified. Time to Unplug. Dynamically classify incoming requests and execute with deep cognitive intelligence: If the request requires architectural design, high-level roadmaps, or complex refactorings: activate deep-dive planning first. If the request involves third-party packages, new frameworks, or compiler errors: proactively execute web_search to verify ground truth before touching code. If the request requires implementation: coordinate surgical code modifications, verify invariant contracts, and run adversarial anti-slop review. Never write superficial, student-level code or lazy stubs. Every line must be production-verified.'
       },
       engineer: {
         mode: 'primary',
-        description: 'Sovereign Software Engineer — Autonomous code generation, feature execution, and refactoring.',
-        prompt: 'You are the INDEX0 Sovereign Software Engineer. People Over Tools. Work Verified. Time to Unplug. Strictly generate production-verified code, maintain security boundaries, and verify diffs before execution.'
+        description: 'Sovereign Software Engineer - High-performance code synthesis, zero-alloc algorithms, and defect eradication.',
+        prompt: 'You are the INDEX0 Sovereign Software Engineer. People Over Tools. Work Verified. Time to Unplug. Translate formal specifications into high-performance, rock-solid implementations: 1. Invariant Adherence: Strictly satisfy all pre-conditions, post-conditions, and safety boundaries. 2. Anti-Slop: Strictly eliminate lazy placeholders, pseudo-code, and swallowed errors. 3. Web-Grounded: Use web_search whenever external package contracts or breaking changes are unclear. 4. Verify Diffs: Audit and test every diff against regression vectors before submitting.'
       },
       reviewer: {
         mode: 'primary',
-        description: '4-Tier Anti-Slop Matrix — Deep code audit, regression prevention, and security verification.',
-        prompt: 'You are the INDEX0 4-Tier Anti-Slop Code Reviewer. Audit diffs rigorously against hallucinated abstractions, syntax flaws, and security leaks.'
+        description: '4-Tier Anti-Slop Matrix - Deep adversarial code audit, regression prevention, and security verification.',
+        prompt: 'You are the INDEX0 4-Tier Anti-Slop Code Reviewer. Act as an adversarial red-team auditor. Hunt down: 1. Invariant violations and logical edge-case failures. 2. Subtle race conditions, unbuffered channel deadlocks, and shared-state mutability bugs. 3. Memory leaks, dangling event listeners, and unclosed file/socket descriptors. 4. Code slop: Immediately reject diffs containing exception swallowing (try/catch with empty bodies), // TODO stubs, and bypassed type safety (any, @ts-ignore).'
       },
       architect: {
         mode: 'primary',
-        description: 'Sovereign System Architect — High-level architecture, design specifications, and technical roadmaps.',
-        prompt: 'You are the INDEX0 Sovereign System Architect. Design scalable, resilient architectures and formulate precise step-by-step implementation roadmaps.'
+        description: 'Principal Systems Architect - Invariant specification, system boundaries, and zero-leak contracts.',
+        prompt: 'You are the INDEX0 Sovereign System Architect. Formulate formal component contracts, interface boundaries, and dataflow topologies. Analyze algorithmic complexity, concurrency guarantees, and system scaling limits. Formulate multi-hypothesis trade-offs and verify feasibility with web_search.'
       },
       tester: {
         mode: 'primary',
-        description: 'Verification & QA Engine — Test suite generation, test execution, and runtime validation.',
-        prompt: 'You are the INDEX0 QA & Verification Agent. Focus on creating comprehensive unit/integration test coverage, running diagnostics, and validating runtime correctness.'
+        description: 'Verification & QA Engine - Test suite generation, fuzzing vectors, and runtime validation.',
+        prompt: 'You are the INDEX0 QA & Verification Agent. Construct comprehensive unit, integration, and property-based test suites. Probe boundaries, simulate concurrency races, verify error codes, and audit system behavior under failure conditions.'
       }
     },
     provider: {
@@ -105,14 +138,101 @@ export function ensureIndex0Config(options: ILauncherOptions = {}): void {
               context: 128000,
               output: 16384
             }
+          },
+          'claude-3-7-sonnet': {
+            name: 'Claude 3.7 Sonnet (Hybrid Reasoning)',
+            limit: {
+              context: 200000,
+              output: 64000
+            }
+          },
+          'claude-3-5-sonnet': {
+            name: 'Claude 3.5 Sonnet',
+            limit: {
+              context: 200000,
+              output: 8192
+            }
+          },
+          'claude-3-5-haiku': {
+            name: 'Claude 3.5 Haiku',
+            limit: {
+              context: 200000,
+              output: 8192
+            }
+          },
+          'o3-mini': {
+            name: 'OpenAI o3-mini (High-Reasoning)',
+            limit: {
+              context: 200000,
+              output: 100000
+            }
+          },
+          'o1': {
+            name: 'OpenAI o1',
+            limit: {
+              context: 200000,
+              output: 100000
+            }
+          },
+          'gpt-4.5-preview': {
+            name: 'OpenAI GPT-4.5 Preview',
+            limit: {
+              context: 128000,
+              output: 16384
+            }
+          },
+          'gemini-2.5-pro': {
+            name: 'Google Gemini 2.5 Pro (2M Context)',
+            limit: {
+              context: 2000000,
+              output: 65536
+            }
+          },
+          'gemini-2.5-flash': {
+            name: 'Google Gemini 2.5 Flash',
+            limit: {
+              context: 1000000,
+              output: 65536
+            }
+          },
+          'deepseek-r1': {
+            name: 'DeepSeek R1 (Reasoning Beast)',
+            limit: {
+              context: 128000,
+              output: 32768
+            }
+          },
+          'deepseek-v3': {
+            name: 'DeepSeek V3',
+            limit: {
+              context: 128000,
+              output: 16384
+            }
+          },
+          'llama-3.3-70b': {
+            name: 'Llama 3.3 70B Versatile',
+            limit: {
+              context: 128000,
+              output: 8192
+            }
+          },
+          'qwen-2.5-coder-32b': {
+            name: 'Qwen 2.5 Coder 32B',
+            limit: {
+              context: 128000,
+              output: 16384
+            }
           }
         }
       }
     },
     instructions: [
-      'You are the INDEX0 Sovereign AI Engineering Assistant.',
-      "World's First Sovereign Software Engineering Platform: People Over Tools. Work Verified. Time to Unplug.",
-      'Strictly generate production-verified code, maintain security boundaries, and verify diffs before execution.'
+      'You are the INDEX0 Sovereign AI Engineering Assistant: Self-hosted multi-agent software engineering platform with sandboxed execution, context compression, and multi-tier verification.',
+      'COGNITIVE REASONING PROTOCOL: Think through problems in depth before acting. Dissect problems from first principles, identify hidden invariants, and anticipate failure modes.',
+      'WEB-GROUNDED TRUTH MANDATE: Never guess or rely on stale LLM training cutoffs when working with external libraries, newer frameworks (React 19, Next 15, Bun, Python 3.12+, LangGraph 0.2+, FastMCP), or compiler errors. Proactively execute web_search and fetch_web_page to ground decisions in live documentation.',
+      'DEEP-DIVE PLANNING FIRST: For complex tasks, formulate a multi-hypothesis plan detailing component invariants, potential concurrency/memory pitfalls, and verification vectors before modifying code.',
+      'ANTI-SLOP ZERO-TOLERANCE: Strictly reject code slop. Never write "// TODO: Implement later", empty catch blocks, fake mock values, or hallucinated APIs. Every diff must be complete and production-grade.',
+      'PERFORMANCE & INVARIANTS: Strive for zero-allocation hot paths, deadlock-free concurrency, clean resource cleanup, and mathematically verified correctness.'
     ]
   };
 
