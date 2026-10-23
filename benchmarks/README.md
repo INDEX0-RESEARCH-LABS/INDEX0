@@ -1,3 +1,6 @@
+> **Status: UNVERIFIED claims. See [CLAIM_AUDIT.md](./CLAIM_AUDIT.md).**
+> All previously published benchmark numbers are unverified. History is preserved for audit purposes only.
+
 # INDEX0 AI — Benchmark Suite (Integrity Mode)
 
 > **Integrity-First Benchmarking**: This directory contains a defensible evaluation framework.

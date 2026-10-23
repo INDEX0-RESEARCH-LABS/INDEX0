@@ -1,4 +1,7 @@
-# INDEX0 AI — Real Market Benchmark Audit Report
+> **Status: UNVERIFIED claims. See [benchmarks/CLAIM_AUDIT.md](../benchmarks/CLAIM_AUDIT.md).**
+> All benchmark numbers in this document (SWE-bench, AiderBench, Terminal-Bench, latency, memory) are UNVERIFIED. History is preserved for audit purposes only.
+
+# INDEX0 AI — Real Market Benchmark Audit Report (UNVERIFIED)
 > **Audited Empirical Benchmark Report on Gold-Standard Industry Testbeds**  
 > **Evaluated Against**: Cursor AI, Claude Code (Anthropic), GitHub Copilot, Devin (Cognition)  
 > **Evaluation Date**: March 2026 | **Hardware**: Linux x86_64, 4 vCPUs, 16GB RAM  

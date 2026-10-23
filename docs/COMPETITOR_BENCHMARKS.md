@@ -1,4 +1,7 @@
-# Competitor Benchmark Matrix — QUARANTINED
+> **Status: UNVERIFIED claims. See [benchmarks/CLAIM_AUDIT.md](../benchmarks/CLAIM_AUDIT.md).**
+> All numbers in this document are unverified. Do not cite them externally. History is preserved for audit purposes only.
+
+# Competitor Benchmark Matrix — QUARANTINED (Historical — UNVERIFIED)
 
 > **⚠️ Integrity Firewall Active:** This document contains **UNVERIFIED claims** from the previous benchmark implementation (v1.x). All claims are quarantined pending reproducible evidence.
 > 

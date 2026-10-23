@@ -1,5 +1,9 @@
-# INDEX0 — Sovereign Engineering AGI: Starting to Till Now
-> **The Authoritative End-to-End Blueprint, Chronological History, Architectural Anatomy, and Sovereign Capabilities Manual**
+> **Status: UNVERIFIED claims. See [benchmarks/CLAIM_AUDIT.md](../benchmarks/CLAIM_AUDIT.md).**
+> Benchmark numbers and capability claims in this document are unverified. History is preserved for audit purposes only.
+
+# INDEX0 — Platform History and Architecture Blueprint: From Start to Now
+> **The End-to-End Blueprint, Chronological History, and Architectural Manual**
+
 
 ---
 
