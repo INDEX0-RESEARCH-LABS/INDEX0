@@ -390,7 +390,8 @@ export function createTestConfig(benchmarkCommit: string): IBenchmarkRunnerConfi
       toolBudget: 50,
       timeBudgetMs: 300000
     },
-    outputDir: path.join(process.cwd(), 'benchmarks', 'runs'),
+    // createRunDirectory() appends 'runs/<runId>', so the base is 'benchmarks'.
+    outputDir: path.join(process.cwd(), 'benchmarks'),
     benchmarkCommit
   };
 }
