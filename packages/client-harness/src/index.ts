@@ -158,4 +158,5 @@ export * from './engine.js';
 export * from './auth.js';
 export * from './launcher.js';
 export * from './benchmark.js';
+export * from './search.js';
 

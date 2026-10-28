@@ -46,6 +46,8 @@ test('UI Engine — Monochrome Diff Viewer', () => {
 
 test('UI Engine — Default Slash Commands Catalog', () => {
   const names = DEFAULT_SLASH_COMMANDS.map((c) => c.name);
+  assert.ok(names.includes('/plan'));
+  assert.ok(names.includes('/search'));
   assert.ok(names.includes('/review'));
   assert.ok(names.includes('/prompt'));
   assert.ok(names.includes('/models'));

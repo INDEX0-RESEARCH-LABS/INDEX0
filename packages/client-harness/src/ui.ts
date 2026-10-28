@@ -426,6 +426,8 @@ export interface SlashCommand {
 }
 
 export const DEFAULT_SLASH_COMMANDS: SlashCommand[] = [
+  { name: '/plan', args: '<objective>', description: 'Deep-dive architectural planning with Tree-of-Thought invariants' },
+  { name: '/search', args: '<query>', description: 'Frontier live web search beast for real-time docs, libs & solutions' },
   { name: '/benchmark', description: 'Run real market empirical benchmark suite (SWE-bench, Viking, GNAP)' },
   { name: '/review', args: '<task>', description: 'Run 4-tier LangGraph anti-slop review matrix' },
   { name: '/prompt', args: '<task>', description: 'Stream prompt directly to Azure OpenAI via LiteLLM' },
