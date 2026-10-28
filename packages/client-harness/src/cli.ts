@@ -16,6 +16,7 @@ import { TerminalTokenFilter } from './filter.js';
 import { GitWorktreeManager } from './worktree.js';
 import { Index0Engine } from './engine.js';
 import { launchTui } from './launcher.js';
+import { resolveApiKey } from './auth.js';
 import { executeFullBenchmarkSuite, executeOfficialBenchmarks } from './benchmark.js';
 import { performWebSearch, formatSearchResultsMarkdown } from './search.js';
 import {
@@ -194,12 +195,12 @@ function printHelp(): void {
  */
 async function interactiveModelSelector(currentModel: string): Promise<string | null> {
   const apiBase = process.env.INDEX0_API_BASE ?? 'https://ai.index0.in/v1';
-  const masterKey = process.env.INDEX0_API_KEY ?? process.env.LITELLM_MASTER_KEY ?? 'sk-index0-litellm-dev';
+  const masterKey = resolveApiKey(false);
 
   let models: string[] = [];
   try {
     const res = await fetch(`${apiBase}/models`, {
-      headers: { Authorization: `Bearer ${masterKey}` }
+      headers: masterKey ? { Authorization: `Bearer ${masterKey}` } : {}
     });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const json = (await res.json()) as any;
@@ -665,12 +666,12 @@ async function executePromptCommand(engine: Index0Engine, task: string): Promise
 async function executeModelsCommand(): Promise<void> {
   const spinner = new TerminalSpinner('Querying sovereign LiteLLM model catalog...').start();
   const apiBase = process.env.INDEX0_API_BASE ?? 'https://ai.index0.in/v1';
-  const masterKey = process.env.INDEX0_API_KEY ?? process.env.LITELLM_MASTER_KEY ?? 'sk-index0-litellm-dev';
+  const masterKey = resolveApiKey(false);
 
   let models: string[] = [];
   try {
     const res = await fetch(`${apiBase}/models`, {
-      headers: { Authorization: `Bearer ${masterKey}` }
+      headers: masterKey ? { Authorization: `Bearer ${masterKey}` } : {}
     });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const json = (await res.json()) as any;
@@ -734,14 +735,14 @@ async function executeHealthCommand(): Promise<void> {
   const checks: string[] = [];
 
   const apiBase = process.env.INDEX0_API_BASE ?? 'https://ai.index0.in/v1';
-  const masterKey = process.env.INDEX0_API_KEY ?? process.env.LITELLM_MASTER_KEY ?? 'sk-index0-litellm-dev';
+  const masterKey = resolveApiKey(false);
 
   try {
     const gateway = await fetch('https://ai.index0.in/health').then((r) => r.ok).catch(() => false);
     checks.push(`Sovereign Edge Gateway (ai.index0.in):   ${gateway ? '[ONLINE]' : '[OFFLINE]'}`);
 
     const litellm = await fetch(`${apiBase}/models`, {
-      headers: { Authorization: `Bearer ${masterKey}` }
+      headers: masterKey ? { Authorization: `Bearer ${masterKey}` } : {}
     }).then((r) => r.ok).catch(() => false);
     checks.push(`LiteLLM Sovereign Router (Azure East US): ${litellm ? '[ONLINE]' : '[OFFLINE]'}`);
 

@@ -37,6 +37,8 @@ export interface IExtensionConfig {
   modelPreference: string;
   tabbyEndpoint: string;
   litellmEndpoint: string;
+  /** Gateway master key; empty means send no Authorization header. */
+  apiKey?: string;
 }
 
 export type PanelId =
@@ -52,6 +54,7 @@ const DEFAULT_CONFIG: IExtensionConfig = {
   modelPreference: 'claude-3-5-sonnet-20241022',
   tabbyEndpoint: 'http://localhost:8080',
   litellmEndpoint: 'http://localhost:4000/v1',
+  apiKey: process.env.INDEX0_API_KEY ?? '',
 };
 
 // ─── Extension Manager ─────────────────────────────────────────────
@@ -147,7 +150,7 @@ export class Index0ExtensionManager {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'Bearer sk-index0-litellm-dev',
+        ...(this.config.apiKey ? { Authorization: `Bearer ${this.config.apiKey}` } : {}),
       },
       body: JSON.stringify({
         model: model || this.config.modelPreference,

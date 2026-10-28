@@ -24,6 +24,27 @@ const GITHUB_DEVICE_CODE_URL = 'https://github.com/login/device/code';
 const GITHUB_ACCESS_TOKEN_URL = 'https://github.com/login/oauth/access_token';
 const GITHUB_USER_API_URL = 'https://api.github.com/user';
 
+// ─── Gateway API Key ────────────────────────────────────────────────────────
+
+/**
+ * Gateway master key from the environment or the logged-in session.
+ *
+ * There is deliberately no hardcoded fallback: the previously published
+ * 'sk-index0-litellm-dev' literal meant every clone shipped a working
+ * credential. Callers that can degrade gracefully pass `required: false`.
+ */
+export function resolveApiKey(required = true): string {
+  const fromEnv = process.env.INDEX0_API_KEY ?? process.env.LITELLM_MASTER_KEY ?? '';
+  const session = loadCredentials()?.sessionToken ?? '';
+  const key = fromEnv || (session.startsWith('sk-') ? session : '');
+  if (!key && required) {
+    throw new Error(
+      'No gateway API key configured. Set INDEX0_API_KEY (or LITELLM_MASTER_KEY) — see .env.example — or run `index0 login`.'
+    );
+  }
+  return key;
+}
+
 // ─── Credential Storage ─────────────────────────────────────────────────────
 
 export interface IIndex0Credentials {

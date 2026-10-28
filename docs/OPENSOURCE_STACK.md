@@ -431,7 +431,7 @@ services:
     container_name: index0-litellm
     restart: unless-stopped
     environment:
-      LITELLM_MASTER_KEY: "${LITELLM_MASTER_KEY:-sk-index0-litellm-dev}"
+      LITELLM_MASTER_KEY: "${LITELLM_MASTER_KEY:?LITELLM_MASTER_KEY must be set (openssl rand -hex 24)}"
       DATABASE_URL: "postgresql://${POSTGRES_USER:-index0}:${POSTGRES_PASSWORD:-index0_secret}@postgres:5432/${POSTGRES_DB:-index0_dev}"
     ports:
       - "4000:4000"

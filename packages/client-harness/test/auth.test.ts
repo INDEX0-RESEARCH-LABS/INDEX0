@@ -9,6 +9,7 @@ import {
   loadCredentials,
   saveCredentials,
   clearCredentials,
+  resolveApiKey,
   type IIndex0Credentials
 } from '../dist/auth.js';
 
@@ -49,5 +50,25 @@ test('Auth — Save, Load, and Clear Lifecycle', () => {
     if (original) {
       saveCredentials(original);
     }
+  }
+});
+
+test('Auth — resolveApiKey never falls back to a published literal', () => {
+  const saved = process.env.INDEX0_API_KEY;
+  const savedMaster = process.env.LITELLM_MASTER_KEY;
+  try {
+    delete process.env.INDEX0_API_KEY;
+    delete process.env.LITELLM_MASTER_KEY;
+    // A missing key must be loud, not silently replaced by a shared secret.
+    assert.throws(() => resolveApiKey(), /No gateway API key configured/);
+    assert.equal(resolveApiKey(false), '');
+
+    process.env.INDEX0_API_KEY = 'sk-from-env';
+    assert.equal(resolveApiKey(), 'sk-from-env');
+  } finally {
+    if (saved === undefined) delete process.env.INDEX0_API_KEY;
+    else process.env.INDEX0_API_KEY = saved;
+    if (savedMaster === undefined) delete process.env.LITELLM_MASTER_KEY;
+    else process.env.LITELLM_MASTER_KEY = savedMaster;
   }
 });

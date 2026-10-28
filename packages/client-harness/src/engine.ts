@@ -11,6 +11,7 @@
 import { TerminalTokenFilter } from './filter.js';
 import { GitWorktreeManager, type IWorktreeInfo } from './worktree.js';
 import { GNAPWorker } from './gnap.js';
+import { resolveApiKey } from './auth.js';
 import { drawBox, color } from './ui.js';
 
 export interface IIndex0EngineConfig {
@@ -77,8 +78,8 @@ export class Index0Engine {
       config.apiBase ??
       process.env.INDEX0_API_BASE ??
       'https://ai.index0.in/v1';
-    this.apiKey =
-      config.apiKey ?? process.env.INDEX0_API_KEY ?? 'sk-index0-litellm-dev';
+    // No literal fallback: a missing key surfaces as a 401, not as a shared secret.
+    this.apiKey = config.apiKey ?? resolveApiKey(false);
     this.model =
       config.model ?? process.env.INDEX0_MODEL ?? 'azure-gpt-4o';
     this.repoRoot = config.repoRoot ?? process.cwd();

@@ -2,7 +2,7 @@ import * as fs from 'node:fs';
 import * as path from 'node:path';
 import * as os from 'node:os';
 import { spawn } from 'node:child_process';
-import { loadCredentials } from './auth.js';
+import { resolveApiKey } from './auth.js';
 import { TerminalSpinner } from './ui.js';
 
 export interface ILauncherOptions {
@@ -48,11 +48,9 @@ export function ensureIndex0Config(options: ILauncherOptions = {}): void {
     }
   }
 
-  const creds = loadCredentials();
   const apiBase = options.apiBase ?? process.env.INDEX0_API_BASE ?? 'https://ai.index0.in/v1';
-  const apiKey = (creds?.sessionToken && creds.sessionToken.startsWith('sk-'))
-    ? creds.sessionToken
-    : (process.env.INDEX0_API_KEY ?? process.env.LITELLM_MASTER_KEY ?? 'sk-index0-litellm-dev');
+  // The TUI cannot run without a key; fail here with an actionable message.
+  const apiKey = resolveApiKey(true);
   const primaryModel = options.model ?? process.env.INDEX0_MODEL ?? 'azure-gpt-4o';
   const fastModel = 'azure-gpt-4o-mini';
 
@@ -707,10 +705,7 @@ export async function launchTui(args: string[] = []): Promise<number> {
   ensureIndex0Config();
   const enginePath = await ensureEngineBinary();
 
-  const creds = loadCredentials();
-  const apiKey = (creds?.sessionToken && creds.sessionToken.startsWith('sk-'))
-    ? creds.sessionToken
-    : (process.env.INDEX0_API_KEY ?? process.env.LITELLM_MASTER_KEY ?? 'sk-index0-litellm-dev');
+  const apiKey = resolveApiKey(true);
 
   return new Promise((resolve) => {
     const child = spawn(enginePath, args, {

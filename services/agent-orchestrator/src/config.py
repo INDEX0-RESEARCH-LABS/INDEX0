@@ -18,7 +18,8 @@ class Settings(BaseSettings):
     # External Service URLs
     sandbox_manager_url: str = "http://localhost:3002"
     litellm_proxy_url: str = "http://localhost:4000"
-    litellm_api_key: str = "sk-index0-litellm-dev"
+    # No default credential: set ORCHESTRATOR_LITELLM_API_KEY / LITELLM_MASTER_KEY
+    litellm_api_key: str = ""
     letta_url: str = "http://localhost:8283"
     letta_api_key: str = ""  # unset by default: no memory call without a key
 

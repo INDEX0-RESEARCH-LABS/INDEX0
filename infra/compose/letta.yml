@@ -15,7 +15,7 @@ services:
       LETTA_PG_URI: "postgresql://${POSTGRES_USER:-index0}:${POSTGRES_PASSWORD:-index0_secret}@postgres:5432/${POSTGRES_DB:-index0_dev}"
       LETTA_SERVER_PORT: 8283
       OPENAI_API_BASE: "http://litellm:4000/v1"
-      OPENAI_API_KEY: "${LITELLM_MASTER_KEY:-sk-index0-litellm-dev}"
+      OPENAI_API_KEY: "${LITELLM_MASTER_KEY:?LITELLM_MASTER_KEY must be set (openssl rand -hex 24)}"
     ports:
       - "8283:8283"
     networks:

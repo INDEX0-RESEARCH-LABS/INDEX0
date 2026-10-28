@@ -6,7 +6,16 @@ import * as os from 'node:os';
 import { patchEngineBranding, ensureIndex0Config, INDEX0_HOME, INDEX0_CONFIG_PATH } from '../dist/launcher.js';
 
 test('Launcher — ensureIndex0Config creates valid sovereign configuration', () => {
-  ensureIndex0Config();
+  // The launcher refuses to write a config with no credential (there is no
+  // hardcoded fallback any more), so supply a throwaway key for this check.
+  const saved = process.env.INDEX0_API_KEY;
+  process.env.INDEX0_API_KEY = 'sk-test-launcher';
+  try {
+    ensureIndex0Config();
+  } finally {
+    if (saved === undefined) delete process.env.INDEX0_API_KEY;
+    else process.env.INDEX0_API_KEY = saved;
+  }
   assert.strictEqual(fs.existsSync(INDEX0_CONFIG_PATH), true);
   const cfg = JSON.parse(fs.readFileSync(INDEX0_CONFIG_PATH, 'utf8'));
   assert.deepStrictEqual(cfg.enabled_providers, ['index0']);
