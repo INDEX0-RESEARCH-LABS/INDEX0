@@ -28,11 +28,11 @@ You do NOT write superficial student code. You reason about:
 You MUST output your response strictly conforming to the requested JSON schema."""
 
 
-async def fetch_letta_memory_context(letta_url: str, prompt: str) -> str:
+async def fetch_letta_memory_context(letta_url: str, prompt: str, api_key: str = "") -> str:
     """Fetch relevant memory blocks from Letta server if available, with graceful fallback."""
     try:
         import httpx
-        headers = {"Authorization": "Bearer sk-index0-letta-dev"}
+        headers = {"Authorization": f"Bearer {api_key}"} if api_key else {}
         async with httpx.AsyncClient(timeout=2.0) as client:
             resp = await client.get(f"{letta_url}/v1/models", headers=headers)
             if resp.status_code == 200:
@@ -40,7 +40,7 @@ async def fetch_letta_memory_context(letta_url: str, prompt: str) -> str:
                 return f"Letta Sovereign Memory Engine: Active ({len(models)} archival agent memories synchronized)"
     except Exception as e:
         logger.debug(f"Letta memory fetch notice: {e}")
-    return "Letta Archival Memory: Active (Prior project patterns loaded)"
+    return "Letta Archival Memory: UNAVAILABLE (no memory context was retrieved)"
 
 
 async def architect_node(state: ReviewLoopState) -> Dict[str, Any]:
@@ -51,7 +51,9 @@ async def architect_node(state: ReviewLoopState) -> Dict[str, Any]:
     task_id = state.get("task_id", "unknown")
     context_files = state.get("context_files", [])
 
-    memory_status = await fetch_letta_memory_context(settings.letta_url, prompt)
+    memory_status = await fetch_letta_memory_context(
+        settings.letta_url, prompt, settings.letta_api_key
+    )
 
     user_message = (
         f"TASK ID: {task_id}\n"

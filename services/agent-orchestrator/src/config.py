@@ -20,6 +20,7 @@ class Settings(BaseSettings):
     litellm_proxy_url: str = "http://localhost:4000"
     litellm_api_key: str = "sk-index0-litellm-dev"
     letta_url: str = "http://localhost:8283"
+    letta_api_key: str = ""  # unset by default: no memory call without a key
 
     # Orchestrator Policy Defaults
     max_review_iterations: int = 5

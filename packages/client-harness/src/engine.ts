@@ -142,7 +142,7 @@ export class Index0Engine {
 
   /**
    * Calls the real agent-orchestrator service to execute a full LangGraph 4-tier cycle.
-   * Falls back to local mock stubs if the orchestrator is unreachable.
+   * Fails closed (all tiers rejected) if the orchestrator is unreachable.
    */
   public async callOrchestratorCycle(
     taskId: string,
@@ -165,7 +165,9 @@ export class Index0Engine {
           maxIterations,
           repositoryRoot: this.repoRoot
         }),
-        signal: AbortSignal.timeout(10000)
+        // Bounds one full 4-tier cycle (architect + developer/critic + QA),
+        // not just connection setup: a live review legitimately takes minutes.
+        signal: AbortSignal.timeout(180000)
       });
 
       if (!response.ok) {
@@ -216,23 +218,30 @@ export class Index0Engine {
 
     const cycle = await this.callOrchestratorCycle(taskId, userPrompt, contextFiles);
 
-    // Fail closed: a cycle that could not run must never surface as an approval.
-    if (cycle.status === 'failed') {
+    // Fail closed: a cycle that did not verify must never surface as an approval.
+    const unverified =
+      !cycle.isComplete ||
+      ['failed', 'circuit_breaker_tripped', 'max_iterations_reached'].includes(cycle.status);
+    if (unverified) {
       const reason =
-        cycle.qaResults?.testOutput ?? 'Orchestrator review cycle failed with no diagnostic output.';
+        cycle.qaResults?.testOutput ??
+        cycle.criticVerdict?.comments ??
+        `Orchestrator cycle ended without verification (status: ${cycle.status}).`;
       const tiers: Array<[IReviewStepResult['step'], string]> = [
         ['architect', 'Architect Spec & Requirements Analysis'],
         ['developer', 'Developer AST Diff Generation'],
         ['critic', 'Critic Anti-Sycophancy Audit'],
         ['qa', 'QA MicroVM Execution & SAST Scan']
       ];
-      return tiers.map(([step, title]) => ({
+      const steps = tiers.map(([step, title]) => ({
         step,
         title,
         status: 'failed' as const,
         details: reason,
         verdict: 'rejected' as const
       }));
+      (steps as any).diff = cycle.implementationDiff;
+      return steps;
     }
 
     const steps: IReviewStepResult[] = [];

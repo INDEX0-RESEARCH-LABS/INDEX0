@@ -118,9 +118,15 @@ jobs:
 
       - name: Scan Diff for Committed Secrets
         run: |
+          set -euo pipefail
           echo "Scanning for accidental secret leaks..."
-          # grep -E has no lookahead: match assignments, then filter known placeholders.
-          matches=$(git diff origin/main | grep -iE '^\+.*(SECRET_KEY|API_KEY|PRIVATE_KEY|TOKEN)=' | grep -viE 'YOUR_|placeholder|Masterkey|example|_KEY=$' || true)
+          # Capture the diff first so a git error fails the job instead of
+          # silently reading as "clean". grep -E has no lookahead: match
+          # assignments, then drop known placeholders and files under *.example.
+          diff=$(git diff origin/main)
+          matches=$(printf '%s\n' "$diff" \
+            | grep -iE '^\+.*(SECRET_KEY|API_KEY|PRIVATE_KEY|TOKEN)=' \
+            | grep -viE 'YOUR_|placeholder|Masterkey|\.example|_KEY=$|_KEY=""' || true)
           if [ -n "$matches" ]; then
             echo "ERROR: Unsanitized credentials detected in git diff!"
             echo "$matches" | sed -E 's/=.*/=<redacted>/'

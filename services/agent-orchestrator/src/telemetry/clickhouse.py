@@ -8,9 +8,25 @@ import httpx
 
 logger = logging.getLogger(__name__)
 
+# Schema columns tenant_id/user_id/workspace_id are UUID and not Nullable, so an
+# unknown actor is recorded with the nil UUID rather than an invented identity.
+NIL_UUID = "00000000-0000-0000-0000-000000000000"
+
 
 def _now() -> str:
     return datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
+
+
+def _as_uuid(value: Optional[str]) -> str:
+    """Return a valid UUID string, or the nil UUID when unknown/unparseable."""
+    if not value:
+        return NIL_UUID
+    try:
+        return str(uuid.UUID(str(value)))
+    except (ValueError, AttributeError, TypeError):
+        # Deterministic derivation keeps a human-readable id (e.g. "cycle-abc")
+        # stable across retries instead of inventing a random tenant.
+        return str(uuid.uuid5(uuid.NAMESPACE_URL, str(value)))
 
 
 class ClickHouseTelemetryClient:
@@ -39,8 +55,8 @@ class ClickHouseTelemetryClient:
         return {
             "event_id": str(uuid.uuid4()),
             "timestamp": _now(),
-            "tenant_id": tenant_id or "",
-            "user_id": user_id or "",
+            "tenant_id": _as_uuid(tenant_id),
+            "user_id": _as_uuid(user_id),
             "action": action,
             "resource_type": resource_type,
             "resource_id": resource_id,
@@ -65,9 +81,9 @@ class ClickHouseTelemetryClient:
         return {
             "metric_id": str(uuid.uuid4()),
             "timestamp": _now(),
-            "tenant_id": tenant_id or "",
-            "run_id": run_id,
-            "workspace_id": workspace_id or "",
+            "tenant_id": _as_uuid(tenant_id),
+            "run_id": _as_uuid(run_id),
+            "workspace_id": _as_uuid(workspace_id),
             "model": model,
             "prompt_tokens": prompt_tokens,
             "completion_tokens": completion_tokens,

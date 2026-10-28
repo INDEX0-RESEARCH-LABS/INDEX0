@@ -1,4 +1,5 @@
 """FastAPI Application for INDEX0 Agent Orchestrator."""
+import asyncio
 from datetime import datetime, timezone
 import uuid
 from typing import Any, Dict
@@ -26,6 +27,17 @@ modernizer = CodeModernizer()
 
 # In-memory storage for active cycles (in production, backed by Redis/PostgreSQL)
 cycles_store: Dict[str, ReviewLoopState] = {}
+
+# Fire-and-forget telemetry tasks must be referenced until they finish,
+# otherwise CPython may garbage-collect the task mid-flight.
+_background_tasks: set = set()
+
+
+def _spawn(coro):
+    task = asyncio.create_task(coro)
+    _background_tasks.add(task)
+    task.add_done_callback(_background_tasks.discard)
+    return task
 
 app = FastAPI(
     title="INDEX0 Agent Orchestrator",
@@ -72,10 +84,11 @@ async def start_cycle(req: CycleStartRequest) -> Dict[str, Any]:
     final_state = await engine.execute_cycle(initial_state)
     cycles_store[cycle_id] = final_state
 
-    # Stream real-time audit event & execution metrics into ClickHouse
+    # Stream audit + execution telemetry into ClickHouse without blocking the
+    # response (each insert has its own 1.5s timeout and may be unreachable).
     from .telemetry import get_clickhouse_client
     ch = get_clickhouse_client()
-    await ch.log_audit_event(
+    _spawn(ch.log_audit_event(
         action="cycle_completed",
         resource_id=cycle_id,
         metadata={
@@ -84,8 +97,8 @@ async def start_cycle(req: CycleStartRequest) -> Dict[str, Any]:
             "iteration": final_state.get("iteration", 1),
             "critic_verdict": final_state.get("critic_verdict", {}).get("decision", "unknown")
         }
-    )
-    await ch.log_execution_metrics(
+    ))
+    _spawn(ch.log_execution_metrics(
         run_id=cycle_id,
         model=settings.developer_model,
         # Unknown values stay 0: token counts are only recorded when the graph
@@ -95,7 +108,7 @@ async def start_cycle(req: CycleStartRequest) -> Dict[str, Any]:
         completion_tokens=int(final_state.get("completion_tokens") or 0),
         status=final_state.get("status", "completed"),
         step_count=final_state.get("iteration", 1)
-    )
+    ))
 
     return {
         "cycleId": cycle_id,
