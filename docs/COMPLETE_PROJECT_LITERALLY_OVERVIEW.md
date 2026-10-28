@@ -1,5 +1,7 @@
 > **Status: UNVERIFIED claims. See [benchmarks/CLAIM_AUDIT.md](../benchmarks/CLAIM_AUDIT.md).**
 > Benchmark numbers and capability claims in this document are unverified. History is preserved for audit purposes only.
+>
+> **Removed 2026-10-28:** the vendored `agent-canvas/` OpenHands fork (1,177 files) is no longer part of this repository. The official SWE-bench / AiderBench harnesses expect a separate OpenHands checkout and now report it as missing rather than silently skipping.
 
 # INDEX0: Platform History and Architecture Blueprint: From Start to Now
 > **The End-to-End Blueprint, Chronological History, and Architectural Manual**
@@ -436,11 +438,6 @@ sequenceDiagram
 ├── pnpm-workspace.yaml             # pnpm monorepo workspace definition
 ├── package.json                    # Monorepo root scripts, Turborepo tasks, dev dependencies
 ├── turbo.json                      # Turborepo task pipeline configuration
-├── agent-canvas/                   # Rebranded Autonomous Workbench & index0_agent runtime
-│   ├── frontend/                   # React 18 / Tailwind Workbench UI
-│   ├── index0_agent/               # Python autonomous agent core (agenthub, runtime, controller)
-│   │   └── aci/                    # Agent-Computer Interface (diff.py, editor.py, linter.py)
-│   └── docker/                     # Dockerfile and runtime sandbox templates
 ├── apps/
 │   ├── ai/                         # Next.js 15 Platform Portal, Marketing, Downloads & Docs
 │   │   ├── src/app/                # App Router (pages: blog, docs, downloads, marketplace, pricing)
@@ -552,7 +549,7 @@ index0 stats
 
 ### 7.2 Cloud Web IDE (`code-server`) & Agent Canvas
 - **Cloud IDE (`code-server:8443`)**: In-browser VS Code instance with full extension support, accessible at `https://ide.index0.in` and `https://ai.index0.in/canvas`.
-- **Agent Canvas (`agent-canvas`)**: Autonomous engineering workbench running `index0_agent` with its dedicated **ACI (Agent-Computer Interface)** for surgical file editing, unified diff application, and real-time linter verification.
+- **Agent Canvas**: *removed 2026-10-28.* The vendored OpenHands fork that used to live in `agent-canvas/` is no longer tracked. Agent execution now goes through `services/agent-orchestrator` (LangGraph review loop) and `services/sandbox-manager` (Docker/microVM execution). Official benchmark runs require an external OpenHands checkout and report it as missing when absent.
 
 ### 7.3 Next.js Platform Portal (`apps/ai`)
 - Built with **Next.js 15 App Router**, **Tailwind CSS**, and modern aesthetics.

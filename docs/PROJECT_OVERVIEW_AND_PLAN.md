@@ -71,10 +71,10 @@ The `index0` CLI is implemented in `packages/client-harness`:
      - MCP (Model Context Protocol) tool inspection (`/sandbox`, `/mcp`).
      - WebRTC Voice Agent rooms.
 
-2. **Cloud Web IDE & Autonomous Workbench (`apps/ide/web` & `agent-canvas`)**:
+2. **Cloud Web IDE & Autonomous Workbench (`apps/ide/web`)**:
    - Hosted at `https://canvas.index0.in` and `https://ide.index0.in`.
    - Reverse-proxied via Caddy to containerized `code-server:8443`.
-   - Powered by the rebranded `index0_agent` runtime (formerly OpenHands) running inside Docker/Firecracker execution sandboxes.
+   - Agent execution runs through `services/agent-orchestrator` inside Docker/Firecracker sandboxes managed by `services/sandbox-manager`. The `agent-canvas/` OpenHands fork is **not** vendored (removed 2026-10-28).
 
 3. **Landing & Downloads Portal (`apps/ai`)**:
    - Next.js 15 application running on port 3005 at `ai.index0.in`.
@@ -125,9 +125,9 @@ flowchart TD
 
 ---
 
-### Tier 2: Autonomous Workbench Execution Agents (`agent-canvas/index0_agent/agenthub`)
+### Tier 2: Autonomous Workbench Execution Agents (`services/agent-orchestrator/src/graph`)
 
-Specialized runtime agents that execute complex interactive tasks inside microVM and Docker sandboxes:
+Specialized runtime agents that execute complex interactive tasks inside microVM and Docker sandboxes (the former `agent-canvas/index0_agent/agenthub` runtime is no longer vendored):
 
 1. ⚙️ **CodeAct Agent**:
    - Executes terminal actions, runs commands, reads shell output, inspects compiler logs, and modifies files iteratively.
@@ -183,7 +183,6 @@ Specialized runtime agents that execute complex interactive tasks inside microVM
 | `apps/ai` | Next.js platform landing & download portal | `:3005` (proxied to `ai.index0.in`) |
 | `apps/ide/web` | Web IDE UI & Workbench visualizer | `:5173` (proxied to `/ide`) |
 | `apps/ide/extension` | VS Code / Cursor IDE Extension | Desktop & Code-OSS |
-| `agent-canvas` | Rebranded OpenHands autonomous runtime | `:8443` (`canvas.index0.in`) |
 | `services/agent-orchestrator` | LangGraph 4-tier review service | `:8000` (proxied to `/orchestrator`) |
 | `services/voice-agent` | Real-time LiveKit / Pipecat service | `:8020` |
 | `services/sandbox-manager` | Docker & MicroVM isolation controller | `:4001` (proxied to `/sandbox`) |
@@ -207,7 +206,7 @@ Specialized runtime agents that execute complex interactive tasks inside microVM
 ### Phase 2: Agent Orchestration & Workbench (COMPLETED ✅)
 - [x] 4-Tier LangGraph review loop built (Architect, Developer, Critic, QA).
 - [x] TextGrad textual backpropagation feedback engine implemented.
-- [x] OpenHands codebase rebranded and aligned to native `index0_agent` and `agent-canvas`.
+- [x] ~~OpenHands codebase rebranded and aligned to native `index0_agent` and `agent-canvas`.~~ (removed 2026-10-28: the vendored fork is no longer tracked)
 - [x] Terminal Token Filter implemented to strip ANSI escapes and compress execution logs.
 
 ### Phase 3: CLI, Cloud VM & Distribution (COMPLETED / ACTIVE ✅)

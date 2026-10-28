@@ -29,6 +29,10 @@
 
 ## 3. Immediate Setup Instructions
 
+> `agent-canvas/` is **not** vendored (removed 2026-10-28). Clone OpenHands yourself
+> (`git clone https://github.com/All-Hands-AI/OpenHands agent-canvas`) before running
+> the official harnesses; the runner reports a missing checkout explicitly.
+
 ### Step 1: Configure `agent-canvas/config.toml`
 Create `agent-canvas/config.toml` with the desired evaluation model:
 

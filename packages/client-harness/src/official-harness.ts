@@ -496,7 +496,7 @@ export async function checkOfficialRunFeasibility(): Promise<{
   try {
     await fs.access(agentCanvasPath);
   } catch {
-    blockedReasons.push('agent-canvas directory not found (run `git submodule update --init` or clone OpenHands)');
+    blockedReasons.push('agent-canvas directory not found (not vendored: clone OpenHands into ./agent-canvas)');
     requirements.push('agent-canvas/OpenHands repository');
   }
 

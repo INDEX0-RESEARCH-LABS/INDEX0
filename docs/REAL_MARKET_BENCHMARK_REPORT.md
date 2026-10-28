@@ -40,7 +40,7 @@ Unlike synthetic marketing claims or proprietary unverified benchmarks, INDEX0 A
 ## 1. SWE-bench Lite Real Issue Resolution (Princeton NLP)
 
 **Dataset**: `princeton-nlp/SWE-bench_Lite` (300 real historical issues from GitHub).  
-**Harness**: Official Dockerized test runner ([`agent-canvas/evaluation/benchmarks/swe_bench`](../agent-canvas/evaluation/benchmarks/swe_bench)).
+**Harness**: Official Dockerized test runner (`agent-canvas/evaluation/benchmarks/swe_bench` in an external OpenHands checkout — not vendored since 2026-10-28).
 
 ### Live Verified Test Cases Evaluated:
 | Instance ID | Target Repository | Real GitHub Problem Statement | Live Test Runner Verdict |
@@ -59,7 +59,7 @@ Unlike synthetic marketing claims or proprietary unverified benchmarks, INDEX0 A
 ## 2. AiderBench Code Editing Accuracy (Exercism 133 Live Pytest)
 
 **Dataset**: `RajMaheshwari/Exercism-Python` (133 real-world programming exercises).  
-**Harness**: [`agent-canvas/evaluation/benchmarks/aider_bench`](../agent-canvas/evaluation/benchmarks/aider_bench) & live `pytest` subprocess execution.
+**Harness**: `agent-canvas/evaluation/benchmarks/aider_bench` in an external OpenHands checkout (not vendored since 2026-10-28) & live `pytest` subprocess execution.
 
 * **Live Test Method**: Real Exercism problem files are generated and tested live using the machine's `pytest` runner.
 * **Live Results**:

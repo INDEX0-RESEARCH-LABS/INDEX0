@@ -111,7 +111,7 @@ The execution core for autonomous software engineering.
 - **Capabilities**: Integrated Monaco editor, terminal emulator, file explorer, multi-agent execution loop
 - **LLM Backend**: Configurable via `LLM_MODEL` env var (Claude, GPT, local vLLM)
 - **Workspace**: Binds to host `./workspace` directory for persistent code development
-- **Agent Canvas**: Vendored OpenHands fork at `/agent-canvas/` with INDEX0-specific agent customizations
+- **Agent Canvas**: *removed 2026-10-28.* The former vendored OpenHands fork at `/agent-canvas/` is no longer tracked; benchmark runs require an external OpenHands checkout.
 
 ### 2.2 Sandbox Execution Engine
 - **Primary**: E2B Cloud MicroVMs via `@e2b/code-interpreter` SDK
