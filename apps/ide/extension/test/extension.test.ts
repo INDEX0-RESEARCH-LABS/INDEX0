@@ -48,7 +48,7 @@ describe('VS Code Extension Scaffolding (@index0/ide-extension)', () => {
 
     const manager = activate(mockContext);
     assert.ok(manager);
-    assert.equal(mockContext.subscriptions.length, 3);
+    assert.equal(mockContext.subscriptions.length, 7);
 
     // Call deactivate cleanly
     deactivate();

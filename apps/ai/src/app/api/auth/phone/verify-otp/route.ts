@@ -20,8 +20,9 @@ export async function POST(req: Request) {
       );
     }
 
-    // In demo / test mode, accept standard demo OTP or 6-digit codes
-    const isValid = cleanOtp === '123456' || cleanOtp.length === 6;
+    // Only allow the designated demo OTP in non-production environments
+    const isDev = process.env.NODE_ENV !== 'production';
+    const isValid = isDev && cleanOtp === '123456';
 
     if (!isValid) {
       return NextResponse.json(

@@ -116,7 +116,13 @@ check_http_endpoint "Zitadel Identity Provider" "${ZITADEL_ISSUER:-http://localh
 # 10. Agent Orchestrator LangGraph Service
 check_http_endpoint "Agent Orchestrator (LangGraph 4-Tier)" "http://localhost:8010/health" "200" false
 
-# 11. Voice Agent Pipeline
+# 11. Sandbox Manager MicroVM Engine
+check_http_endpoint "Sandbox Manager (MicroVM & E2B)" "http://localhost:4001/health" "200" false
+
+# 12. Caddy Sovereign Ingress Gateway
+check_http_endpoint "Caddy Sovereign Ingress Gateway" "http://localhost:8000/health" "200" false
+
+# 13. Voice Agent Pipeline
 check_http_endpoint "Voice Agent Worker (LiveKit/Pipecat)" "http://localhost:8020/health" "200" false
 
 # 12. Privacy & Zero Data Retention (ZDR) Policy Enforcement Check
