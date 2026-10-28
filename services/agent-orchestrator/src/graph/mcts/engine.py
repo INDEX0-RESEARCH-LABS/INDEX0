@@ -27,8 +27,12 @@ class MCTSEngine:
 
         passed_qa = qa.get("passed", False)
         tests_passed = qa.get("tests_passed", 0)
-        tests_run = max(1, qa.get("tests_run", 1))
-        correctness_ratio = tests_passed / float(tests_run)
+        tests_run = qa.get("tests_run") or 0
+        # No reported count means "not measured", not "0% correct": a passing QA
+        # with no counts is consistent, so score it against the pass verdict.
+        correctness_ratio = (
+            tests_passed / float(tests_run) if tests_run else (1.0 if passed_qa else 0.0)
+        )
 
         decision = critic.get("decision", "request_changes")
         critic_approved = decision == "approve"

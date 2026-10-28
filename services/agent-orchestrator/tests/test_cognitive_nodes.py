@@ -1,4 +1,5 @@
 """Unit tests for Phase 1 Cognitive Nodes and LiteLLM Client."""
+import httpx
 import pytest
 from pydantic import BaseModel
 from src.llm.client import LiteLLMClient
@@ -89,7 +90,12 @@ async def test_critic_node_detects_slop():
 
 
 @pytest.mark.asyncio
-async def test_qa_node_execution():
+async def test_qa_node_fails_closed_when_sandbox_is_unreachable(monkeypatch):
+    """No sandbox means nothing was verified: the gate must not report a pass."""
+    async def unreachable(*args, **kwargs):
+        raise httpx.ConnectError("sandbox-manager offline")
+
+    monkeypatch.setattr("src.graph.nodes.qa.execute_in_sandbox", unreachable)
     state = {
         "cycle_id": "qa-test-cycle",
         "task_id": "task-test-qa",
@@ -99,9 +105,36 @@ async def test_qa_node_execution():
     }
     result = await qa_node(state)
 
-    assert "qa_results" in result
     qa = result["qa_results"]
-    assert "passed" in qa
+    assert qa["passed"] is False
+    assert qa["tests_run"] == 0
+    assert qa["sastFindings"] is None
+    assert qa["sandboxMode"] == "unverified"
+    assert result["final_verdict"] == "rejected"
+
+
+@pytest.mark.asyncio
+async def test_qa_node_reports_only_observed_results(monkeypatch):
+    captured = {}
+
+    async def fake_sandbox(sandbox_url, command, timeout_ms=30000):
+        captured["cmd"] = command
+        return {"exitCode": 0, "stdout": "24 passed, 0 failed", "stderr": "", "durationMs": 1234}
+
+    monkeypatch.setattr("src.graph.nodes.qa.execute_in_sandbox", fake_sandbox)
+    state = {
+        "cycle_id": "qa-test-cycle",
+        "task_id": "task-test-qa",
+        "implementation_diff": "diff --git a/main.ts b/main.ts\n+ export const ok = true;",
+        "iteration": 1,
+        "history": []
+    }
+    result = await qa_node(state)
+
+    qa = result["qa_results"]
     assert qa["passed"] is True
-    assert qa["tests_run"] == 5
-    assert result["final_verdict"] == "approved"
+    assert qa["tests_run"] == 24
+    assert qa["tests_passed"] == 24
+    assert qa["duration_ms"] == 1234
+    # The verification command must be able to fail (no '|| echo' rescue).
+    assert "echo" not in captured["cmd"]

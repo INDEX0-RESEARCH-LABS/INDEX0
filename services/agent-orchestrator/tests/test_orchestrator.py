@@ -81,9 +81,14 @@ async def test_review_loop_full_cycle():
     }
     final_state = await engine.execute_cycle(initial_state)
     assert final_state["is_complete"] is True
-    assert final_state["status"] == "qa_verified"
+    # LiteLLM and the sandbox are both unreachable in unit tests, so the loop
+    # must not claim verification. QA fails closed instead of reporting
+    # "All unit and invariant tests passed".
+    assert final_state["status"] == "qa_failed"
     assert "qa_results" in final_state
-    assert final_state["qa_results"]["status"] == "passed"
+    assert final_state["qa_results"]["status"] == "failed"
+    assert final_state["qa_results"]["tests_run"] == 0
+    assert final_state["final_verdict"] == "rejected"
 
 
 def test_textgrad_feedback_engine():

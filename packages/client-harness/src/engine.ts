@@ -58,7 +58,8 @@ interface IOrchestratorCycleResponse {
   qaResults?: {
     passed: boolean;
     testOutput?: string;
-    sastFindings?: number;
+    /** SAST finding count, or null when no scan was run. */
+    sastFindings?: number | null;
   };
   history: Array<{ role: string; content: string }>;
 }
@@ -290,7 +291,9 @@ export class Index0Engine {
       title: 'QA MicroVM Execution & SAST Scan',
       status: qaPassed ? 'passed' : 'failed',
       details: qaPassed
-        ? `Tests passed. SAST findings: ${cycle.qaResults?.sastFindings ?? 0}.`
+        ? typeof cycle.qaResults?.sastFindings === 'number'
+          ? `Tests passed. SAST findings: ${cycle.qaResults.sastFindings}.`
+          : 'Tests passed. SAST scan was not run.'
         : `QA failed: ${cycle.qaResults?.testOutput?.slice(0, 80) ?? 'see logs'}.`,
       verdict: qaPassed ? 'approved' : 'rejected'
     });
