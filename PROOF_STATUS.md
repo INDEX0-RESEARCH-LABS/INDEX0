@@ -3,7 +3,7 @@
 Current proof-of-work status for every claimed capability.
 Filled only from direct inspection of this repository. "Not verified" means the code or test was not found during this audit.
 
-> Last updated: 2026-10-23. Review against latest commit before citing externally.
+> Last updated: 2026-10-28. Review against latest commit before citing externally.
 
 ---
 
@@ -13,7 +13,7 @@ Filled only from direct inspection of this repository. "Not verified" means the 
 | **Interactive TUI (full-screen terminal)** | Working | `packages/client-harness/src/launcher.ts`, `packages/client-harness/src/ui.ts`; tested in `packages/client-harness/test/launcher.test.ts` |
 | **GitHub Device Flow login** | Working | `packages/client-harness/src/auth.ts`; tested in `packages/client-harness/test/auth.test.ts` |
 | **LLM prompt routing via LiteLLM** | Working | `packages/client-harness/src/engine.ts`; LiteLLM config at `infra/litellm/`; Docker Compose service in `infra/compose/litellm.yml` |
-| **4-tier review loop (Architect, Developer, Critic, QA)** | Partial | Python implementation at `services/agent-orchestrator/src/graph/review_loop.py` and `src/graph/nodes/`; REST API wiring at `services/agent-orchestrator/src/main.py`; TypeScript client in `packages/client-harness/src/engine.ts`; end-to-end integration not tested in CI |
+| **4-tier review loop (Architect, Developer, Critic, QA)** | Partial | Python implementation at `services/agent-orchestrator/src/graph/review_loop.py` and `src/graph/nodes/`; REST API wiring at `services/agent-orchestrator/src/main.py`; TypeScript client in `packages/client-harness/src/engine.ts`. `pytest services/agent-orchestrator/tests` passes 22/22 (verified 2026-10-28, Python 3.12) and now runs in CI (`.github/workflows/ci.yml` job `python-services`). Not verified: a live end-to-end run against a real model. |
 | **Git-native agent coordination (GNAP)** | Working | `packages/client-harness/src/gnap.ts`; writes to `.gnap/` directory; tested in `packages/client-harness/test/gnap.test.ts` |
 | **Git worktree isolation** | Working | `packages/client-harness/src/worktree.ts`; tested in `packages/client-harness/test/worktree.test.ts` |
 | **Context compression (viking://) - string transform** | Working | `packages/mcp-host/src/`; transform ratio measured and labeled as local string estimate in benchmark output; tested in `packages/client-harness/test/benchmark.test.ts` |
@@ -32,7 +32,7 @@ Filled only from direct inspection of this repository. "Not verified" means the 
 | **MCTS multiverse search engine** | Partial | `services/agent-orchestrator/src/graph/mcts/engine.py` and `tree.py` exist; integration with review loop not demonstrated; no benchmark result |
 | **TextGrad backpropagation loop** | Partial | `services/agent-orchestrator/src/textgrad/` directory exists; integration not tested end-to-end |
 | **Autonomous re-engineering (`index0 re-engineer`)** | Partial | CLI command wired in `packages/client-harness/src/cli.ts`; `services/agent-orchestrator/src/reengineering/` exists; smoke test in `packages/client-harness/test/reengineer.test.ts`; no production run verified |
-| **Voice pipeline (LiveKit + Pipecat)** | In progress | `services/voice-agent/` directory exists with Python service; Docker Compose overlay at `infra/compose/livekit.yml`; latency figures are UNVERIFIED |
+| **Voice pipeline (LiveKit + Pipecat)** | In progress | `services/voice-agent/` directory exists with Python service; `pytest services/voice-agent/tests` passes 3/3 and now runs in CI (`.github/workflows/ci.yml` job `python-services`); Docker Compose overlay at `infra/compose/livekit.yml`; latency figures are UNVERIFIED |
 | **Edge autocomplete (TabbyML)** | In progress | `infra/tabby/` config exists; Docker Compose overlay at `infra/compose/tabby.yml`; latency figures are UNVERIFIED |
 | **Web IDE (code-server)** | In progress | `infra/code-server/` Dockerfile and config exist; Docker Compose overlay at `infra/compose/code-server.yml`; live URL not confirmed |
 | **Semgrep / Trivy security gates** | Partial | Referenced in `scripts/license-check.sh` and Docker Compose; not run as CI gate in this repo |
