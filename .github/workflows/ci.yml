@@ -81,6 +81,32 @@ jobs:
       - name: Validate Docker Compose
         run: docker compose -f infra/compose/docker-compose.yml config
 
+  python-services:
+    name: Python Service Tests (Orchestrator, Voice)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup uv + Python 3.12
+        uses: astral-sh/setup-uv@v6
+        with:
+          python-version: '3.12'
+          enable-cache: true
+
+      - name: Create venv and install editable services
+        run: |
+          uv venv --python 3.12
+          uv pip install -e "./services/agent-orchestrator[dev]" -e "./services/voice-agent[dev]"
+
+      - name: Agent orchestrator tests
+        working-directory: services/agent-orchestrator
+        run: ../../.venv/bin/python -m pytest tests -q
+
+      - name: Voice agent tests
+        working-directory: services/voice-agent
+        run: ../../.venv/bin/python -m pytest tests -q
+
   security-scan:
     name: Secret & Credential Leak Scan
     runs-on: ubuntu-latest
@@ -93,10 +119,14 @@ jobs:
       - name: Scan Diff for Committed Secrets
         run: |
           echo "Scanning for accidental secret leaks..."
-          git diff origin/main | grep -iE "(SECRET_KEY|API_KEY|PRIVATE_KEY|TOKEN)=(?!YOUR_|placeholder|Masterkey)" && {
+          # grep -E has no lookahead: match assignments, then filter known placeholders.
+          matches=$(git diff origin/main | grep -iE '^\+.*(SECRET_KEY|API_KEY|PRIVATE_KEY|TOKEN)=' | grep -viE 'YOUR_|placeholder|Masterkey|example|_KEY=$' || true)
+          if [ -n "$matches" ]; then
             echo "ERROR: Unsanitized credentials detected in git diff!"
+            echo "$matches" | sed -E 's/=.*/=<redacted>/'
             exit 1
-          } || echo "No exposed credentials detected. Repository clean."
+          fi
+          echo "No exposed credentials detected. Repository clean."
 
       - name: License Boundary Audit
         run: bash scripts/license-check.sh

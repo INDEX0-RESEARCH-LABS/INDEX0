@@ -1,5 +1,6 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
+import { execSync } from 'node:child_process';
 import * as path from 'node:path';
 import {
   runCliPerformanceBenchmark,
@@ -70,6 +71,13 @@ describe('Benchmark Suite: Mechanics Verification', () => {
     
     assert.equal(market.aiderExercism.status, 'SMOKE_CHECK_ONLY');
     assert.ok(market.aiderExercism.measurementNote && market.aiderExercism.measurementNote.includes('SMOKE CHECK'));
+    // The python fallback must actually execute every exercise (regression: unittest
+    // was invoked with an absolute file path, which never imports, silently scoring 0/5).
+    const hasPython = execSync('command -v python3 || true', { encoding: 'utf-8' }).trim().length > 0;
+    if (hasPython) {
+      assert.equal(market.aiderExercism.exercisesEvaluated, 5);
+      assert.equal(market.aiderExercism.exercisesPassed, 5, 'Exercism smoke checks must all execute');
+    }
     
     assert.ok(market.realRepoSurgery.measurementNote && market.realRepoSurgery.measurementNote.includes('UNVERIFIED'));
   });

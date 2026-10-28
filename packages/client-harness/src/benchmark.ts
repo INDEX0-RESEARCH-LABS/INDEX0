@@ -539,9 +539,12 @@ export async function runRealMarketCasesBenchmark(): Promise<IEmpiricalBenchmark
           testOutput: summary
         });
       } catch {
-        // Fallback to python3 -m unittest
+        // Fallback to unittest discovery (unittest cannot import an absolute file path)
         try {
-          execSync(`python3 -m unittest "${filePath}"`, { encoding: 'utf-8', timeout: 5000 });
+          execSync(`python3 -m unittest discover -s "${tmpDir}" -p "${ex.filename}"`, {
+            encoding: 'utf-8',
+            timeout: 5000
+          });
           executedExercism.push({
             name: ex.name,
             language: 'python',

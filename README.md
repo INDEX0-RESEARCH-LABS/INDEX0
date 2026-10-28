@@ -63,7 +63,7 @@ index0 benchmark
 ## Quickstart
 
 ### Prerequisites
-- Node.js 20+
+- Node.js **22.18+** (or 24/26 LTS) — package tests run TypeScript directly via `node --test`, which needs built-in type stripping; Node 20 fails with `ERR_UNKNOWN_FILE_EXTENSION`
 - pnpm 12+
 - Python 3.11+
 - Docker and Docker Compose
