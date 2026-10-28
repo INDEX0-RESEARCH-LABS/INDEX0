@@ -77,28 +77,51 @@ class ReviewLoopEngine:
         arch_res = await architect_node(state)
         state.update(arch_res)
 
-        # 2. Iteration loop (Developer <-> Critic)
+        # 2. Iteration loop (Developer <-> Critic) with Circuit Breaker Protection
+        from ..circuit_breaker import AgentCircuitBreaker, CircuitBreakerException
+        breaker = AgentCircuitBreaker()
+        breaker.reset()
+
         max_iter = state.get("max_iterations", 5)
         while state.get("iteration", 0) < max_iter:
-            # Developer implementation
-            dev_res = await developer_node(state)
-            state.update(dev_res)
+            try:
+                # Developer implementation
+                dev_res = await developer_node(state)
+                state.update(dev_res)
 
-            # Critic evaluation
-            crit_res = await critic_node(state)
-            state.update(crit_res)
+                # Circuit Breaker Evaluation
+                modified_files = list(state.get("generated_code", {}).keys()) or state.get("context_files", [])
+                code_snapshot = "\n".join(state.get("generated_code", {}).values()) or state.get("implementation_diff", "")
+                
+                cb_metrics = breaker.evaluate_step(
+                    modified_files=modified_files,
+                    current_code=code_snapshot
+                )
+                state["circuit_breaker_metrics"] = cb_metrics
 
-            route = should_continue_review(state)
-            if route == "qa":
-                qa_res = await qa_node(state)
-                state.update(qa_res)
-                break
-            elif route == "end":
-                state["status"] = "max_iterations_reached"
+                # Critic evaluation
+                crit_res = await critic_node(state)
+                state.update(crit_res)
+
+                route = should_continue_review(state)
+                if route == "qa":
+                    qa_res = await qa_node(state)
+                    state.update(qa_res)
+                    break
+                elif route == "end":
+                    state["status"] = "max_iterations_reached"
+                    state["is_complete"] = True
+                    state["final_verdict"] = "rejected"
+                    break
+                # route == "developer" -> continues while loop
+            except CircuitBreakerException as e:
+                logger.error(f"[ReviewLoopEngine] Circuit breaker tripped: {e}")
+                state["circuit_breaker_tripped"] = True
+                state["circuit_breaker_reason"] = str(e)
+                state["status"] = "circuit_breaker_tripped"
                 state["is_complete"] = True
-                state["final_verdict"] = "rejected"
+                state["final_verdict"] = "aborted"
                 break
-            # route == "developer" -> continues while loop
 
         return state
 

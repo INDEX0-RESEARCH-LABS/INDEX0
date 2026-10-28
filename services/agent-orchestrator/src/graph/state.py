@@ -28,9 +28,12 @@ class ReviewLoopState(TypedDict, total=False):
     textgrad_loss: float
     textgrad_prompt: Optional[str]
 
-    # Status tracking
+    # Status tracking & Circuit Breakers
     current_role: str
     status: str
     is_complete: bool
     final_verdict: Optional[str]
     history: List[Dict[str, Any]]
+    circuit_breaker_metrics: Optional[Dict[str, Any]]
+    circuit_breaker_tripped: bool
+    circuit_breaker_reason: Optional[str]

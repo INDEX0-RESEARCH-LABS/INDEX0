@@ -19,7 +19,6 @@ class Settings(BaseSettings):
     sandbox_manager_url: str = "http://localhost:3002"
     litellm_proxy_url: str = "http://localhost:4000"
     litellm_api_key: str = "sk-index0-litellm-dev"
-    openhands_url: str = "http://localhost:3000"
     letta_url: str = "http://localhost:8283"
 
     # Orchestrator Policy Defaults

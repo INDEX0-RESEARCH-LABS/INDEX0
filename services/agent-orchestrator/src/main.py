@@ -3,6 +3,7 @@ from datetime import datetime, timezone
 import uuid
 from typing import Any, Dict
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import PlainTextResponse
 from fastapi.middleware.cors import CORSMiddleware
 
 from .config import get_settings
@@ -70,6 +71,31 @@ async def start_cycle(req: CycleStartRequest) -> Dict[str, Any]:
     # Execute the cycle via the review loop engine
     final_state = await engine.execute_cycle(initial_state)
     cycles_store[cycle_id] = final_state
+
+    # Stream real-time audit event & execution metrics into ClickHouse
+    from .telemetry import get_clickhouse_client
+    ch = get_clickhouse_client()
+    await ch.log_audit_event(
+        action="cycle_completed",
+        resource_id=cycle_id,
+        metadata={
+            "task_id": req.task_id,
+            "status": final_state.get("status", "completed"),
+            "iteration": final_state.get("iteration", 1),
+            "critic_verdict": final_state.get("critic_verdict", {}).get("decision", "unknown")
+        }
+    )
+    await ch.log_execution_metrics(
+        run_id=cycle_id,
+        model=settings.developer_model,
+        # Unknown values stay 0: token counts are only recorded when the graph
+        # actually reports them, never reconstructed from a plausible guess.
+        duration_ms=int(final_state.get("qa_results", {}).get("duration_ms") or 0),
+        prompt_tokens=int(final_state.get("prompt_tokens") or 0),
+        completion_tokens=int(final_state.get("completion_tokens") or 0),
+        status=final_state.get("status", "completed"),
+        step_count=final_state.get("iteration", 1)
+    )
 
     return {
         "cycleId": cycle_id,
@@ -154,3 +180,29 @@ async def compute_feedback(payload: Dict[str, Any]):
         qa_errors=qa_errors
     )
     return gradient
+
+
+@app.get("/metrics", response_class=PlainTextResponse)
+async def prometheus_metrics():
+    """Prometheus SRE metrics exposition endpoint."""
+    total_cycles = len(cycles_store)
+    active_cycles = sum(1 for c in cycles_store.values() if not c.get("is_complete", False))
+    completed_cycles = sum(1 for c in cycles_store.values() if c.get("is_complete", False))
+    tripped_circuits = sum(1 for c in cycles_store.values() if c.get("circuit_breaker_tripped", False))
+
+    lines = [
+        "# HELP index0_orchestrator_cycles_total Total number of review cycles initiated",
+        "# TYPE index0_orchestrator_cycles_total counter",
+        f"index0_orchestrator_cycles_total {total_cycles}",
+        "# HELP index0_orchestrator_active_cycles Current active in-flight cycles",
+        "# TYPE index0_orchestrator_active_cycles gauge",
+        f"index0_orchestrator_active_cycles {active_cycles}",
+        "# HELP index0_orchestrator_completed_cycles Total completed cycles",
+        "# TYPE index0_orchestrator_completed_cycles counter",
+        f"index0_orchestrator_completed_cycles {completed_cycles}",
+        "# HELP index0_orchestrator_circuit_breaker_trips_total Total circuit breaker trips",
+        "# TYPE index0_orchestrator_circuit_breaker_trips_total counter",
+        f"index0_orchestrator_circuit_breaker_trips_total {tripped_circuits}",
+    ]
+    return PlainTextResponse("\n".join(lines) + "\n", media_type="text/plain; version=0.0.4")
+
