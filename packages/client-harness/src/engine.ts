@@ -164,44 +164,35 @@ export class Index0Engine {
           contextFiles,
           maxIterations,
           repositoryRoot: this.repoRoot
-        })
+        }),
+        signal: AbortSignal.timeout(10000)
       });
 
       if (!response.ok) {
-        console.warn(`[Index0Engine] Orchestrator unreachable (${response.status}) — using local matrix mode.`);
-        return {
-          cycleId: `matrix-cycle-${Date.now().toString(36)}`,
-          taskId,
-          status: 'completed',
-          isComplete: true,
-          iteration: 1,
-          architecturePlan: `[Matrix] Architecture verified for: "${userPrompt}"`,
-          implementationDiff: '--- a/patch.ts\n+++ b/patch.ts\n@@ -0,0 +1 @@\n+// verified patch',
-          criticVerdict: { decision: 'approve', comments: '[Matrix] Security and anti-slop checks passed.' },
-          qaResults: { passed: true, testOutput: '[Matrix] Unit and integration tests passed.', sastFindings: 0 },
-          history: []
-        };
+        throw new Error(`Orchestrator returned HTTP ${response.status}: ${response.statusText}`);
       }
 
       return (await response.json()) as IOrchestratorCycleResponse;
     } catch (err: any) {
-      // Offline / local dev fallback — returns a synthetic approved cycle
+      // Offline / network failure handling — report explicit offline rejection
       if (
-        err.message.includes('fetch failed') ||
-        err.message.includes('ECONNREFUSED') ||
-        err.message.includes('ENOTFOUND')
+        err.message?.includes('fetch failed') ||
+        err.message?.includes('ECONNREFUSED') ||
+        err.message?.includes('ENOTFOUND') ||
+        err.name === 'TimeoutError' ||
+        err.name === 'AbortError'
       ) {
-        console.warn('[Index0Engine] Orchestrator unreachable — using local mock mode.');
+        console.warn(`[Index0Engine] Orchestrator unreachable at ${this.orchestratorBase}.`);
         return {
-          cycleId: `mock-cycle-${Date.now().toString(36)}`,
+          cycleId: `offline-${Date.now().toString(36)}`,
           taskId,
-          status: 'completed',
-          isComplete: true,
+          status: 'failed',
+          isComplete: false,
           iteration: 1,
-          architecturePlan: `[Mock] Spec for: "${userPrompt}"`,
-          implementationDiff: '--- a/mock.ts\n+++ b/mock.ts\n@@ -0,0 +1 @@\n+// mock implementation',
-          criticVerdict: { decision: 'approve', comments: '[Mock] No issues found.' },
-          qaResults: { passed: true, testOutput: '[Mock] All tests passed.', sastFindings: 0 },
+          architecturePlan: `[Offline] Unable to connect to orchestrator at ${this.orchestratorBase}`,
+          implementationDiff: '',
+          criticVerdict: { decision: 'reject', comments: '[Offline] Verification halted: backend orchestrator offline.' },
+          qaResults: { passed: false, testOutput: `[Offline] Orchestrator unreachable at ${this.orchestratorBase}. Start it (pnpm run infra:all:up) before running a review.`, sastFindings: 0 },
           history: []
         };
       }
@@ -224,6 +215,25 @@ export class Index0Engine {
       : taskDescription;
 
     const cycle = await this.callOrchestratorCycle(taskId, userPrompt, contextFiles);
+
+    // Fail closed: a cycle that could not run must never surface as an approval.
+    if (cycle.status === 'failed') {
+      const reason =
+        cycle.qaResults?.testOutput ?? 'Orchestrator review cycle failed with no diagnostic output.';
+      const tiers: Array<[IReviewStepResult['step'], string]> = [
+        ['architect', 'Architect Spec & Requirements Analysis'],
+        ['developer', 'Developer AST Diff Generation'],
+        ['critic', 'Critic Anti-Sycophancy Audit'],
+        ['qa', 'QA MicroVM Execution & SAST Scan']
+      ];
+      return tiers.map(([step, title]) => ({
+        step,
+        title,
+        status: 'failed' as const,
+        details: reason,
+        verdict: 'rejected' as const
+      }));
+    }
 
     const steps: IReviewStepResult[] = [];
     (steps as any).diff = cycle.implementationDiff;

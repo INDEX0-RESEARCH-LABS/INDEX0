@@ -9,18 +9,21 @@ test('GitWorktreeManager — Repo Verification', async () => {
   assert.equal(isRepo, true, 'Current workspace must be a valid git repository');
 });
 
-test('Index0Engine — 4-Tier Matrix Review', async () => {
-  const engine = new Index0Engine();
+test('Index0Engine — 4-Tier Matrix Review fails closed when the orchestrator is unreachable', async () => {
+  // Deterministic: point at a closed port instead of the default gateway so the
+  // test never reaches the network and never depends on prod availability.
+  const engine = new Index0Engine({ orchestratorBase: 'http://127.0.0.1:9/orchestrator' });
   const steps = await engine.runReviewMatrix('Implement secure JWT claims validation');
 
   assert.equal(steps.length, 4);
-  assert.equal(steps[0].step, 'architect');
-  assert.equal(steps[1].step, 'developer');
-  assert.equal(steps[2].step, 'critic');
-  assert.equal(steps[3].step, 'qa');
-
-  assert.equal(steps[0].status, 'passed');
-  assert.equal(steps[2].status, 'passed');
+  assert.deepEqual(
+    steps.map((s) => s.step),
+    ['architect', 'developer', 'critic', 'qa']
+  );
+  // An unreachable backend must never synthesize an approval.
+  assert.ok(steps.every((s) => s.status === 'failed'));
+  assert.ok(steps.every((s) => s.verdict === 'rejected'));
+  assert.match(steps[0].details, /offline|unreachable/i);
 });
 
 test('Index0Engine — Terminal Output Sanitization', () => {

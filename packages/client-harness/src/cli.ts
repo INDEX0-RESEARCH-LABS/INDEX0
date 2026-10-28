@@ -176,11 +176,6 @@ function printHelp(): void {
       description: 'auto-commit signed GNAP review upon matrix approval'
     },
     {
-      command: '--mock',
-      args: '',
-      description: 'run offline in local mock mode without network calls'
-    },
-    {
       command: '-h, --help',
       args: '',
       description: 'display this help menu'

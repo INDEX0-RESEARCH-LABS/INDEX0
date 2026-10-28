@@ -44,7 +44,7 @@
   "scripts": {
     "build": "tsc && chmod +x dist/cli.js",
     "typecheck": "tsc --noEmit",
-    "test": "tsc && chmod +x dist/cli.js && npx tsx --test test/*.test.ts",
+    "test": "tsc && chmod +x dist/cli.js && node --test test/*.test.ts",
     "prepublishOnly": "pnpm build"
   },
   "devDependencies": {
