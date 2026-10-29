@@ -3,7 +3,8 @@
 Current proof-of-work status for every claimed capability.
 Filled only from direct inspection of this repository. "Not verified" means the code or test was not found during this audit.
 
-> Last updated: 2026-10-28. Review against latest commit before citing externally.
+> Last updated: 2026-10-29. Review against latest commit before citing externally.
+> 15 of 36 capabilities are verifiable today; 0 of 3 published benchmarks.
 
 ---
 
@@ -13,7 +14,7 @@ Filled only from direct inspection of this repository. "Not verified" means the 
 | **Interactive TUI (full-screen terminal)** | Working | `packages/client-harness/src/launcher.ts`, `packages/client-harness/src/ui.ts`; tested in `packages/client-harness/test/launcher.test.ts` |
 | **GitHub Device Flow login** | Working | `packages/client-harness/src/auth.ts`; tested in `packages/client-harness/test/auth.test.ts` |
 | **LLM prompt routing via LiteLLM** | Working | `packages/client-harness/src/engine.ts`; LiteLLM config at `infra/litellm/`; Docker Compose service in `infra/compose/litellm.yml` |
-| **4-tier review loop (Architect, Developer, Critic, QA)** | Partial | Python implementation at `services/agent-orchestrator/src/graph/review_loop.py` and `src/graph/nodes/`; REST API wiring at `services/agent-orchestrator/src/main.py`; TypeScript client in `packages/client-harness/src/engine.ts`. `pytest services/agent-orchestrator/tests` passes 26/26 (verified 2026-10-28, Python 3.12) and now runs in CI (`.github/workflows/ci.yml` job `python-services`). Not verified: a live end-to-end run against a real model. |
+| **4-tier review loop (Architect, Developer, Critic, QA)** | Working | Live end-to-end runs on 2026-10-29 against Azure OpenAI via LiteLLM: the critic rejected two patches, the developer revised, and the QA tier executed the candidate code in a network-isolated `node:22` container against the repository's own test suite (4 passed / 0 failed, exit 0). Evidence committed in `demo/runs/`. `pytest services/agent-orchestrator/tests` passes 28/28 and runs in CI job `python-services`. Reproduce with `./demo/run-demo.sh`. |
 | **Git-native agent coordination (GNAP)** | Working | `packages/client-harness/src/gnap.ts`; writes to `.gnap/` directory; tested in `packages/client-harness/test/gnap.test.ts` |
 | **Git worktree isolation** | Working | `packages/client-harness/src/worktree.ts`; tested in `packages/client-harness/test/worktree.test.ts` |
 | **Context compression (viking://) - string transform** | Working | `packages/mcp-host/src/`; transform ratio measured and labeled as local string estimate in benchmark output; tested in `packages/client-harness/test/benchmark.test.ts` |

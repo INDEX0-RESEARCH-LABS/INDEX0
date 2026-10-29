@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>INDEX0 — The verification layer for AI-written code</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root {
+    --paper: #f7f5f1;
+    --ink: #14120f;
+    --muted: #6b665e;
+    --rule: #ddd7cc;
+    --accent: #c2410c;
+    --accent-soft: #f3e3d8;
+    --ok: #1f6f43;
+    --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+    --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: var(--paper); color: var(--ink); font-family: var(--sans); }
+  body { overflow: hidden; }
+
+  .deck { height: 100vh; position: relative; }
+  .slide {
+    position: absolute; inset: 0;
+    display: none;
+    flex-direction: column;
+    padding: 5vh 7vw 6vh;
+    overflow: hidden;
+  }
+  .slide.active { display: flex; }
+
+  h1, h2, h3 { margin: 0; font-weight: 620; letter-spacing: -0.02em; line-height: 1.06; }
+  h1 { font-size: clamp(34px, 5.6vw, 76px); }
+  h2 { font-size: clamp(24px, 3.4vw, 44px); max-width: 22ch; }
+  h3 { font-size: clamp(15px, 1.5vw, 20px); }
+  p { margin: 0; font-size: clamp(14px, 1.5vw, 19px); line-height: 1.5; color: var(--muted); }
+  strong { color: var(--ink); font-weight: 620; }
+
+  .kicker {
+    font-family: var(--mono); font-size: clamp(10px, 1vw, 12px); letter-spacing: .18em;
+    text-transform: uppercase; color: var(--accent); margin-bottom: 2.2vh;
+  }
+  .slide > header { margin-bottom: 4vh; }
+  .body { flex: 1; display: flex; flex-direction: column; gap: 3.2vh; min-height: 0; justify-content: center; }
+
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 3vw; }
+  .stat .n {
+    font-family: var(--mono); font-size: clamp(34px, 5vw, 64px); font-weight: 500;
+    letter-spacing: -0.03em; line-height: 1; display: block;
+  }
+  .stat .n.bad { color: var(--accent); }
+  .stat .l { display: block; margin-top: 1.4vh; font-size: clamp(12px, 1.15vw, 15px); line-height: 1.45; color: var(--muted); max-width: 30ch; }
+
+  .quote { font-size: clamp(18px, 2.3vw, 30px); line-height: 1.35; max-width: 34ch; letter-spacing: -0.01em; color: var(--ink); }
+  .quote.decided { border-left: 3px solid var(--accent); padding-left: 3vw; }
+
+  ul.plain { margin: 0; padding: 0; list-style: none; display: grid; gap: 2.2vh; }
+  ul.plain li { display: grid; grid-template-columns: auto 1fr; gap: 1.4vw; align-items: baseline; font-size: clamp(14px, 1.45vw, 18px); }
+  ul.plain li b { font-family: var(--mono); font-size: .82em; color: var(--accent); font-weight: 500; letter-spacing: .04em; }
+  ul.plain li span { color: var(--muted); }
+  ul.plain li span strong { color: var(--ink); }
+
+  /* pipeline */
+  .pipeline { display: flex; align-items: stretch; gap: 1vw; flex-wrap: wrap; }
+  .stage {
+    flex: 1 1 150px; border: 1px solid var(--rule); background: #fff; padding: 2.2vh 1.4vw;
+    display: flex; flex-direction: column; gap: 1vh; min-width: 140px;
+  }
+  .stage .tag { font-family: var(--mono); font-size: 10px; letter-spacing: .16em; color: var(--muted); text-transform: uppercase; }
+  .stage .name { font-size: clamp(14px, 1.35vw, 17px); font-weight: 620; }
+  .stage .desc { font-size: clamp(11px, 1vw, 13px); color: var(--muted); line-height: 1.4; }
+  .stage.accent { border-color: var(--accent); background: var(--accent-soft); }
+
+  /* terminal */
+  .term {
+    background: #17150f; color: #e8e2d6; font-family: var(--mono);
+    font-size: clamp(9.5px, .95vw, 12.5px); line-height: 1.62; padding: 2vh 1.8vw;
+    overflow: auto; border-radius: 3px; white-space: pre; flex: 1; min-height: 0;
+  }
+  .term .g { color: #7fbf8f; }
+  .term .r { color: #e58a6a; }
+  .term .d { color: #8a8478; }
+  .term .w { color: #f0e9db; }
+
+  /* table */
+  table { border-collapse: collapse; width: 100%; font-size: clamp(10px, 1.05vw, 14px); }
+  th, td { text-align: left; padding: 1.25vh 1vw; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  th { font-family: var(--mono); font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+  tr.us td { background: var(--accent-soft); font-weight: 600; }
+  td.gap { color: var(--muted); }
+  .yes { color: var(--ok); font-weight: 600; }
+  .no { color: var(--accent); }
+
+  .body.top { justify-content: flex-start; }
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 5vw; align-items: start; }
+  .note {
+    font-family: var(--mono); font-size: clamp(9px, .85vw, 11px); color: var(--muted);
+    line-height: 1.6; border-top: 1px solid var(--rule); padding-top: 1.4vh; margin-top: auto;
+  }
+  .note b { color: var(--accent); font-weight: 500; }
+
+  .bar-row { display: grid; grid-template-columns: 9ch 1fr auto; align-items: center; gap: 1.6vw; font-family: var(--mono); font-size: clamp(11px, 1.1vw, 14px); }
+  .bar { height: 26px; background: var(--ink); }
+  .bar.soft { background: #b9b1a2; }
+
+  .big-claim { font-size: clamp(20px, 2.6vw, 36px); line-height: 1.25; max-width: 26ch; letter-spacing: -0.02em; font-weight: 600; }
+  .pill { display: inline-block; font-family: var(--mono); font-size: .62em; letter-spacing: .1em; text-transform: uppercase; border: 1px solid var(--accent); color: var(--accent); padding: .5em .8em; vertical-align: middle; }
+
+  /* chrome */
+  .chrome { position: fixed; left: 7vw; right: 7vw; bottom: 2.4vh; display: flex; justify-content: space-between; align-items: center; font-family: var(--mono); font-size: 10px; letter-spacing: .14em; color: #a09889; text-transform: uppercase; pointer-events: none; }
+  .progress { position: fixed; left: 0; bottom: 0; height: 2px; background: var(--accent); transition: width .28s ease; }
+  .hint { position: fixed; right: 7vw; top: 3.4vh; font-family: var(--mono); font-size: 10px; color: #bdb5a6; letter-spacing: .1em; }
+
+  @media (max-width: 760px) {
+    .cols { grid-template-columns: 1fr; }
+    .slide { padding: 4vh 6vw 8vh; }
+  }
+  @media print {
+    html, body { overflow: visible; height: auto; background: #fff; }
+    .deck { height: auto; }
+    .slide { display: flex !important; position: relative; inset: auto; height: 100vh; page-break-after: always; }
+    .chrome, .progress, .hint { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="deck" id="deck">
+
+  <!-- 1 -->
+  <section class="slide active">
+    <div class="body" style="justify-content: center; gap: 4vh;">
+      <div class="kicker">Pre-seed · October 2026</div>
+      <h1>INDEX0</h1>
+      <p class="quote" style="max-width: 27ch; color: var(--ink);">
+        The verification layer for AI-written code — running in your tenant, on your keys, with proof you can replay.
+      </p>
+      <div class="note" style="margin-top: 6vh; max-width: 62ch;">
+        A working product, a published audit of our own claims, and no benchmark we can't reproduce.
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 -->
+  <section class="slide">
+    <header><div class="kicker">01 — The problem</div><h2>AI made code cheap. Knowing it's correct stayed expensive.</h2></header>
+    <div class="body">
+      <div class="stats">
+        <div class="stat"><span class="n bad">10×</span><span class="l">more security findings from AI-assisted developers, who also wrote 3–4× more code.</span></div>
+        <div class="stat"><span class="n bad">45%</span><span class="l">of AI-generated samples introduced an OWASP Top 10 flaw — and it did not improve across model generations.</span></div>
+        <div class="stat"><span class="n bad">86%</span><span class="l">of AI-generated XSS samples failed. Java fared worst at 72% of samples flawed.</span></div>
+      </div>
+      <p style="max-width: 66ch;">The bottleneck moved from <strong>writing</strong> code to <strong>proving</strong> it. Every team now reviews more code, faster, with the same number of senior eyes.</p>
+    </div>
+    <div class="note">Apiiro, <i>4× velocity, 10× vulnerability</i>, 4 Sep 2025 · Veracode, <i>2025 GenAI Code Security Report</i>, 30 Jul 2025</div>
+  </section>
+
+  <!-- 3 -->
+  <section class="slide">
+    <header><div class="kicker">02 — The symptom</div><h2>"Almost right" is the expensive failure mode.</h2></header>
+    <div class="body">
+      <div class="stats">
+        <div class="stat"><span class="n">46%</span><span class="l">of developers actively distrust AI tool accuracy; 33% trust it.</span></div>
+        <div class="stat"><span class="n">66%</span><span class="l">say the frustration is code that's "almost right, but not quite".</span></div>
+        <div class="stat"><span class="n">45%</span><span class="l">say debugging AI-generated code takes longer than code they wrote.</span></div>
+      </div>
+      <p class="quote" style="max-width: 40ch;">Building it is no longer the hard part. <strong>Accepting it is.</strong></p>
+    </div>
+    <div class="note">Stack Overflow Developer Survey 2025, n≈31,500 · published Jul 2025</div>
+  </section>
+
+  <!-- 4 -->
+  <section class="slide">
+    <header><div class="kicker">03 — The measurement</div><h2>Speed went up. Stability went down.</h2></header>
+    <div class="body">
+      <div class="stats">
+        <div class="stat"><span class="n bad">−7.2%</span><span class="l">delivery stability for a 25% increase in AI adoption.</span></div>
+        <div class="stat"><span class="n">−1.5%</span><span class="l">delivery throughput at the same adoption level.</span></div>
+        <div class="stat"><span class="n">2025</span><span class="l">throughput turned positive — instability is still negative.</span></div>
+      </div>
+      <p style="max-width: 64ch;">DORA's own reading: AI amplifies whatever your delivery system already does. If verification is weak, AI makes it weaker, faster.</p>
+    </div>
+    <div class="note">DORA / Google Cloud, <i>Impact of GenAI in Software Development</i>, 2024 · updated Sep 2025</div>
+  </section>
+
+  <!-- 5 -->
+  <section class="slide">
+    <header><div class="kicker">04 — Why now</div><h2>Sovereignty stopped being a preference and became a procurement score.</h2></header>
+    <div class="body top">
+      <ul class="plain">
+        <li><b>JAN 2025</b><span><strong>DORA in force</strong> for EU financial entities — ICT third-party risk, 4-hour incident reporting.</span></li>
+        <li><b>OCT 2025</b><span><strong>EU Cloud Sovereignty Framework v1.2.1</strong> scores sovereignty in procurement, backed by a €180M tender.</span></li>
+        <li><b>NOV 2025</b><span><strong>India DPDP Rules notified</strong> — Significant Data Fiduciaries can be ordered to keep data in India; penalties to ₹250 crore.</span></li>
+        <li><b>2025 → 2027</b><span><strong>Sovereign cloud IaaS</strong> grows $59.3B → $110.6B globally; Europe $6.9B → $23.1B.</span></li>
+      </ul>
+      <p class="quote" style="max-width: 36ch; margin-top: auto;">"Send your source code to a US SaaS" is a non-starter in exactly the accounts with the most to lose.</p>
+    </div>
+    <div class="note">European Commission, 20 Oct 2025 · India MeitY, 13 Nov 2025 · Gartner, 9 Feb 2026</div>
+  </section>
+
+  <!-- 6 -->
+  <section class="slide">
+    <header><div class="kicker">05 — The market</div><h2>The budget is real. The estimates are soft, so we show the range.</h2></header>
+    <div class="body">
+      <div class="bar-row"><span>2025</span><div class="bar" style="width: 24.7%"></div><span>$7.4B</span></div>
+      <div class="bar-row"><span>2028</span><div class="bar" style="width: 42%"></div><span>$12.6B</span></div>
+      <div class="bar-row"><span>2031</span><div class="bar" style="width: 100%"></div><span>$30.0B</span></div>
+      <p style="max-width: 62ch; margin-top: 2vh;">AI coding tools, 26.2% CAGR. Two independent analyst houses differ by <strong>~4×</strong> — so we cite the range, not a point, and we never quote a TAM for "AI code verification" because none exists.</p>
+      <p style="max-width: 62ch;">Our budget line is <strong>AI governance</strong>: AppSec and audit, not the IDE.</p>
+    </div>
+    <div class="note">Mordor Intelligence, 2026 · MarketsandMarkets · Gartner: 90% of enterprise engineers on AI code assistants by 2028</div>
+  </section>
+
+  <!-- 7 -->
+  <section class="slide">
+    <header><div class="kicker">06 — The product</div><h2>A gate, not another generator.</h2></header>
+    <div class="body">
+      <div class="pipeline">
+        <div class="stage"><span class="tag">Tier 1</span><span class="name">Architect</span><span class="desc">Turns the objective into invariants that can be violated.</span></div>
+        <div class="stage"><span class="tag">Tier 2</span><span class="name">Developer</span><span class="desc">Edits the real files. No hunk arithmetic, no stubs.</span></div>
+        <div class="stage"><span class="tag">Tier 3</span><span class="name">Critic</span><span class="desc">Adversarial review. Only critical/error findings can block.</span></div>
+        <div class="stage accent"><span class="tag">Tier 4</span><span class="name">QA</span><span class="desc">Runs the candidate code against the repo's suite in a network-isolated container.</span></div>
+      </div>
+      <ul class="plain" style="margin-top: 1vh;">
+        <li><b>EVIDENCE</b><span>The exit code decides — not a model's opinion of the diff.</span></li>
+        <li><b>SIGNED</b><span>Every cycle is recorded, hash-chained and attributable to a key.</span></li>
+        <li><b>YOURS</b><span>Your Azure tenant, your model keys, your source never leaves.</span></li>
+      </ul>
+    </div>
+    <div class="note">services/agent-orchestrator/src/graph/review_loop.py · services/sandbox-manager · packages/gnap</div>
+  </section>
+
+  <!-- 8 -->
+  <section class="slide">
+    <header><div class="kicker">07 — The demo</div><h2>This ran 20 minutes ago.</h2></header>
+    <div class="body">
+      <div class="term">$ ./demo/run-demo.sh
+<span class="d">==> postgres + litellm</span>
+<span class="d">==> sandbox-manager (provider=docker, image=node:22)</span>
+<span class="d">==> agent-orchestrator</span>
+<span class="d">==> running the review cycle</span>
+
+status     : <span class="g">qa_verified</span>
+iterations : 2
+critic     : approve
+qa passed  : <span class="g">True</span>
+tests      : <span class="g">4 passed / 0 failed</span> in 1259 ms
+sandbox    : live_microvm (exit 0)
+<span class="w">history</span>
+  architect   plan_proposal
+  developer   implementation
+  critic      review_verdict   <span class="r">request_changes</span>
+  developer   implementation
+  critic      review_verdict   <span class="g">approve</span>
+  qa          test_result      <span class="g">passed</span>
+</div>
+      <p style="max-width: 74ch;">Nothing on this slide is a mock. The fixture ships a failing test: the critic rejected the first patch, the developer revised, and the QA tier <strong>executed</strong> the result — no network, read-only source mount, 1.2 seconds.</p>
+    </div>
+    <div class="note">demo/runs/20261029T174629Z — request, cycle transcript and diff committed with the code</div>
+  </section>
+
+  <!-- 9 -->
+  <section class="slide">
+    <header><div class="kicker">08 — The buyer</div><h2>200–5,000 developers, regulated, already on Azure.</h2></header>
+    <div class="body cols">
+      <div>
+        <h3 style="margin-bottom: 1.6vh;">Who signs</h3>
+        <ul class="plain">
+          <li><b>PLATFORM</b><span>Owns the engineering system and the AI rollout.</span></li>
+          <li><b>APPSEC</b><span>Owns the finding backlog we're about to make worse.</span></li>
+          <li><b>CISO</b><span>Owns the answer to "where did that code go?".</span></li>
+        </ul>
+      </div>
+      <div>
+        <h3 style="margin-bottom: 1.6vh;">Why they can't buy it today</h3>
+        <ul class="plain">
+          <li><b>FINANCE</b><span>DORA third-party risk. Inference must stay in-perimeter.</span></li>
+          <li><b>HEALTH</b><span>Source and patient-adjacent logic under HIPAA.</span></li>
+          <li><b>PUBLIC</b><span>FedRAMP High, IL5/IL6, ITAR, EU data residency.</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="note"><b>Honest caveat:</b> self-hosting is not whitespace — Qodo and OpenHands already ship it. The wedge is an <b>enforced gate with replayable evidence</b> at seat counts incumbents won't serve.</div>
+  </section>
+
+  <!-- 10 -->
+  <section class="slide">
+    <header><div class="kicker">09 — Competition</div><h2>Everyone reviews. Nobody hands you the receipt.</h2></header>
+    <div class="body">
+      <table>
+        <thead><tr><th>Tool</th><th>What it is</th><th>Verification gap</th><th>Self-host</th></tr></thead>
+        <tbody>
+          <tr><td>Cursor</td><td>AI IDE + Bugbot</td><td class="gap">Reviews with the model family that generated the code</td><td class="no">No documented</td></tr>
+          <tr><td>GitHub Copilot</td><td>IDE + PR + CodeQL</td><td class="gap">Strong static scanning; silent on whether tests ran</td><td class="no">Cloud inference</td></tr>
+          <tr><td>CodeRabbit</td><td>PR review bot</td><td class="gap">Comment-level; no merge-blocking artifact</td><td class="gap">Enterprise, 500+ seats</td></tr>
+          <tr><td>Qodo</td><td>Review + test gen</td><td class="gap">Review-centric; the gate isn't the product</td><td class="yes">Yes, air-gapped</td></tr>
+          <tr><td>OpenHands</td><td>MIT agent platform</td><td class="gap">Runs tests; no independent Architect/Critic/QA split</td><td class="yes">Yes</td></tr>
+          <tr class="us"><td>INDEX0</td><td>Verification gate</td><td>Plan → diff → sandboxed test → verdict, signed per commit</td><td class="yes">Yes, your keys</td></tr>
+        </tbody>
+      </table>
+      <p style="max-width: 70ch;">The gap nobody closes: a record you can <strong>replay offline</strong> and verify without trusting the vendor. That's the claim we're asking you to fund.</p>
+    </div>
+    <div class="note">Pricing and roadmap claims deliberately omitted — we did not verify them. Nothing here is sourced from a vendor's marketing page.</div>
+  </section>
+
+  <!-- 11 -->
+  <section class="slide">
+    <header><div class="kicker">10 — What is actually verified</div><h2>We audited our own claims and deleted the ones we couldn't reproduce.</h2></header>
+    <div class="body">
+      <div class="stats">
+        <div class="stat"><span class="n">15/36</span><span class="l">claimed capabilities verifiable today, listed line by line in <b>PROOF_STATUS.md</b>, shipped in the repo.</span></div>
+        <div class="stat"><span class="n">0</span><span class="l">published benchmark scores. The old 96.2% SWE-bench and 92% AiderBench numbers were unverified and removed.</span></div>
+        <div class="stat"><span class="n">28/28</span><span class="l">orchestrator tests green, plus 14 sandbox-manager and the full monorepo build.</span></div>
+      </div>
+      <p class="quote decided">"We are building a verification product. The first thing we verified was ourselves — and any vendor selling you trust should be able to show you the same page."</p>
+    </div>
+    <div class="note">PROOF_STATUS.md · benchmarks/CLAIM_AUDIT.md · audited 28 Oct 2026</div>
+  </section>
+
+  <!-- 12 -->
+  <section class="slide">
+    <header><div class="kicker">11 — The ask</div><h2>Pre-seed to turn a working loop into one paid pilot.</h2></header>
+    <div class="body cols">
+      <div>
+        <h3 style="margin-bottom: 1.6vh;">The next 6 months</h3>
+        <ul class="plain">
+          <li><b>01</b><span>One paid pilot in a regulated Azure tenant.</span></li>
+          <li><b>02</b><span>Three design partners on the evidence format.</span></li>
+          <li><b>03</b><span>A replayable artifact accepted by a real audit.</span></li>
+        </ul>
+      </div>
+      <div>
+        <h3 style="margin-bottom: 1.6vh;">What we will not claim</h3>
+        <ul class="plain">
+          <li><b>—</b><span>No benchmark score until we can reproduce it in public.</span></li>
+          <li><b>—</b><span>No revenue, no users, no logos on this deck.</span></li>
+          <li><b>—</b><span>No margin until inference is metered on a real tenant.</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="note" style="font-size: clamp(11px, 1vw, 14px); color: var(--ink);">Ask: pre-seed for one pilot and three design partners. Milestone is a signed, replayable artifact — not a leaderboard position.</div>
+  </section>
+
+  <!-- 13 appendix -->
+  <section class="slide">
+    <header><div class="kicker">Appendix</div><h2>The five things that can kill us.</h2></header>
+    <div class="body top">
+      <ul class="plain">
+        <li><b>01</b><span><strong>Verification is a feature, not a company.</strong> Cursor, GitHub and Qodo can bundle review-plus-tests into seats they already own.</span></li>
+        <li><b>02</b><span><strong>No forcing function.</strong> "Audit-ready evidence" is a nice-to-have until an auditor demands it. If that demand is 2029, we don't reach it.</span></li>
+        <li><b>03</b><span><strong>Two people cannot pass enterprise procurement.</strong> SOC 2, pen test, 9–18 month cycles — runway ends first.</span></li>
+        <li><b>04</b><span><strong>Credibility debt is real.</strong> The audit found an OTP bypass, injectable telemetry and a review path that could return approvals offline. All fixed and pinned by tests — but being caught hiding them would have been fatal.</span></li>
+        <li><b>05</b><span><strong>Own-keys means no telemetry.</strong> No usage data, no expansion signal, no ROI proof we can show a board.</span></li>
+      </ul>
+    </div>
+    <div class="note">Stated plainly, because you will find them anyway. Mitigations are in the notes; ask us about any one of them.</div>
+  </section>
+
+</div>
+
+<div class="hint">← → · f fullscreen</div>
+<div class="chrome"><span>INDEX0 · pre-seed</span><span id="counter">1 / 13</span></div>
+<div class="progress" id="progress" style="width: 7.7%"></div>
+
+<script>
+(() => {
+  const slides = [...document.querySelectorAll('.slide')];
+  const counter = document.getElementById('counter');
+  const progress = document.getElementById('progress');
+  let i = 0;
+
+  function show(n) {
+    i = Math.max(0, Math.min(slides.length - 1, n));
+    slides.forEach((s, k) => s.classList.toggle('active', k === i));
+    counter.textContent = `${i + 1} / ${slides.length}`;
+    progress.style.width = `${((i + 1) / slides.length) * 100}%`;
+    if (location.hash !== `#${i + 1}`) history.replaceState(null, '', `#${i + 1}`);
+  }
+
+  addEventListener('keydown', (e) => {
+    if (['ArrowRight', 'ArrowDown', ' ', 'PageDown'].includes(e.key)) { e.preventDefault(); show(i + 1); }
+    else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) { e.preventDefault(); show(i - 1); }
+    else if (e.key === 'Home') show(0);
+    else if (e.key === 'End') show(slides.length - 1);
+    else if (e.key.toLowerCase() === 'f') {
+      document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+    }
+  });
+
+  addEventListener('click', (e) => {
+    if (e.clientX > innerWidth * 0.6) show(i + 1);
+    else if (e.clientX < innerWidth * 0.4) show(i - 1);
+  });
+
+  const start = parseInt(location.hash.replace('#', ''), 10);
+  show(Number.isFinite(start) && start > 0 ? start - 1 : 0);
+})();
+</script>
+</body>
+</html>

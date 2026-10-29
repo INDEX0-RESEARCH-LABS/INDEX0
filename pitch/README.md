@@ -1,0 +1,137 @@
+# Pitch pack — 2-day readiness
+
+Everything here is built from what the repository can prove today.
+Nothing in this pack cites a benchmark score, a customer, or a revenue figure.
+
+| File | What it is |
+|---|---|
+| `deck.html` | 13-slide deck. Opens offline in any browser. `←/→` to move, `f` for fullscreen. |
+| `INDEX0_deck.pdf` | Print/email copy of the same deck. |
+| `../demo/run-demo.sh` | The live demo. One command, real model, real sandbox, real test run. |
+| `../demo/runs/` | Two recorded runs with request, transcript and diff. |
+| `../PROOF_STATUS.md` | 15 of 36 capabilities verifiable; 0 of 3 benchmark scores. Hand this over. |
+| `../benchmarks/CLAIM_AUDIT.md` | The audit that deleted the unverifiable claims. Hand this over too. |
+
+---
+
+## The 3-minute demo (say it in this order)
+
+**Before you start:** `cd INDEX0`, then `./demo/run-demo.sh`. It prints a preflight,
+starts the stack, and takes 15–40 seconds. Start it *before* you open your mouth.
+
+> "This is a repository with three tests and one of them fails. A divide by zero
+> returns `Infinity`. That's the shape of most AI code review problems — plausible,
+> runs fine, wrong."
+
+While it runs:
+
+> "Four tiers. The Architect turns the request into invariants. The Developer edits
+> the real files — we give it file contents, not a diff, because models are bad at
+> hunk arithmetic. The Critic reviews adversarially. Then QA, which is the only tier
+> that can approve anything: it copies the repo into a container with no network,
+> writes the candidate files, and runs the repository's own test suite."
+
+When the output lands:
+
+> "Look at the history. The critic rejected the first patch. The developer revised.
+> Then QA ran it for real: 4 passed, 0 failed, exit code 0, in about a second.
+> The verdict is an exit code, not an opinion."
+
+Then the honest turn:
+
+> "Two days ago this loop couldn't reach QA at all, and when it did, it was running
+> `npm test` in an empty container. We found that because we audited our own claims
+> and deleted the ones we couldn't reproduce. 15 of our 36 claimed capabilities are
+> verifiable today, and that file is in the repo."
+
+**If the model is slow or the network is down:** say so out loud and open
+`demo/runs/20261029T174629Z/`. The committed transcript is the same evidence.
+
+---
+
+## Hostile Q&A — the ten questions, answered straight
+
+**1. "What's your traction?"**
+Zero revenue, zero users, no design partners signed. We have a working verification
+loop, 28 orchestrator tests, and a published audit of our own claims. We're raising
+to convert one paid pilot.
+
+**2. "Cursor/Copilot will bundle this."**
+They will bundle review. They cannot hand a regulated customer an artifact that the
+customer can verify without trusting them, inside the customer's own tenant. That's
+the product, not the review.
+
+**3. "Qodo and OpenHands already self-host."**
+Correct, and we say so on slide 10. They ship review; the merge-blocking evidence
+artifact is not their product. Our wedge is sub-500-seat regulated buyers those
+vendors don't serve at that seat count.
+
+**4. "What's actually yours?"**
+The four-tier loop, the sandbox providers, GNAP commit signing, worktree isolation,
+and the orchestrator. The terminal launcher derives from OpenCode (MIT) — disclosed
+in the repo, and it will come up in diligence.
+
+**5. "Why did you delete your benchmarks?"**
+Because we couldn't reproduce them. 96.2% SWE-bench, 92% AiderBench — gone. What
+replaced them is `PROOF_STATUS.md`, which lists what works and what doesn't.
+
+**6. "Unit economics?"**
+Per-seat licence plus support. Inference runs on the customer's Azure contract, so
+our COGS should look like software. We have no measured margin and won't quote one.
+
+**7. "Whose budget is this?"**
+Platform or AppSec, under AI governance. Not the IDE budget — that's already spent.
+
+**8. "Why now?"**
+DORA (Jan 2025), the EU Cloud Sovereignty Framework (Oct 2025), India's DPDP Rules
+(Nov 2025). Sovereignty became a scored procurement criterion, and AI-assisted teams
+are producing 3–4× the code with 10× the security findings.
+
+**9. "Two people against enterprise procurement?"**
+That's the real risk. Founder-led, three design partners, services-heavy deals, and
+we stay out of SOC 2 scope by deploying into the customer's tenant.
+
+**10. "What's the next milestone?"**
+One paid pilot whose replayable artifact survives a real audit. Not a leaderboard
+position.
+
+---
+
+## The five things that can kill this (say them before they do)
+
+1. Verification is a feature, not a company — incumbents bundle it.
+2. No forcing function until an auditor demands evidence.
+3. Two people cannot pass enterprise procurement before runway ends.
+4. Credibility debt: the audit found an OTP bypass, injectable telemetry, and a
+   review path that could return approvals offline. All fixed and pinned by tests.
+5. Own-keys means no telemetry — no usage data, no expansion signal, no ROI proof.
+
+---
+
+## Two-day checklist
+
+| When | Must be true |
+|---|---|
+| **Now** | `./demo/run-demo.sh` passes on your machine, twice in a row. |
+| **Now** | `node -v` ≥ 22, Docker running, `.env` has `LITELLM_MASTER_KEY` + Azure keys. |
+| **+2h** | Record the demo once, screen + voice. Video is the fallback for a dead venue Wi-Fi. |
+| **+4h** | Print `PROOF_STATUS.md` and `CLAIM_AUDIT.md`. Hand them over unprompted. |
+| **+6h** | Rehearse the 3-minute script out loud, timed. Then the ten answers, out loud. |
+| **+8h** | Verify every number on every slide against its source line. Delete anything you can't. |
+| **+10h** | Offline fallback: deck PDF on a USB stick, demo video on the laptop, hotspot tested. |
+| **Morning of** | Run the demo once in the room, on the actual projector, before anyone arrives. |
+
+Do not add features in these 48 hours. The demo is the product.
+
+---
+
+## What the deck deliberately does not claim
+
+- No benchmark score (the three published ones are unverified).
+- No customer, logo, pilot or letter of intent.
+- No revenue, ARR, pipeline or margin.
+- No latency or cost number that wasn't measured on this machine.
+- No TAM for "AI code verification" — no credible figure exists.
+
+If an investor asks for one of these, the answer is "we don't have it yet, here's
+how we'd get it". That answer is the pitch.

@@ -41,6 +41,12 @@ cleanup() { for pid in "${PIDS[@]:-}"; do kill "$pid" 2>/dev/null || true; done;
 trap cleanup EXIT
 
 if [[ "$START_SERVICES" == 1 ]]; then
+  for port in 4001 8000; do
+    if ss -ltnH "sport = :$port" 2>/dev/null | grep -q .; then
+      die "port $port is already in use — stop that process first (or run with --no-start)"
+    fi
+  done
+
   echo "==> bringing up postgres + litellm"
   docker start index0-postgres index0-litellm >/dev/null 2>&1 || true
   wait_for "$LITELLM_URL/health/liveliness" "LiteLLM" 90
