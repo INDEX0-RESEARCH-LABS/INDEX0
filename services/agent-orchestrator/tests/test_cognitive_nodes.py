@@ -1,4 +1,8 @@
 """Unit tests for Phase 1 Cognitive Nodes and LiteLLM Client."""
+import base64
+import re
+import subprocess
+
 import httpx
 import pytest
 from pydantic import BaseModel
@@ -6,7 +10,7 @@ from src.llm.client import LiteLLMClient
 from src.graph.nodes.architect import architect_node
 from src.graph.nodes.developer import developer_node
 from src.graph.nodes.critic import critic_node
-from src.graph.nodes.qa import qa_node
+from src.graph.nodes.qa import qa_node, verification_command
 from src.models import ArchitectSpec, AlgorithmicHypothesis
 
 
@@ -46,7 +50,17 @@ async def test_architect_node_spec_generation():
 
 
 @pytest.mark.asyncio
-async def test_developer_node_with_textgrad_feedback():
+async def test_developer_node_with_textgrad_feedback(monkeypatch):
+    async def fake_complete(**kwargs):
+        # The TextGrad directive must reach the model.
+        user_message = kwargs["messages"][-1]["content"]
+        assert "Race on line 42" in user_message
+        return "### FILE: src/worker.ts\n```ts\nexport const guarded = true;\n```"
+
+    monkeypatch.setattr(
+        "src.graph.nodes.developer.get_llm_client",
+        lambda: type("LLM", (), {"complete": staticmethod(fake_complete)})(),
+    )
     state = {
         "cycle_id": "dev-test-cycle",
         "task_id": "task-zero-race",
@@ -64,11 +78,28 @@ async def test_developer_node_with_textgrad_feedback():
     }
     result = await developer_node(state)
 
-    assert "implementation_diff" in result
-    diff = result["implementation_diff"]
-    assert len(diff) > 20
+    assert result["generated_code"] == {"src/worker.ts": "export const guarded = true;\n"}
+    assert result["implementation_diff"].startswith("diff --git a/src/worker.ts b/src/worker.ts")
     assert result["iteration"] == 2
     assert result["current_role"] == "developer"
+
+
+def test_verification_command_writes_whole_files_and_stays_inside_the_workspace():
+    command = verification_command(
+        "",
+        files={"src/math.js": "export const ok = true;\n", "../escape.js": "nope\n"},
+    )
+
+    # Whole-file output is written directly; unsafe paths are dropped.
+    assert "../escape.js" not in command
+    match = re.search(r"printf %s '([^']+)' \| base64 -d > src/math\.js", command)
+    assert match, command
+    assert base64.b64decode(match.group(1)).decode() == "export const ok = true;\n"
+    assert command.rstrip().endswith("npm test")
+    # The command must be a valid shell program (quoting/redirection bugs fail here).
+    subprocess.run(["sh", "-n", "-c", command], check=True)
+    # ...and every step is chained, so no failure can be swallowed.
+    assert " || " not in command
 
 
 @pytest.mark.asyncio
@@ -117,8 +148,9 @@ async def test_qa_node_fails_closed_when_sandbox_is_unreachable(monkeypatch):
 async def test_qa_node_reports_only_observed_results(monkeypatch):
     captured = {}
 
-    async def fake_sandbox(sandbox_url, command, timeout_ms=30000):
+    async def fake_sandbox(sandbox_url, command, timeout_ms=30000, workspace_path=""):
         captured["cmd"] = command
+        captured["workspace"] = workspace_path
         return {"exitCode": 0, "stdout": "24 passed, 0 failed", "stderr": "", "durationMs": 1234}
 
     monkeypatch.setattr("src.graph.nodes.qa.execute_in_sandbox", fake_sandbox)
@@ -126,6 +158,7 @@ async def test_qa_node_reports_only_observed_results(monkeypatch):
         "cycle_id": "qa-test-cycle",
         "task_id": "task-test-qa",
         "implementation_diff": "diff --git a/main.ts b/main.ts\n+ export const ok = true;",
+        "repository_root": "/srv/repo-under-test",
         "iteration": 1,
         "history": []
     }
@@ -136,5 +169,7 @@ async def test_qa_node_reports_only_observed_results(monkeypatch):
     assert qa["tests_run"] == 24
     assert qa["tests_passed"] == 24
     assert qa["duration_ms"] == 1234
+    # QA must verify the repo this cycle was started against.
+    assert captured["workspace"] == "/srv/repo-under-test"
     # The verification command must be able to fail (no '|| echo' rescue).
     assert "echo" not in captured["cmd"]

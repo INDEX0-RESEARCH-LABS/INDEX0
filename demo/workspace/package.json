@@ -1,0 +1,10 @@
+{
+  "name": "index0-demo-workspace",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Deliberately broken fixture: the QA gate must catch the unguarded divide by zero.",
+  "scripts": {
+    "test": "node --test"
+  }
+}

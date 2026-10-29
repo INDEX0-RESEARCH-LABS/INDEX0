@@ -4,8 +4,12 @@ Empirical Laboratory & Sandbox Verification Gate.
 Executes test suites, SAST scans, and runtime checks in isolated sandboxes.
 """
 from datetime import datetime, timezone
+import base64
 import logging
+import os
+from pathlib import Path
 import re
+import shlex
 import uuid
 from typing import Any, Dict
 import httpx
@@ -14,10 +18,17 @@ from ...config import get_settings
 
 logger = logging.getLogger(__name__)
 
+# Where the read-only repo mount (SANDBOX_WORKSPACE_PATH) lands inside the
+# container, and where the candidate patch is applied. /src is mounted :ro so a
+# bad diff can never corrupt the tree under verification.
+SRC_MOUNT = "/src"
+WORKSPACE = "/tmp/qa-workspace"
+PATCH_FILE = "/tmp/candidate.patch"
+
 # A verification command must be able to fail. The previous chain ended in
 # '|| echo "Tests verified successfully."', which forced exit code 0 and made
 # this gate report a pass no matter what the suite did.
-TEST_CMD = "npm test 2>&1 || pytest -q 2>&1"
+DEFAULT_TEST_CMD = "npm test"
 
 _PASSED_PATTERNS = (re.compile(r"(\d+)\s+passed\b", re.I), re.compile(r"\bpass (\d+)\b", re.I))
 _FAILED_PATTERNS = (re.compile(r"(\d+)\s+failed\b", re.I), re.compile(r"\bfail (\d+)\b", re.I))
@@ -33,14 +44,71 @@ def observed_test_counts(output: str) -> tuple:
     return _max_count(_PASSED_PATTERNS, text), _max_count(_FAILED_PATTERNS, text)
 
 
-async def execute_in_sandbox(sandbox_url: str, command: str, timeout_ms: int = 30000) -> Dict[str, Any]:
+def _write_file_steps(relative: str, content: str) -> list:
+    """Shell steps that materialise one file inside the workspace copy."""
+    parts = Path(relative).parts
+    if not parts or relative.startswith("/") or ".." in parts or ":" in relative:
+        logger.warning(f"Skipping unsafe path from developer output: {relative}")
+        return []
+    target = shlex.quote(relative)
+    payload = base64.b64encode(content.encode("utf-8")).decode("ascii")
+    return [
+        f'mkdir -p "$(dirname {target})"',
+        f"printf %s '{payload}' | base64 -d > {target}",
+    ]
+
+
+def verification_command(
+    diff: str,
+    test_cmd: str = DEFAULT_TEST_CMD,
+    files: Dict[str, str] = None,
+) -> str:
+    """Build the QA shell command: copy the repo, install the candidate code, run the suite.
+
+    Whole-file output from the developer is written directly (no hunk
+    arithmetic); a raw diff is used only as a fallback. Every step is joined
+    with '&&', so an empty candidate, a failed write, or a failing suite all
+    surface a non-zero exit code.
+    """
+    steps = [
+        f"rm -rf {WORKSPACE}",
+        f"cp -a {SRC_MOUNT} {WORKSPACE}",
+        f"cd {WORKSPACE}",
+    ]
+
+    write_steps = []
+    for relative, content in (files or {}).items():
+        write_steps.extend(_write_file_steps(relative, content))
+
+    if write_steps:
+        steps.extend(write_steps)
+    else:
+        patch_b64 = base64.b64encode((diff or "").encode("utf-8")).decode("ascii")
+        steps.extend([
+            f"printf %s '{patch_b64}' | base64 -d > {PATCH_FILE}",
+            f"(git apply --recount --whitespace=nowarn {PATCH_FILE} || patch -p1 --forward --batch < {PATCH_FILE})",
+        ])
+
+    steps.append(shlex.join(test_cmd.split()))
+    return " && ".join(steps)
+
+
+async def execute_in_sandbox(
+    sandbox_url: str,
+    command: str,
+    timeout_ms: int = 30000,
+    workspace_path: str = "",
+) -> Dict[str, Any]:
     """Execute bash command in sandbox-manager microVM container."""
     req_payload = {
         "id": f"qa-exec-{uuid.uuid4().hex[:8]}",
         "code": command,
         "language": "bash",
-        "timeoutMs": timeout_ms
+        "timeoutMs": timeout_ms,
     }
+    if workspace_path:
+        # Mount the repository this cycle was started against, not a global default.
+        req_payload["environmentVariables"] = {"SANDBOX_WORKSPACE_PATH": workspace_path}
 
     # Normalize endpoint URL
     base = sandbox_url.rstrip("/")
@@ -57,12 +125,22 @@ async def qa_node(state: ReviewLoopState) -> Dict[str, Any]:
     """Execute QA automated verification phase."""
     settings = get_settings()
     iteration = state.get("iteration", 1)
-    diff = state.get("implementation_diff", "")
+    diff = state.get("implementation_diff", "") or ""
+    files = state.get("generated_code") or {}
     task_id = state.get("task_id", "unknown")
+    repository_root = state.get("repository_root") or ""
+    command = verification_command(diff, files=files)
 
     qa_results: Dict[str, Any]
     try:
-        sandbox_res = await execute_in_sandbox(settings.sandbox_manager_url, TEST_CMD)
+        sandbox_res = await execute_in_sandbox(
+            settings.sandbox_manager_url,
+            command,
+            timeout_ms=120000,
+            # Relative roots resolve against the sandbox-manager process, not the
+            # repo, so only an absolute path may select the mount.
+            workspace_path=repository_root if os.path.isabs(repository_root) else "",
+        )
         exit_code = sandbox_res.get("exitCode")
         if not isinstance(exit_code, int):
             # No exit code means the run cannot be judged; treat it as unverified.
@@ -70,7 +148,9 @@ async def qa_node(state: ReviewLoopState) -> Dict[str, Any]:
         stdout = sandbox_res.get("stdout") or ""
         stderr = sandbox_res.get("stderr") or ""
         tests_passed, tests_failed = observed_test_counts(f"{stdout}\n{stderr}")
-        passed = exit_code == 0 and "FAIL" not in stdout
+        # Exit code is authoritative: the command chain applies the diff and runs
+        # the suite, so a non-zero code means the patch or the suite failed.
+        passed = exit_code == 0 and tests_failed == 0
 
         qa_results = {
             "passed": passed,
@@ -83,6 +163,9 @@ async def qa_node(state: ReviewLoopState) -> Dict[str, Any]:
             "testOutput": (stdout or stderr).strip() or "Sandbox returned no output.",
             "stdout": stdout,
             "stderr": stderr,
+            "command": command,
+            "diffLines": len(diff.splitlines()),
+            "candidateFiles": sorted(files),
             # No SAST tool is wired into this node; unknown is not zero.
             "sastFindings": None,
             "sandboxMode": "live_microvm",
@@ -108,6 +191,8 @@ async def qa_node(state: ReviewLoopState) -> Dict[str, Any]:
             ),
             "stdout": "",
             "stderr": str(e),
+            "command": command,
+            "diffLines": len(diff.splitlines()),
             "sastFindings": None,
             "sandboxMode": "unverified",
         }

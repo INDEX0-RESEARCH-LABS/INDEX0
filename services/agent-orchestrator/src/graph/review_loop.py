@@ -11,7 +11,12 @@ logger = logging.getLogger(__name__)
 
 
 def should_continue_review(state: ReviewLoopState) -> Literal["qa", "developer", "end"]:
-    """Conditional edge routing based on Critic review verdict."""
+    """Conditional edge routing based on Critic review verdict.
+
+    Exhausting the iteration budget never skips verification: the loop runs QA on
+    the last diff so the outcome rests on executed tests, not on the absence of
+    further criticism.
+    """
     verdict = state.get("critic_verdict", {})
     decision = verdict.get("decision", "approve")
     iteration = state.get("iteration", 1)
@@ -20,8 +25,8 @@ def should_continue_review(state: ReviewLoopState) -> Literal["qa", "developer",
     if decision == "approve":
         return "qa"
     elif iteration >= max_iterations:
-        logger.warning(f"Max review iterations reached ({max_iterations}). Ending loop.")
-        return "end"
+        logger.warning(f"Max review iterations reached ({max_iterations}); verifying last diff with QA.")
+        return "qa"
     else:
         return "developer"
 

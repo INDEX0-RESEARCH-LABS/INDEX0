@@ -29,16 +29,66 @@ async def test_architect_node():
 
 
 @pytest.mark.asyncio
-async def test_developer_node():
+async def test_developer_node_derives_a_diff_from_whole_file_output(tmp_path, monkeypatch):
+    """The model returns whole files; the node computes the diff itself."""
+    source = tmp_path / "src" / "math.js"
+    source.parent.mkdir(parents=True)
+    source.write_text("export function divide(a, b) {\n  return a / b;\n}\n")
+
+    async def fake_complete(**kwargs):
+        return (
+            "### FILE: src/math.js\n```js\n"
+            "export function divide(a, b) {\n"
+            "  if (b === 0) throw new RangeError(\"division by zero\");\n"
+            "  return a / b;\n"
+            "}\n```"
+        )
+
+    monkeypatch.setattr(
+        "src.graph.nodes.developer.get_llm_client",
+        lambda: type("LLM", (), {"complete": staticmethod(fake_complete)})(),
+    )
+
     state = {
-        "architecture_plan": "Step 1: Write auth handler",
+        "user_prompt": "Make divide throw on a zero denominator",
+        "architecture_plan": "Guard the denominator",
+        "repository_root": str(tmp_path),
+        "context_files": ["src/math.js"],
         "iteration": 0,
-        "history": []
+        "history": [],
     }
     result = await developer_node(state)
+
+    assert result["generated_code"] == {
+        "src/math.js": (
+            'export function divide(a, b) {\n'
+            '  if (b === 0) throw new RangeError("division by zero");\n'
+            "  return a / b;\n}\n"
+        )
+    }
+    diff = result["implementation_diff"]
+    assert diff.startswith("diff --git a/src/math.js b/src/math.js")
+    assert '+  if (b === 0) throw new RangeError("division by zero");' in diff
     assert result["iteration"] == 1
-    assert "implementation_diff" in result
-    assert "export const isVerified = true;" in result["implementation_diff"]
+
+
+@pytest.mark.asyncio
+async def test_developer_node_fabricates_nothing_when_the_model_is_unavailable(monkeypatch):
+    async def boom(**kwargs):
+        raise RuntimeError("model offline")
+
+    monkeypatch.setattr(
+        "src.graph.nodes.developer.get_llm_client",
+        lambda: type("LLM", (), {"complete": staticmethod(boom)})(),
+    )
+    state = {"architecture_plan": "Step 1", "iteration": 0, "history": []}
+    result = await developer_node(state)
+
+    # An unavailable model must not produce a plausible-looking patch that no
+    # test could ever verify.
+    assert result["implementation_diff"] == ""
+    assert result["generated_code"] == {}
+    assert result["iteration"] == 1
 
 
 @pytest.mark.asyncio

@@ -1,0 +1,7 @@
+{
+  "taskId": "demo-divide-zero",
+  "userPrompt": "src/math.js exports divide(numerator, denominator), which returns Infinity when the denominator is 0. Make divide throw a RangeError with the message 'division by zero' when the denominator is 0. Keep average() working exactly as it is.",
+  "repositoryRoot": "/home/darion-dev/Dev/Incubator/INDEX0/demo/workspace",
+  "contextFiles": ["src/math.js", "test/math.test.js"],
+  "maxIterations": 5
+}

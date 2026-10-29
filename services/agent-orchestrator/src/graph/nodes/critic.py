@@ -46,7 +46,17 @@ AUDIT CRITERIA:
    - Bypassed types (`any`, `@ts-ignore`, unsafe casts)
 5. Decision Rule:
    - If there are ANY 'critical' or 'error' findings: decision MUST be 'request_changes'.
-   - ONLY if the diff is completely sound, safe, and passes all invariants: decision is 'approve'."""
+   - ONLY if the diff is completely sound, safe, and passes all invariants: decision is 'approve'.
+
+CALIBRATION (this is the difference between review and noise):
+- Audit the diff against the ORIGINAL GOAL and the stated invariants. Do not invent new
+  requirements. A missing feature that the goal never asked for is not a finding.
+- 'critical' or 'error' means the code is WRONG or UNSAFE: it breaks behaviour, violates an
+  invariant, loses data, or opens a security hole. Style, naming, file layout, modularity and
+  "could be extracted into a helper" are 'info' at most, and never block approval.
+- Do not demand concurrency, thread-safety or performance work that the diff cannot affect.
+- If the diff does what the goal asked, in a way that is correct and safe, approve it.
+  A small diff that passes is better than a large diff that impresses."""
 
 
 async def critic_node(state: ReviewLoopState) -> Dict[str, Any]:
@@ -85,6 +95,14 @@ async def critic_node(state: ReviewLoopState) -> Dict[str, Any]:
         decision = eval_result.decision
         comments = eval_result.comments
         findings = [f.model_dump(by_alias=True) for f in eval_result.findings]
+
+        # The decision rule is binding: only critical/error findings may block.
+        # Advisory findings (warning/info) are recorded but do not stall the loop.
+        blocking = [f for f in findings if str(f.get("severity", "")).lower() in ("critical", "error")]
+        if decision == "request_changes" and not blocking:
+            logger.info("Critic reported only advisory findings; approving with notes.")
+            decision = "approve"
+            comments = f"{comments} (No blocking findings: {len(findings)} advisory note(s).)"
     except Exception as e:
         logger.warning(f"Critic LLM inference failed or unavailable ({e}); applying heuristic static audit.")
         # Heuristic static audit fallback
