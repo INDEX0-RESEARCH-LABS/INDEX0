@@ -49,7 +49,7 @@ Then the honest turn:
 
 ---
 
-## Hostile Q&A — the ten questions, answered straight
+## Hostile Q&A — the eleven questions, answered straight
 
 **1. "What's your traction?"**
 Zero revenue, zero users, no design partners signed. We have a working verification
@@ -76,7 +76,7 @@ Because we couldn't reproduce them. 96.2% SWE-bench, 92% AiderBench — gone. Wh
 replaced them is `PROOF_STATUS.md`, which lists what works and what doesn't.
 
 **6. "Unit economics?"**
-Per-seat licence plus support. Inference runs on the customer's Azure contract, so
+Per-seat licence plus support. Inference runs on the customer's own model contract, so
 our COGS should look like software. We have no measured margin and won't quote one.
 
 **7. "Whose budget is this?"**
@@ -94,6 +94,11 @@ we stay out of SOC 2 scope by deploying into the customer's tenant.
 **10. "What's the next milestone?"**
 One paid pilot whose replayable artifact survives a real audit. Not a leaderboard
 position.
+
+**11. "Does this run on Azure? You said you dropped it."**
+The product never depended on one vendor. The demo you just watched ran on a free
+model route through our own gateway; the customer brings their own model contract,
+including Azure, Bedrock or a local model. What we dropped was our own Azure bill.
 
 ---
 
@@ -113,7 +118,8 @@ position.
 | When | Must be true |
 |---|---|
 | **Now** | `./demo/run-demo.sh` passes on your machine, twice in a row. |
-| **Now** | `node -v` ≥ 22, Docker running, `.env` has `LITELLM_MASTER_KEY` + Azure keys. |
+| **Now** | `node -v` ≥ 22, Docker running, `.env` has `LITELLM_MASTER_KEY` + one free model key (`GROQ_API_KEY`). No Azure, no card. |
+| **+15m** | Put a second free key (`GEMINI_API_KEY`) in `.env` as the fallback route, and test `DEMO_MODEL=gemini ./demo/run-demo.sh`. One dead provider must not kill the pitch. |
 | **+2h** | Record the demo once, screen + voice. Video is the fallback for a dead venue Wi-Fi. |
 | **+4h** | Print `PROOF_STATUS.md` and `CLAIM_AUDIT.md`. Hand them over unprompted. |
 | **+6h** | Rehearse the 3-minute script out loud, timed. Then the ten answers, out loud. |

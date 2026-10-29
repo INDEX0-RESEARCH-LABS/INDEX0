@@ -60,6 +60,55 @@ model_list:
       api_version: "2024-08-01-preview"
       api_key: "os.environ/AZURE_OPENAI_API_KEY"
 
+  - model_name: "claude-3-7-sonnet"
+    litellm_params:
+      model: "azure/azure-gpt-4o"
+      api_base: "https://oai-index0-prod-eastus-426dd.openai.azure.com/"
+      api_version: "2024-08-01-preview"
+      api_key: "os.environ/AZURE_OPENAI_API_KEY"
+
+  # ---------------------------------------------------------------------------
+  # Zero-cost routes. Pick one with DEMO_MODEL in demo/run-demo.sh.
+  # Each needs only its own key; no Azure subscription required.
+  # ---------------------------------------------------------------------------
+
+  # Groq free tier — no credit card, fastest option (~300 tok/s, Llama 3.3 70B).
+  - model_name: "groq"
+    litellm_params:
+      model: "groq/llama-3.3-70b-versatile"
+      api_key: "os.environ/GROQ_API_KEY"
+    model_info:
+      input_cost_per_token: 0
+      output_cost_per_token: 0
+
+  # Google AI Studio free tier — no credit card.
+  - model_name: "gemini"
+    litellm_params:
+      model: "gemini/gemini-2.5-flash"
+      api_key: "os.environ/GEMINI_API_KEY"
+    model_info:
+      input_cost_per_token: 0
+      output_cost_per_token: 0
+
+  # OpenRouter free models — no credit card, rate-limited.
+  - model_name: "openrouter"
+    litellm_params:
+      model: "openrouter/meta-llama/llama-3.3-70b-instruct:free"
+      api_key: "os.environ/OPENROUTER_API_KEY"
+    model_info:
+      input_cost_per_token: 0
+      output_cost_per_token: 0
+
+  # Fully local Ollama — no key, no network, proves the air-gap claim.
+  # Slower and weaker on CPU; use a 7B+ coder model on a machine with RAM to spare.
+  - model_name: "ollama"
+    litellm_params:
+      model: "ollama/qwen2.5-coder:7b"
+      api_base: "os.environ/OLLAMA_API_BASE"
+    model_info:
+      input_cost_per_token: 0
+      output_cost_per_token: 0
+
 litellm_settings:
   drop_params: true
 

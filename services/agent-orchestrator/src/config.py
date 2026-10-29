@@ -25,10 +25,12 @@ class Settings(BaseSettings):
 
     # Orchestrator Policy Defaults
     max_review_iterations: int = 5
-    architect_model: str = "azure-gpt-4o"
-    developer_model: str = "azure-gpt-4o"
-    critic_model: str = "azure-gpt-4o"
-    qa_model: str = "azure-gpt-4o-mini"
+    # Free routes by default: no Azure subscription, no card. Override with
+    # ORCHESTRATOR_*_MODEL (see infra/litellm/config.yaml for available names).
+    architect_model: str = "groq"
+    developer_model: str = "groq"
+    critic_model: str = "groq"
+    qa_model: str = "groq"
 
 
 @lru_cache

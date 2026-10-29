@@ -3,15 +3,29 @@
 One broken repository, one full review cycle, real test evidence.
 
 ```
-./demo/run-demo.sh
+./demo/run-demo.sh                  # default free route: groq
+DEMO_MODEL=gemini ./demo/run-demo.sh
 ```
 
-Takes ~40s including container start. Requires Docker, Node ≥ 22, a reachable
-LiteLLM proxy, and the Python env described in `pitch/README.md`.
+Takes ~60s including container start. Requires Docker, Node ≥ 22, one **free**
+model key in `.env`, and the Python env described in `pitch/README.md`.
+No Azure subscription and no paid API is needed.
+
+| `DEMO_MODEL` | key in `.env` | where to get it |
+|---|---|---|
+| `groq` (default) | `GROQ_API_KEY` | <https://console.groq.com/keys> — free, no card |
+| `gemini` | `GEMINI_API_KEY` | <https://aistudio.google.com/apikey> — free, no card |
+| `openrouter` | `OPENROUTER_API_KEY` | <https://openrouter.ai/keys> — free models |
+| `ollama` | `OLLAMA_API_BASE` | local Ollama, no key, no network (slow on CPU) |
+
+Every agent is pinned to the chosen route (`ORCHESTRATOR_*_MODEL`), and the
+runner sends one throwaway completion through the gateway before the cycle so a
+dead key fails in two seconds with a readable message instead of mid-run.
 
 ## What it does
 
-1. Starts postgres + LiteLLM, builds and starts the sandbox-manager
+1. Starts a LiteLLM gateway on port 4002 from `infra/litellm/config.yaml`
+   (no database needed), builds and starts the sandbox-manager
    (`provider=docker`, image `node:22`), starts the agent-orchestrator.
 2. Posts a cycle to `POST /cycles/start` against `demo/workspace`, passing that
    path as the repository to verify.
