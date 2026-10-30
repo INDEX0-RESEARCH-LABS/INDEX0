@@ -52,3 +52,9 @@ workspace/.openhands-state/
 
 # Local distribution archives
 /index0-cli.tar.gz
+
+# Local benchmark LiteLLM proxy config (env-backed, no secrets)
+litellm_config.yaml
+
+# demo python env (created by demo/run-demo.sh)
+.venv-demo/

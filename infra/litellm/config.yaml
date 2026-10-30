@@ -99,16 +99,6 @@ model_list:
       input_cost_per_token: 0
       output_cost_per_token: 0
 
-  # Fully local Ollama — no key, no network, proves the air-gap claim.
-  # Slower and weaker on CPU; use a 7B+ coder model on a machine with RAM to spare.
-  - model_name: "ollama"
-    litellm_params:
-      model: "ollama/qwen2.5-coder:7b"
-      api_base: "os.environ/OLLAMA_API_BASE"
-    model_info:
-      input_cost_per_token: 0
-      output_cost_per_token: 0
-
 litellm_settings:
   drop_params: true
 

@@ -3,7 +3,7 @@
 One broken repository, one full review cycle, real test evidence.
 
 ```
-./demo/run-demo.sh                  # default free route: groq
+./demo/run-demo.sh                  # picks the first usable route automatically
 DEMO_MODEL=gemini ./demo/run-demo.sh
 ```
 
@@ -13,10 +13,10 @@ No Azure subscription and no paid API is needed.
 
 | `DEMO_MODEL` | key in `.env` | where to get it |
 |---|---|---|
-| `groq` (default) | `GROQ_API_KEY` | <https://console.groq.com/keys> — free, no card |
+| `auto` (default) | whichever is set | first key found: groq → gemini → openrouter |
+| `groq` | `GROQ_API_KEY` | <https://console.groq.com/keys> — free, no card |
 | `gemini` | `GEMINI_API_KEY` | <https://aistudio.google.com/apikey> — free, no card |
 | `openrouter` | `OPENROUTER_API_KEY` | <https://openrouter.ai/keys> — free models |
-| `ollama` | `OLLAMA_API_BASE` | local Ollama, no key, no network (slow on CPU) |
 
 Every agent is pinned to the chosen route (`ORCHESTRATOR_*_MODEL`), and the
 runner sends one throwaway completion through the gateway before the cycle so a

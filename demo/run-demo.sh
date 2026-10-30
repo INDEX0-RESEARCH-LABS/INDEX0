@@ -6,16 +6,16 @@
 #   DEMO_MODEL=gemini ./demo/run-demo.sh
 #
 # Requires: docker, node >= 22, and one free model key in .env (no Azure, no spend).
-# DEMO_MODEL picks the LiteLLM route: groq (default) | gemini | openrouter | ollama.
+# DEMO_MODEL picks the LiteLLM route: auto (default) | groq | gemini | openrouter.
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 WORKSPACE="${DEMO_WORKSPACE:-$ROOT/demo/workspace}"
-PYTHON="${DEMO_PYTHON:-/tmp/i0venv/bin/python}"
+PYTHON="${DEMO_PYTHON:-$ROOT/.venv-demo/bin/python}"
 START_SERVICES=1
 [[ "${1:-}" == "--no-start" ]] && START_SERVICES=0
 
-DEMO_MODEL="${DEMO_MODEL:-groq}"
+DEMO_MODEL="${DEMO_MODEL:-auto}"
 # The demo runs its own gateway on 4002 so it never fights a dev container on 4000.
 LITELLM_URL="${LITELLM_URL:-http://localhost:4002}"
 SANDBOX_URL="${SANDBOX_URL:-http://localhost:4001}"
@@ -36,12 +36,34 @@ set -a; . "$ROOT/.env"; set +a
 : "${LITELLM_MASTER_KEY:?LITELLM_MASTER_KEY must be set in .env}"
 
 # Which free route to use. Each needs one key and no payment method.
+# "auto" picks the first route whose key is present, so a typo in DEMO_MODEL
+# cannot silently kill the demo.
+key_for() {
+  case "$1" in
+    groq) echo GROQ_API_KEY ;;
+    gemini) echo GEMINI_API_KEY ;;
+    openrouter) echo OPENROUTER_API_KEY ;;
+  esac
+}
+
+if [[ "$DEMO_MODEL" == auto ]]; then
+  DEMO_MODEL=""
+  for candidate in groq gemini openrouter; do
+    kv="$(key_for "$candidate")"
+    if [[ -n "${!kv:-}" ]]; then DEMO_MODEL="$candidate"; break; fi
+  done
+  [[ -n "$DEMO_MODEL" ]] || die "no model route available. Add one free key to $ROOT/.env:
+  GROQ_API_KEY=...       https://console.groq.com/keys      (free, no card)
+  GEMINI_API_KEY=...     https://aistudio.google.com/apikey (free, no card)
+  OPENROUTER_API_KEY=... https://openrouter.ai/keys"
+  echo "    using route: $DEMO_MODEL"
+fi
+
 case "$DEMO_MODEL" in
   groq)       KEY_VAR=GROQ_API_KEY;       KEY_URL="https://console.groq.com/keys" ;;
   gemini)     KEY_VAR=GEMINI_API_KEY;     KEY_URL="https://aistudio.google.com/apikey" ;;
   openrouter) KEY_VAR=OPENROUTER_API_KEY; KEY_URL="https://openrouter.ai/keys" ;;
-  ollama)     KEY_VAR=OLLAMA_API_BASE;    KEY_URL="run ollama locally and export OLLAMA_API_BASE" ;;
-  *) die "DEMO_MODEL=$DEMO_MODEL is not a route in infra/litellm/config.yaml (groq|gemini|openrouter|ollama)" ;;
+  *) die "DEMO_MODEL=$DEMO_MODEL is not a route in infra/litellm/config.yaml (groq|gemini|openrouter|auto)" ;;
 esac
 [[ -n "${!KEY_VAR:-}" ]] || die "DEMO_MODEL=$DEMO_MODEL needs $KEY_VAR in $ROOT/.env — free key: $KEY_URL"
 
@@ -70,7 +92,12 @@ command -v docker >/dev/null || die "docker is required"
 docker info >/dev/null 2>&1 || die "docker daemon is not running"
 command -v node >/dev/null || die "node >= 22 is required"
 [[ "$(node -p 'process.versions.node.split(".")[0]')" -ge 22 ]] || die "node >= 22 is required (found $(node -v))"
-[[ -x "$PYTHON" ]] || die "python env missing: $PYTHON (create it: uv venv --python 3.12 /tmp/i0venv && uv pip install --python /tmp/i0venv/bin/python -e 'services/agent-orchestrator[dev]')"
+if [[ ! -x "$PYTHON" ]] && [[ -z "${DEMO_PYTHON:-}" ]] && command -v uv >/dev/null; then
+  echo "==> creating python env at $ROOT/.venv-demo (first run only)"
+  uv venv --python 3.12 "$ROOT/.venv-demo" >/dev/null
+  uv pip install --python "$PYTHON" -e "$ROOT/services/agent-orchestrator[dev]" >/dev/null
+fi
+[[ -x "$PYTHON" ]] || die "python env missing: $PYTHON (create it: uv venv --python 3.12 $ROOT/.venv-demo && uv pip install --python $PYTHON -e '$ROOT/services/agent-orchestrator[dev]')"
 
 PIDS=()
 cleanup() {
@@ -89,13 +116,11 @@ if [[ "$START_SERVICES" == 1 ]]; then
   echo "==> starting LiteLLM gateway (route=$DEMO_MODEL, no database needed)"
   docker rm -f "$GATEWAY_CONTAINER" >/dev/null 2>&1 || true
   docker run -d --rm --name "$GATEWAY_CONTAINER" \
-    --add-host host.docker.internal:host-gateway \
     -p "$(sed -E 's#.*:([0-9]+)$#\1#' <<<"$LITELLM_URL"):4000" \
     -e LITELLM_MASTER_KEY="$LITELLM_MASTER_KEY" \
     -e GROQ_API_KEY="${GROQ_API_KEY:-}" \
     -e GEMINI_API_KEY="${GEMINI_API_KEY:-}" \
     -e OPENROUTER_API_KEY="${OPENROUTER_API_KEY:-}" \
-    -e OLLAMA_API_BASE="${OLLAMA_API_BASE:-http://host.docker.internal:11434}" \
     -v "$ROOT/infra/litellm/config.yaml:/app/config.yaml:ro" \
     ghcr.io/berriai/litellm:main-latest --config /app/config.yaml >/dev/null
   wait_for "$LITELLM_URL/health/liveliness" "LiteLLM" 90
