@@ -13,14 +13,18 @@ INDEX0 is a self-hosted multi-agent software engineering platform with a termina
 
 ## Demo
 
-> **[VIDEO DEMO LINK HERE]** — replace this line with a link to your recorded walkthrough.
-
-Run the local microbenchmark (no credentials required) to see the platform in action:
+One broken repository, one full review cycle, real test evidence:
 
 ```bash
-# After installing (see Quickstart), run the local benchmark suite
-index0 benchmark
+./demo/run-demo.sh      # needs docker + one free model key; no Azure, no paid API
 ```
+
+The loop fixes `demo/workspace`, a critic rejects the first patch, and the QA tier
+runs the repository's own test suite in a network-isolated container. The verdict
+is an exit code. Recorded transcripts of real runs live in `demo/runs/`;
+`pitch/` holds the deck and the demo script.
+
+What actually works today, and what doesn't: [`PROOF_STATUS.md`](PROOF_STATUS.md).
 
 ---
 
