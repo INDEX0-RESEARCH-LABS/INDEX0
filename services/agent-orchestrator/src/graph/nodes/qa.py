@@ -58,6 +58,36 @@ def _write_file_steps(relative: str, content: str) -> list:
     ]
 
 
+def _is_test_path(relative: str) -> bool:
+    """True for files that belong to the test suite the gate is supposed to trust.
+
+    The candidate must never be able to edit the very assertions that decide
+    whether it passed: that turns verification into theatre.
+    """
+    parts = [p.lower() for p in Path(relative).parts]
+    if not parts:
+        return False
+    name = parts[-1]
+    return (
+        any(p in {"test", "tests", "__tests__", "spec", "specs"} for p in parts[:-1])
+        or name.startswith("test_")
+        or name.endswith("_test.py")
+        or ".test." in name
+        or ".spec." in name
+    )
+
+
+def _test_paths_in_diff(diff: str) -> list:
+    """Paths the raw-diff fallback would touch, filtered to test files."""
+    paths = []
+    for line in (diff or "").splitlines():
+        if line.startswith(("+++ b/", "--- a/")):
+            path = line[6:].strip()
+            if path != "/dev/null" and _is_test_path(path) and path not in paths:
+                paths.append(path)
+    return paths
+
+
 def verification_command(
     diff: str,
     test_cmd: str = DEFAULT_TEST_CMD,
@@ -69,6 +99,10 @@ def verification_command(
     arithmetic); a raw diff is used only as a fallback. Every step is joined
     with '&&', so an empty candidate, a failed write, or a failing suite all
     surface a non-zero exit code.
+
+    Candidate edits to test files are dropped (and restored in the diff path):
+    the suite that decides the verdict is the repository's own, as it existed
+    before the cycle.
     """
     steps = [
         f"rm -rf {WORKSPACE}",
@@ -78,6 +112,9 @@ def verification_command(
 
     write_steps = []
     for relative, content in (files or {}).items():
+        if _is_test_path(relative):
+            logger.warning(f"Ignoring candidate edit to a test file: {relative}")
+            continue
         write_steps.extend(_write_file_steps(relative, content))
 
     if write_steps:
@@ -88,6 +125,9 @@ def verification_command(
             f"printf %s '{patch_b64}' | base64 -d > {PATCH_FILE}",
             f"(git apply --recount --whitespace=nowarn {PATCH_FILE} || patch -p1 --forward --batch < {PATCH_FILE})",
         ])
+        for test_path in _test_paths_in_diff(diff):
+            quoted = shlex.quote(test_path)
+            steps.append(f"cp -a {SRC_MOUNT}/{quoted} ./{quoted}")
 
     steps.append(shlex.join(test_cmd.split()))
     return " && ".join(steps)

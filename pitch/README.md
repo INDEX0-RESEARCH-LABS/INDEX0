@@ -54,7 +54,7 @@ Then the honest turn:
 
 ---
 
-## Hostile Q&A — the eleven questions, answered straight
+## Hostile Q&A — the twelve questions, answered straight
 
 **1. "What's your traction?"**
 Zero revenue, zero users, no design partners signed. We have a working verification
@@ -104,6 +104,14 @@ position.
 The product never depended on one vendor. The demo you just watched ran on a free
 model route through our own gateway; the customer brings their own model contract,
 including Azure, Bedrock or a local model. What we dropped was our own Azure bill.
+
+**12. "What stops the model from editing the test that judges it?"**
+Nothing in most tools; here it is a dropped write. QA applies candidate files to a
+throwaway copy and discards any change that lands on a test path, so the suite that
+decides the verdict is always the repository's own. Two tests pin that behaviour
+(`services/agent-orchestrator/tests/test_cognitive_nodes.py`). We found the hole
+because a Gemini run edited a test file mid-demo — it strengthened the assertion,
+but we don't grade our own homework on the model's word.
 
 ---
 

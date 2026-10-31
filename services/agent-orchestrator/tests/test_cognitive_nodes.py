@@ -102,6 +102,42 @@ def test_verification_command_writes_whole_files_and_stays_inside_the_workspace(
     assert " || " not in command
 
 
+def test_verification_command_ignores_candidate_edits_to_tests():
+    """The gate must run the repo's own assertions, not the candidate's."""
+    weakened = 'test("x", () => { assert.ok(true); });\n'
+    command = verification_command(
+        "",
+        files={
+            "src/math.js": "export const ok = true;\n",
+            "test/math.test.js": weakened,
+            "tests/helpers/setup.js": weakened,
+        },
+    )
+
+    # Only the source change is written; both test paths are dropped.
+    assert "base64 -d > src/math.js" in command
+    assert "test/math.test.js" not in command
+    assert "tests/helpers/setup.js" not in command
+    encoded = base64.b64encode(weakened.encode()).decode()
+    assert encoded not in command
+    subprocess.run(["sh", "-n", "-c", command], check=True)
+
+
+def test_verification_command_restores_tests_a_diff_would_touch():
+    diff = (
+        "diff --git a/src/math.js b/src/math.js\n"
+        "--- a/src/math.js\n+++ b/src/math.js\n"
+        "@@ -1 +1 @@\n-x\n+y\n"
+        "--- a/test/math.test.js\n+++ b/test/math.test.js\n"
+        "@@ -1 +1 @@\n-x\n+y\n"
+    )
+    command = verification_command(diff, files={})
+
+    assert "cp -a /src/test/math.test.js ./test/math.test.js" in command
+    assert "cp -a /src/src/math.js" not in command
+    subprocess.run(["sh", "-n", "-c", command], check=True)
+
+
 @pytest.mark.asyncio
 async def test_critic_node_detects_slop():
     state = {

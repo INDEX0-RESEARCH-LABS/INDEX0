@@ -32,7 +32,9 @@ dead key fails in two seconds with a readable message instead of mid-run.
 3. Architect → Developer → Critic (may reject and loop) → QA.
 4. QA copies the repository into a container with `--network none`, writes the
    candidate files over the copy, runs `npm test`, and reports the exit code and
-   the counts the runner actually printed.
+   the counts the runner actually printed. Candidate edits to test files are
+   dropped before the suite runs, so the assertions that decide the verdict are
+   always the repository's own.
 5. Writes `demo/runs/<timestamp>/` with `request.json`, `cycle.json`,
    `candidate.patch` and `summary.txt`.
 
@@ -54,6 +56,16 @@ developer fixes it, which is the point — the demo only passes when the code do
 
 The 2026-10-29 runs used `azure-gpt-4o`. The runner now defaults to a free route,
 so no recorded run costs money to reproduce.
+
+## The fallback route
+
+`DEMO_MODEL=gemini` was verified end to end on 2026-10-31: `qa_verified`, the critic
+rejected the first patch, the developer revised, 3 tests passed in 1933 ms. The
+cycle took 193 s, roughly 30× the Groq route, so it is the fallback and not the live
+path. That run is deliberately left uncommitted: its candidate also edited
+`test/math.test.js` (it strengthened the assertion, but a pass on a test the model
+touched is not evidence). The guard that drops candidate edits to test files landed
+straight after it.
 
 ## Checks
 

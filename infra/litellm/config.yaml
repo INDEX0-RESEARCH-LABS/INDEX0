@@ -85,7 +85,7 @@ model_list:
   # Google AI Studio free tier — no credit card.
   - model_name: "gemini"
     litellm_params:
-      model: "gemini/gemini-2.5-flash"
+      model: "gemini/gemini-3.5-flash"
       api_key: "os.environ/GEMINI_API_KEY"
     model_info:
       input_cost_per_token: 0
