@@ -118,6 +118,22 @@ including Azure, Bedrock or a local model. What we dropped was our own Azure bil
 
 ---
 
+## Recording the fallback video (silent, 60 seconds)
+
+The video is insurance, not the pitch. Record it muted; add narration afterwards or
+skip narration entirely — a terminal that types itself plus one caption per tier
+reads fine.
+
+1. Terminal at ~120% zoom, dark theme, nothing but the prompt on screen.
+2. Start a screen recorder (GNOME: `Ctrl+Alt+Shift+R`, or OBS at 1280×720/30).
+3. Run `./demo/run-demo.sh` **cold** (so the container start is visible), then
+   `./demo/run-demo.sh` again **warm** (7 seconds, no dead air).
+4. Stop after `RESULT: VERIFIED`. Keep it under 90 seconds.
+5. Store it as `pitch/demo-fallback.mp4` and put it on the USB stick next to the PDF.
+
+Do not script a fake run. If you miss a take, run it again — it costs nothing now
+and it is the one artifact an investor will re-watch to check you weren't bluffing.
+
 ## Two-day checklist
 
 | When | Must be true |
