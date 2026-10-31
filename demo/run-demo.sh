@@ -85,7 +85,7 @@ probe_model() { # fail before the cycle, not in the middle of it
     echo >&2
     die "route '$DEMO_MODEL' is not answering. Check $KEY_VAR in .env (free key: $KEY_URL)"
   fi
-  echo "    model $DEMO_MODEL answered: $(sed '$d' <<<"$body" | "$PYTHON" -c 'import json,sys; print(json.load(sys.stdin)["choices"][0]["message"]["content"].strip()[:40])')"
+  echo "    model $DEMO_MODEL reachable: $(sed '$d' <<<"$body" | "$PYTHON" -c 'import json,sys; print((json.load(sys.stdin)["choices"][0]["message"].get("content") or "no text (reasoning model)").strip()[:40])')"
 }
 
 command -v docker >/dev/null || die "docker is required"

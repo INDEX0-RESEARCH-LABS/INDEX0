@@ -44,10 +44,16 @@ developer fixes it, which is the point — the demo only passes when the code do
 
 ## Recorded runs
 
-- `runs/20261029T174629Z` — the run shown on the deck's demo slide (2 iterations,
-  one critic rejection, 4 tests passed in 1259 ms).
-- `runs/example-3-iterations` — a slower run where the critic rejected twice.
-  Useful when someone asks whether the loop really iterates.
+- `runs/20261031T002004Z` — the run shown on the deck's demo slide: free Groq
+  route, one iteration, 3 tests passed in 1332 ms, exit 0.
+- `runs/20261031T001930Z` — the same cycle minutes earlier, 3 passed in 1664 ms.
+- `runs/20261029T174629Z` — an earlier run where the critic rejected the first
+  patch and the developer revised (2 iterations, 4 passed in 1259 ms).
+- `runs/example-3-iterations` — the critic rejected twice. Useful when someone
+  asks whether the loop really iterates.
+
+The 2026-10-29 runs used `azure-gpt-4o`. The runner now defaults to a free route,
+so no recorded run costs money to reproduce.
 
 ## Checks
 

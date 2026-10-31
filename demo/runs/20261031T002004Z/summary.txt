@@ -1,0 +1,13 @@
+model        : groq
+status       : qa_verified
+iterations   : 1
+critic       : approve
+qa passed    : True
+tests        : 3 passed / 0 failed in 1332 ms
+sandbox      : live_microvm (exit 0)
+files        : src/math.js
+history      :
+  architect  plan_proposal    
+  developer  implementation   
+  critic     review_verdict   approve
+  qa         test_result      passed

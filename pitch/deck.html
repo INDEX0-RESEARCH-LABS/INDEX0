@@ -78,6 +78,7 @@
     font-size: clamp(9.5px, .95vw, 12.5px); line-height: 1.62; padding: 2vh 1.8vw;
     overflow: auto; border-radius: 3px; white-space: pre; flex: 1; min-height: 0;
   }
+  .term.tight { flex: 0 0 auto; }
   .term .g { color: #7fbf8f; }
   .term .r { color: #e58a6a; }
   .term .d { color: #8a8478; }
@@ -232,32 +233,42 @@
 
   <!-- 8 -->
   <section class="slide">
-    <header><div class="kicker">07 — The demo</div><h2>This ran 20 minutes ago.</h2></header>
-    <div class="body">
-      <div class="term">$ ./demo/run-demo.sh
+    <header><div class="kicker">07 — The demo</div><h2>This ran this morning, on a free model.</h2></header>
+    <div class="body top">
+      <div class="term tight">$ ./demo/run-demo.sh
 <span class="d">==> litellm gateway (free route, no database)</span>
-<span class="d">    model answered: ok</span>
+<span class="d">    model groq reachable</span>
 <span class="d">==> sandbox-manager (provider=docker, image=node:22)</span>
 <span class="d">==> agent-orchestrator</span>
 <span class="d">==> running the review cycle</span>
 
+model      : groq
 status     : <span class="g">qa_verified</span>
-iterations : 2
+iterations : 1
 critic     : approve
 qa passed  : <span class="g">True</span>
-tests      : <span class="g">4 passed / 0 failed</span> in 1259 ms
+tests      : <span class="g">3 passed / 0 failed</span> in 1332 ms
 sandbox    : live_microvm (exit 0)
 <span class="w">history</span>
   architect   plan_proposal
   developer   implementation
-  critic      review_verdict   <span class="r">request_changes</span>
-  developer   implementation
   critic      review_verdict   <span class="g">approve</span>
   qa          test_result      <span class="g">passed</span>
 </div>
-      <p style="max-width: 74ch;">Nothing on this slide is a mock. The fixture ships a failing test: the critic rejected the first patch, the developer revised, and the QA tier <strong>executed</strong> the result — no network, read-only source mount, 1.2 seconds.</p>
+      <p style="max-width: 74ch; margin: 1.4vh 0;">The patch only counts because QA <strong>executed</strong> it — no network, read-only mount, 1.3 seconds. This is the whole diff it shipped:</p>
+      <div class="term tight" style="font-size: clamp(8.5px, .85vw, 11px); padding: 1.2vh 1.4vw;">
+<span class="d">--- a/src/math.js</span>
+<span class="d">+++ b/src/math.js</span>
+<span class="d">@@ -1,4 +1,7 @@</span>
+ export function divide(numerator, denominator) {
+<span class="g">+  if (denominator === 0) {</span>
+<span class="g">+    throw new RangeError('division by zero');</span>
+<span class="g">+  }</span>
+   return numerator / denominator;
+ }
+      </div>
     </div>
-    <div class="note">demo/runs/20261029T174629Z — request, cycle transcript and diff committed with the code</div>
+    <div class="note">demo/runs/20261031T002004Z — request, cycle transcript and diff committed with the code</div>
   </section>
 
   <!-- 9 -->

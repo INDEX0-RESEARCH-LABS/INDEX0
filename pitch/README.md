@@ -17,7 +17,8 @@ Nothing in this pack cites a benchmark score, a customer, or a revenue figure.
 ## The 3-minute demo (say it in this order)
 
 **Before you start:** `cd INDEX0`, then `./demo/run-demo.sh`. It prints a preflight,
-starts the stack, and takes 15–40 seconds. Start it *before* you open your mouth.
+starts the stack, and takes 60 seconds cold / ~7 seconds warm. Start it *before* you
+open your mouth.
 
 > "This is a repository with three tests and one of them fails. A divide by zero
 > returns `Infinity`. That's the shape of most AI code review problems — plausible,
@@ -33,9 +34,13 @@ While it runs:
 
 When the output lands:
 
-> "Look at the history. The critic rejected the first patch. The developer revised.
-> Then QA ran it for real: 4 passed, 0 failed, exit code 0, in about a second.
-> The verdict is an exit code, not an opinion."
+> "QA ran it for real: 3 passed, 0 failed, exit code 0, in 1.3 seconds. The verdict
+> is an exit code, not an opinion. Note it says `iterations: 1` — the critic approved
+> this patch on the first pass, which is what you want. It does reject: there's a
+> committed run in `demo/runs/` where it rejected twice before QA passed."
+
+If someone asks why the run is fast: it is one small file and a free-tier model,
+not a benchmark. Say that instead of inventing a number.
 
 Then the honest turn:
 
