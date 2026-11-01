@@ -7,10 +7,10 @@ Nothing in this pack cites a benchmark score, a customer, or a revenue figure.
 |---|---|
 | `deck.html` | 13-slide deck. Opens offline in any browser. `←/→` to move, `f` for fullscreen. |
 | `INDEX0_deck.pdf` | Print/email copy of the current deck (13 pp). |
-| `deck-uber.pdf` | Uber-style variant (14 pp): one idea per slide, 3-scenario table. |
+| `deck-uber.pdf` | 15-slide fundraising deck in the 2008 Uber layout: one idea per slide, alternating dark/light, and the four slides that actually close a round — why now, business model, team, ask. **Use this one in the room.** |
 | `ONE_PAGER.pdf` | One-page leave-behind. Print and hand over unprompted. |
 | `../demo/run-demo.sh` | The live demo. One command, real model, real sandbox, real test run. |
-| `../demo/runs/` | Two recorded runs with request, transcript and diff. |
+| `../demo/runs/` | Six recorded runs with request, transcript and diff. |
 | `../PROOF_STATUS.md` | 15 of 36 capabilities verifiable; 0 of 3 benchmark scores. Hand this over. |
 | `../benchmarks/CLAIM_AUDIT.md` | The audit that deleted the unverifiable claims. Hand this over too. |
 
