@@ -6,7 +6,8 @@ Nothing in this pack cites a benchmark score, a customer, or a revenue figure.
 | File | What it is |
 |---|---|
 | `deck.html` | 13-slide deck. Opens offline in any browser. `←/→` to move, `f` for fullscreen. |
-| `INDEX0_deck.pdf` | Print/email copy of the same deck. |
+| `INDEX0_deck.pdf` | Print/email copy of the current deck (13 pp). |
+| `deck-uber.pdf` | Uber-style variant (14 pp): one idea per slide, 3-scenario table. |
 | `ONE_PAGER.pdf` | One-page leave-behind. Print and hand over unprompted. |
 | `../demo/run-demo.sh` | The live demo. One command, real model, real sandbox, real test run. |
 | `../demo/runs/` | Two recorded runs with request, transcript and diff. |
