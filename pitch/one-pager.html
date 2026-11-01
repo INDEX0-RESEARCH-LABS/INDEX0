@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>INDEX0 — one page</title>
+<style>
+  @page { size: Letter; margin: 0.6in 0.7in; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body { font-family: Georgia, "Times New Roman", serif; color: #1a1814; font-size: 10.5pt; line-height: 1.45; }
+  h1 { font-size: 22pt; margin: 0 0 2pt; letter-spacing: -0.02em; }
+  .sub { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 8.5pt; color: #6b6356; margin-bottom: 14pt; letter-spacing: .06em; text-transform: uppercase; }
+  h2 { font-size: 11.5pt; margin: 10pt 0 3pt; color: #c2410c; }
+  p { margin: 0 0 7pt; }
+  ul { margin: 0 0 7pt; padding-left: 15pt; }
+  li { margin-bottom: 3pt; }
+  .mono { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 9pt; }
+  .row { display: flex; gap: 1.2em; }
+  .col { flex: 1; }
+  .foot { margin-top: 12pt; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 8pt; color: #6b6356; border-top: 1px solid #d9d2c3; padding-top: 6pt; }
+  b { font-weight: 600; }
+</style>
+</head>
+<body>
+  <h1>INDEX0</h1>
+  <div class="sub">Pre-seed · October 2026 · INDEX0 Research Labs</div>
+
+  <p><b>Verification before merge.</b> A self-hosted, four-tier review loop (Architect, Developer, Critic, QA) where the QA tier <b>executes the candidate code</b> against the repository's own test suite in a network-isolated container. The verdict is an exit code, not a model's opinion of the diff.</p>
+
+  <h2>Problem</h2>
+  <p>AI coding tools produce plausible code that passes the wrong tests. Every existing review layer (Copilot, Cursor, Qodo, OpenHands) reports findings or scores; none hands a regulated customer a replayable artifact proving the fix ran. AI-assisted teams ship 3–4× the code with 10× the security findings, and auditors now ask for evidence.</p>
+
+  <h2>Product</h2>
+  <ul>
+    <li>Developer output is whole files (models are bad at hunk arithmetic); the unified diff is derived by us.</li>
+    <li>Critic review is advisory-only: <code>request_changes</code> with no critical/error finding is auto-upgraded to <code>approve</code>.</li>
+    <li>QA copies the repo into a container with <code>--network none</code>, writes the candidate, runs <code>npm test</code>, reports exit code and counts the runner printed.</li>
+    <li>Candidate edits to test files are dropped, so the assertions that decide the verdict are always the repository's own.</li>
+    <li>Every cycle is hash-chained and attributable (GNAP).</li>
+  </ul>
+
+  <h2>Proof (we audited ourselves first)</h2>
+  <ul>
+    <li><b>15 of 36</b> claimed capabilities verifiable today — listed line by line in <code>PROOF_STATUS.md</code>, shipped in the repo.</li>
+    <li><b>0 of 3</b> published benchmarks. The old 96.2% SWE-bench / 92% AiderBench numbers were unverified and removed.</li>
+    <li><b>30/30</b> orchestrator tests, 14 sandbox-manager, full monorepo build, all green in CI.</li>
+    <li>Four committed end-to-end runs: <code>qa_verified</code>, exit 0, 3–4 tests passed in 1.2–1.7 s.</li>
+  </ul>
+
+  <h2>Market</h2>
+  <p>Code review software: $7.4B (2025) → $12.6B (2028). Buyer: 200–5,000 developers in regulated organisations (finance, healthcare, gov) already on cloud contracts, priced out of enterprise-tier review tools.</p>
+
+  <h2>Ask</h2>
+  <p>Pre-seed to turn a working loop into <b>one paid pilot</b> whose replayable artifact survives a real audit: three design partners on the evidence format, one pilot in a customer's own tenant. Inference runs on the customer's model contract, so our COGS look like software.</p>
+
+  <h2>Live demo</h2>
+  <p><code>./demo/run-demo.sh</code> — one command, ~7 s warm, no Azure, no paid API. The transcript on slide 7 is the output of a run minutes before the deck was exported.</p>
+
+  <div class="foot">INDEX0 Research Labs · <span class="mono">github.com/INDEX0-RESEARCH-LABS/INDEX0</span> · PROOF_STATUS.md · benchmarks/CLAIM_AUDIT.md</div>
+</body>
+</html>

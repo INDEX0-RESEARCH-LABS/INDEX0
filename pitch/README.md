@@ -7,6 +7,7 @@ Nothing in this pack cites a benchmark score, a customer, or a revenue figure.
 |---|---|
 | `deck.html` | 13-slide deck. Opens offline in any browser. `←/→` to move, `f` for fullscreen. |
 | `INDEX0_deck.pdf` | Print/email copy of the same deck. |
+| `ONE_PAGER.pdf` | One-page leave-behind. Print and hand over unprompted. |
 | `../demo/run-demo.sh` | The live demo. One command, real model, real sandbox, real test run. |
 | `../demo/runs/` | Two recorded runs with request, transcript and diff. |
 | `../PROOF_STATUS.md` | 15 of 36 capabilities verifiable; 0 of 3 benchmark scores. Hand this over. |
