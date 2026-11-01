@@ -252,47 +252,60 @@ Footer: `Raising $750K · 18 months · three paid pilots · PROOF_STATUS.md list
 | Six verified runs | `demo/runs/` — six committed, three on the Groq free route |
 | 15 of 36 capabilities | `PROOF_STATUS.md` (0 of 3 benchmarks verified) |
 | Market anchors 1.22 → 2.44 | Mordor Intelligence, Secure Code Review Platforms Market (page updated Sep 2026); 14.88% CAGR published |
-| $450M serviceable | 2,500 × 500 × $360, bottom-up; = 37% of the $1.22B category |
-| $180k ACV | $30/dev/month × 500 developers |
+| $300M serviceable | 2,500 × 500 × $240, bottom-up; = 3% of the $9.8B 2026 category (deck-simple, one-pager) |
+| $120k ACV | $20/dev/month × 500 developers (matches `docs/ROADMAP_AND_UNIT_ECONOMICS.md`) |
+| Three surfaces | CLI 37 tests, web workbench 94 tests, VS Code extension 4 tests — run them yourself |
+| Market $9.8B → $26.0B | Grand View Research, AI Code Tools Market, 27.1% CAGR, updated Jun 2026 |
 
 ---
 
 ## deck-simple — the 13 slides you actually say out loud
 
-Same skeleton as `deck-13`, rewritten for a room that does not work in this field. One idea per line, a source under every number. Rebuild with `./build-deck-simple.sh`.
+This is the deck that matches the product. `deck-13`, `deck-uber` and `INDEX0_deck` were written when we described only the review loop; they say "a gate, not a generator", which is wrong. Rebuild or retire them.
+Rebuild this one with `./build-deck-simple.sh`.
 
 | # | Slide | What you say (one breath) | Point at |
 |---|---|---|---|
-| 1 | Nothing merges until it runs. | "We are the door AI code has to walk through before it ships." | the wordmark, nothing else |
-| 2 | Writing got fast. Checking did not. | "Ninety percent of developers use AI. Forty-five percent of its code ships a flaw. Eighty-nine percent of a PR's life is waiting." | the three big numbers |
-| 3 | So we built the door. | "One verdict per patch — ship or stop. No report to read." | the verdict line |
-| 4 | Three rules. That is the product. | "Any repo with a test command, one command, exit zero or it does not merge." | the terminal block |
-| 5 | Six things a copycat cannot fake. | "Each of these came from a bug we shipped and then closed." | the cheat-guard tile |
-| 6 | What you can run today. | "This is the command, the receipt and the patch — from the repo at HEAD." | the three captures |
+| 1 | INDEX0 AI — Own your AI engineer. | "We are a self-hosted AI software engineering platform: three surfaces, one rule." | the motto in the footer |
+| 2 | AI writes the code now. Nobody checks it. | "Ninety percent use AI, forty-five percent of its code ships a flaw, and eighty-nine percent of a PR's life is waiting for a human." | the three big numbers |
+| 3 | One platform. Three surfaces. One rule. | "Terminal, editor, browser — and nothing merges until the tests run." | the fourth tile |
+| 4 | Four agents. One verdict. | "Architect plans, developer patches, critic rejects, QA runs the suite. Exit zero or it does not merge." | the terminal block |
+| 5 | Six things a copycat cannot fake. | "Each of these came from a bug we shipped and then closed." | self-hosted tile |
+| 6 | What you can run today. | "CLI, editor, browser — all in the repo at HEAD, 135 tests." | the three captures |
 | 7 | Where it pays for itself. | "Four patches that all looked correct, and none of them were." | AI patches tile |
-| 8 | A human reads 400 lines an hour. | "Same three tests, a human reads them, the gate runs them in 1.6 seconds." | the comparison rows |
+| 8 | Their assistant suggests. Yours decides. | "They suggest inside their cloud and stop at the diff. We run your suite in yours." | the four comparison rows |
 | 9 | Boring on purpose. | "Docker or Firecracker, any model, no patent — the public audit is the moat." | no patent tile |
-| 10 | The budget is real. Here is the math. | "1.22 to 2.44 billion published. My slice is 450 million, the smaller number." | the $450M |
-| 11 | Three endings. All possible. | "Fifteen accounts is 2.7 million a year. There is no revenue today." | worst case |
+| 10 | The budget is real. Here is the math. | "Nine point eight to twenty-six billion is the category. My slice is 300 million, at our own 20-dollar seat price." | the $300M |
+| 11 | Three endings. All possible. | "Fifteen accounts is 1.8 million a year. There is no revenue today." | worst case |
 | 12 | Two ways in. | "Three design partners at a time, and every run leaves a receipt that travels." | the receipt line |
-| 13 | Four months. Four proofs. | "All of it is in the repo, with the commit. Fifteen of thirty-six claims are verifiable; the gap is what the round buys." | the last milestone |
+| 13 | Four months. Four proofs. | "Three surfaces, the loop, six runs, a price. Fifteen of thirty-six claims verifiable; the gap is what the round buys." | the last milestone |
 
 Two rules for this deck: never read a bullet aloud, and never say a number without the line under it.
 
+### The three clauses of the motto, and where they live
+
+| Motto clause | What it means | Slide that proves it |
+|---|---|---|
+| **People Over Tools** | a human asks, reviews, approves; the agents do the typing | 3, 4, 8 |
+| **Work Verified** | the verdict is an exit code, not an opinion | 2, 4, 5, 6 |
+| **Time to Unplug** | self-hosted, your model key, your cloud or your laptop | 5, 8, 9 |
+
+If someone asks "what do you actually sell", the answer is slide 3, not slide 4. The loop is the guarantee inside the platform.
+
 ## Before you present
 
-1. **Confirm `$750K / 18 months / 3 pilots`** — it is the only number in the deck I could not derive from the repo.
-2. **Confirm the entity name** `INDEX0 Research Labs` on slide 1.
-3. Rebuild if the HTML changes: `cd pitch && ./build-deck-13.sh`.
-4. Present from `deck-13.pdf` full-screen, or the HTML (arrow keys, `f` for fullscreen).
+1. **Confirm `$750K / 18 months / 3 pilots`** — it is the only number in the pack I could not derive from the repo.
+2. **Confirm the legal name.** The code and copyright headers say **INDEX0 AI Inc.**; `deck-13` and the older decks still say "INDEX0 Research Labs".
+3. Rebuild if the HTML changes: `cd pitch && ./build-deck-simple.sh`.
+4. Present from `deck-simple.pdf` full-screen, or the HTML (arrow keys, `f` for fullscreen).
 
 Four decks exist:
 
 | File | Slides | Use |
 |---|---|---|
-| `deck-simple.pdf` | 13 | **Present this in the room.** Plainest language, one idea per line, a source under every number. |
-| `deck-13.pdf` | 13 | The version that matches your written slide spec exactly, if someone asks to check against it. |
-| `deck-uber.pdf` | 15 | Adds why-now, business model, team and the ask — use for a longer session or a partner meeting. |
-| `INDEX0_deck.pdf` | 13 | Dense diligence version. Send it, do not present it. |
+| `deck-simple.pdf` | 13 | **Current and correct. Present this.** Platform positioning, one idea per line, a source under every number. |
+| `deck-13.pdf` | 13 | Matches your written slide spec, but still says "a gate, not a generator" and quotes the old $450M. **Do not hand out until rebuilt.** |
+| `deck-uber.pdf` | 15 | Same stale positioning. Adds why-now, business model, team, ask. **Do not hand out until rebuilt.** |
+| `INDEX0_deck.pdf` | 13 | Dense diligence version, same stale positioning. **Do not hand out until rebuilt.** |
 
 `ONE_PAGER.pdf` is the leave-behind for every meeting.

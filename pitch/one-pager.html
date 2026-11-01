@@ -2,12 +2,12 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>INDEX0 — one page</title>
+<title>INDEX0 AI — one page</title>
 <style>
-  @page { size: Letter; margin: 0.6in 0.7in; }
+  @page { size: Letter; margin: 0.5in 0.65in; }
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; }
-  body { font-family: Georgia, "Times New Roman", serif; color: #1a1814; font-size: 10.5pt; line-height: 1.45; }
+  body { font-family: Georgia, "Times New Roman", serif; color: #1a1814; font-size: 10pt; line-height: 1.38; }
   h1 { font-size: 22pt; margin: 0 0 2pt; letter-spacing: -0.02em; }
   .sub { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 8.5pt; color: #6b6356; margin-bottom: 14pt; letter-spacing: .06em; text-transform: uppercase; }
   h2 { font-size: 11.5pt; margin: 10pt 0 3pt; color: #c2410c; }
@@ -22,21 +22,26 @@
 </style>
 </head>
 <body>
-  <h1>INDEX0</h1>
-  <div class="sub">Pre-seed · November 2026 · INDEX0 Research Labs</div>
+  <h1>INDEX0 AI</h1>
+  <div class="sub">Pre-seed · November 2026 · INDEX0 AI Inc.</div>
 
-  <p><b>Verification before merge.</b> A self-hosted, four-tier review loop (Architect, Developer, Critic, QA) where the QA tier <b>executes the candidate code</b> against the repository's own test suite in a network-isolated container. The verdict is an exit code, not a model's opinion of the diff.</p>
+  <p><b>Own your AI engineer.</b> A self-hosted, multi-agent AI software engineering platform. You ask for code in your terminal, editor or browser; four agents plan, patch and critique it; the last one <b>executes it</b> against the repository's own test suite in a network-isolated container. Nothing merges until it runs — on your infrastructure, with your model key.</p>
+
+  <h2>Surfaces</h2>
+  <ul>
+    <li><b>Terminal</b> — the <code>index0</code> CLI and TUI: <code>run</code>, <code>plan</code>, <code>review</code>, worktrees. 37 tests.</li>
+    <li><b>Editor</b> — VS Code extension, 7 commands including GhostText and GNAP diff review. 4 tests.</li>
+    <li><b>Browser</b> — React workbench and the portal at <code>ai.index0.in</code>. 94 tests.</li>
+  </ul>
 
   <h2>Problem</h2>
-  <p>AI coding tools produce plausible code that passes the wrong tests. Every existing review layer (Copilot, Cursor, Qodo, OpenHands) reports findings or scores; none hands a regulated customer a replayable artifact proving the fix ran. AI-assisted teams ship 3–4× the code with 10× the security findings, and auditors now ask for evidence.</p>
+  <p>90% of developers use AI at work (DORA 2025) and 45% of the code it writes ships an OWASP flaw (Veracode 2025). The assistants that write it live in their own cloud and stop at the diff; the reviewer still reads 400 lines an hour, and the regulated buyer is told to send source out and rent a seat forever.</p>
 
   <h2>Product</h2>
   <ul>
     <li>Developer output is whole files (models are bad at hunk arithmetic); the unified diff is derived by us.</li>
-    <li>Critic review is advisory-only: <code>request_changes</code> with no critical/error finding is auto-upgraded to <code>approve</code>.</li>
-    <li>QA copies the repo into a container with <code>--network none</code>, writes the candidate, runs <code>npm test</code>, reports exit code and counts the runner printed.</li>
-    <li>Candidate edits to test files are dropped, so the assertions that decide the verdict are always the repository's own.</li>
-    <li>Every cycle is hash-chained and attributable (GNAP).</li>
+    <li>QA copies the repo into a container with <code>--network none</code>, writes the candidate, runs <code>npm test</code>, reports the exit code and the counts the runner printed.</li>
+    <li>Candidate edits to test files are dropped, so the assertions that decide the verdict are always the repository's own. Every cycle is hash-chained (GNAP).</li>
   </ul>
 
   <h2>Proof (we audited ourselves first)</h2>
@@ -48,14 +53,11 @@
   </ul>
 
   <h2>Market</h2>
-  <p>Secure code review platforms: $1.22B (2025) → $2.44B (2030), 14.9% a year (Mordor Intelligence). Our slice: 2,500 orgs × 500 developers × $360 = $450M. Buyer: 200–5,000 developers in regulated organisations (finance, healthcare, gov) already on cloud contracts, priced out of enterprise-tier review tools.</p>
+  <p>AI code tools: $9.8B (2026) → $26.0B (2030), 27.1% a year (Grand View Research; GVR names on-premises the fastest-growing deployment segment, driven by data-sovereignty rules). Our slice: 2,500 regulated orgs × 500 developers × $240 = <b>$300M</b>, at our $20/seat/month price. Buyer: 200–5,000 developers in finance, healthcare and government who cannot send source to a vendor cloud.</p>
 
   <h2>Ask</h2>
-  <p><b>$750K pre-seed over 18 months</b> to turn a working loop into three paid pilots whose replayable artifacts survive a real audit. Use of funds: two hires (sandbox infrastructure, security), founder-led GTM with three design partners, and SOC 2 Type I. Inference runs on the customer's model contract, so our COGS look like software.</p>
+  <p><b>$750K pre-seed over 18 months</b> to turn a working platform into three paid pilots whose replayable artifacts survive a real audit. Two hires (sandbox infrastructure, security), founder-led GTM, SOC 2 Type I. Inference runs on the customer's model contract, so COGS look like software. Live demo: <code>./demo/run-demo.sh</code> — ~7 s warm, no paid API.</p>
 
-  <h2>Live demo</h2>
-  <p><code>./demo/run-demo.sh</code> — one command, ~7 s warm, no Azure, no paid API. The transcript on slide 7 is the output of a run minutes before the deck was exported.</p>
-
-  <div class="foot">INDEX0 Research Labs · <span class="mono">github.com/INDEX0-RESEARCH-LABS/INDEX0</span> · PROOF_STATUS.md · benchmarks/CLAIM_AUDIT.md</div>
+  <div class="foot">People Over Tools. Work Verified. Time to Unplug. · INDEX0 AI Inc. · <span class="mono">github.com/INDEX0-RESEARCH-LABS/INDEX0</span> · PROOF_STATUS.md</div>
 </body>
 </html>

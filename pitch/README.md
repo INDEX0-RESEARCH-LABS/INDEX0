@@ -5,13 +5,13 @@ Nothing in this pack cites a benchmark score, a customer, or a revenue figure.
 
 | File | What it is |
 |---|---|
-| `deck-simple.pdf` | **Present this one.** The same 13 slides, rewritten in plain language: one idea per line, a verified source under every number, no jargon. 13 pp. Rebuild with `./build-deck-simple.sh`. |
-| `deck-13.pdf` | The version that matches your written 13-slide spec exactly. Same order, denser copy. Rebuild with `./build-deck-13.sh`. |
+| `deck-simple.pdf` | **Present this one.** INDEX0 AI as it is: a self-hosted multi-agent platform with three surfaces (CLI, editor, browser) and one rule — nothing merges until it runs. Plain language, one idea per line, a source under every number. 13 pp. Rebuild with `./build-deck-simple.sh`. |
+| `deck-13.pdf` | Matches your written 13-slide spec, but carries the **old positioning** ("a gate, not a generator", $450M market). Rebuild before handing out. |
 | `SPEAKER_NOTES.md` | Per-slide on-slide text, icon/visual, layout, speaker note, a one-breath script for `deck-simple`, and the claim → evidence table. Read this before rehearsing. |
-| `deck-uber.pdf` | 15-slide fundraising deck in the 2008 Uber layout: one idea per slide, alternating dark/light, and the four slides that actually close a round — why now, business model, team, ask. **Use this one if you get 20 minutes instead of 5.** |
+| `deck-uber.pdf` | 15-slide version in the 2008 Uber layout — why now, business model, team, ask. **Old positioning; rebuild before handing out.** |
 | `deck.html` | Dense 13-slide version. Opens offline in any browser. `←/→` to move, `f` for fullscreen. |
-| `INDEX0_deck.pdf` | Print/email copy of the dense deck (13 pp). |
-| `ONE_PAGER.pdf` | One-page leave-behind. Print and hand over unprompted. |
+| `INDEX0_deck.pdf` | Print/email copy of the dense deck (13 pp). **Old positioning.** |
+| `ONE_PAGER.pdf` | One-page leave-behind, platform positioning. Print and hand over unprompted. |
 | `../demo/run-demo.sh` | The live demo. One command, real model, real sandbox, real test run. |
 | `../demo/runs/` | Six recorded runs with request, transcript and diff. |
 | `../PROOF_STATUS.md` | 15 of 36 capabilities verifiable; 0 of 3 benchmark scores. Hand this over. |
