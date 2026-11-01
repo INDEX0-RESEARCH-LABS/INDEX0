@@ -176,30 +176,32 @@ Sub: `Nothing here needs a research breakthrough to work.` (3 columns)
 **On-slide text** — *The budget is real. Here is the math.*
 Sub: `Two anchors published, four years interpolated at the same rate.`
 
-Chart, 6 points, 2025–2030, USD billions: 7.4 (2025), 8.8, 10.5, 12.6 (2028), 15.0, 18.0. Legend: filled dot = *Published 2025 and 2028*; hollow dot = *Same 19% CAGR applied*.
+Chart, 6 points, 2025–2030, USD billions: 1.22 (2025), 1.40, 1.61, 1.85, 2.13, 2.44 (2030). Legend: filled dot = *Published 2025 and 2030*; hollow dot = *Same 14.9% CAGR applied*.
 
-Math block: `5,000` regulated organisations × `500` developers each × `$360` per developer, per year → **$900M serviceable**. Sub: `Top-down and bottom-up land within one order of magnitude. We quote the low end.`
+Math block: `2,500` regulated organisations × `500` developers each × `$360` per developer, per year → **$450M we can sell into**. Sub: `That is 37% of the $1.22B category — the regulated half. We quote the smaller number.`
+
+Footnote: `Mordor Intelligence, Secure Code Review Platforms Market: USD 1.22B (2025) to USD 2.44B (2030), 14.88% CAGR · four years interpolated`.
 
 **Background / layout** — dark, split 1.1:0.9, area chart left, math right.
 
-**Speaker note** — "Only two numbers on this chart are published: 7.4 billion in 2025 and 12.6 in 2028, which is 19% a year. The other four are that same rate applied forward, and they are drawn hollow so you can discount them. The bottom-up is 5,000 organisations at 500 developers and 30 dollars a seat — 900 million — and we sell against the lower of the two."
+**Speaker note** — "Only two numbers on this chart are published, both by the same house: 1.22 billion in 2025 and 2.44 billion in 2030, which is 14.9 percent a year. The four in between are that rate applied forward, drawn hollow so you can discount them. The bottom-up is my own: 2,500 regulated organisations, 500 developers each, 30 dollars a seat per month — 450 million. That is 37 percent of the published category, so the number I am asking you to believe is the smaller one."
 
 ---
 
 ## 11 · LOOKING FORWARD
 
 **On-slide text** — *Three outcomes, all arithmetically possible.*
-Sub: `Every figure below is accounts × $180k, against the $900M serviceable market.`
+Sub: `Every figure below is accounts × $180k, against the $450M we can sell into.`
 
 | # | Icon | Case | Text | Revenue |
 |---|---|---|---|---|
-| 1 | trophy | Best case | Category standard for regulated engineering. **1,500 accounts**. | **$270M ARR** (blue) |
-| 2 | target | Realistic | 2.4% of 5,000 organisations. **120 accounts**. | $21M ARR |
+| 1 | trophy | Best case | The default gate. **1,500 accounts**, 60% of the segment. | **$270M ARR** (blue) |
+| 2 | target | Realistic | 5% of 2,500 organisations. **120 accounts**. | $21M ARR |
 | 3 | lifebuoy | Worst case | A 10-person service in one sector. **15 accounts**. | $2.7M ARR |
 
 **Background / layout** — light, 3-column scenarios, revenue as the largest type on the slide.
 
-**Speaker note** — "Take the worst case seriously: fifteen accounts at 180 thousand is 2.7 million a year — a real business, not a rounding error. The realistic case is 2.4% of the 5,000 organisations, and the best case is becoming the default gate rather than a product teams buy. There is no revenue today; these are outcomes of the pricing, not a forecast."
+**Speaker note** — "Take the worst case seriously: fifteen accounts at 180 thousand is 2.7 million a year — a real business, not a rounding error. The realistic case is 5 percent of the 2,500 organisations, and the best case is becoming the default gate rather than a product teams buy. There is no revenue today; these are outcomes of the pricing, not a forecast."
 
 ---
 
@@ -249,9 +251,33 @@ Footer: `Raising $750K · 18 months · three paid pilots · PROOF_STATUS.md list
 | Sealed sandbox, no egress | `--network none`, read-only source mount in `services/sandbox-manager/src/services/execution.service.ts` |
 | Six verified runs | `demo/runs/` — six committed, three on the Groq free route |
 | 15 of 36 capabilities | `PROOF_STATUS.md` (0 of 3 benchmarks verified) |
-| Market anchors 7.4 → 12.6 | Mordor Intelligence 2026; MarketsandMarkets; implied 19.4% CAGR |
-| $900M serviceable | 5,000 × 500 × $360, bottom-up |
+| Market anchors 1.22 → 2.44 | Mordor Intelligence, Secure Code Review Platforms Market (page updated Sep 2026); 14.88% CAGR published |
+| $450M serviceable | 2,500 × 500 × $360, bottom-up; = 37% of the $1.22B category |
 | $180k ACV | $30/dev/month × 500 developers |
+
+---
+
+## deck-simple — the 13 slides you actually say out loud
+
+Same skeleton as `deck-13`, rewritten for a room that does not work in this field. One idea per line, a source under every number. Rebuild with `./build-deck-simple.sh`.
+
+| # | Slide | What you say (one breath) | Point at |
+|---|---|---|---|
+| 1 | Nothing merges until it runs. | "We are the door AI code has to walk through before it ships." | the wordmark, nothing else |
+| 2 | Writing got fast. Checking did not. | "Ninety percent of developers use AI. Forty-five percent of its code ships a flaw. Eighty-nine percent of a PR's life is waiting." | the three big numbers |
+| 3 | So we built the door. | "One verdict per patch — ship or stop. No report to read." | the verdict line |
+| 4 | Three rules. That is the product. | "Any repo with a test command, one command, exit zero or it does not merge." | the terminal block |
+| 5 | Six things a copycat cannot fake. | "Each of these came from a bug we shipped and then closed." | the cheat-guard tile |
+| 6 | What you can run today. | "This is the command, the receipt and the patch — from the repo at HEAD." | the three captures |
+| 7 | Where it pays for itself. | "Four patches that all looked correct, and none of them were." | AI patches tile |
+| 8 | A human reads 400 lines an hour. | "Same three tests, a human reads them, the gate runs them in 1.6 seconds." | the comparison rows |
+| 9 | Boring on purpose. | "Docker or Firecracker, any model, no patent — the public audit is the moat." | no patent tile |
+| 10 | The budget is real. Here is the math. | "1.22 to 2.44 billion published. My slice is 450 million, the smaller number." | the $450M |
+| 11 | Three endings. All possible. | "Fifteen accounts is 2.7 million a year. There is no revenue today." | worst case |
+| 12 | Two ways in. | "Three design partners at a time, and every run leaves a receipt that travels." | the receipt line |
+| 13 | Four months. Four proofs. | "All of it is in the repo, with the commit. Fifteen of thirty-six claims are verifiable; the gap is what the round buys." | the last milestone |
+
+Two rules for this deck: never read a bullet aloud, and never say a number without the line under it.
 
 ## Before you present
 
@@ -260,4 +286,13 @@ Footer: `Raising $750K · 18 months · three paid pilots · PROOF_STATUS.md list
 3. Rebuild if the HTML changes: `cd pitch && ./build-deck-13.sh`.
 4. Present from `deck-13.pdf` full-screen, or the HTML (arrow keys, `f` for fullscreen).
 
-Three decks exist: `deck-13.pdf` (this one — matches your 13-slide spec), `deck-uber.pdf` (15 slides, adds why-now, business model, team, ask), `INDEX0_deck.pdf` (dense diligence version). Present `deck-13.pdf`; keep the other two for follow-up.
+Four decks exist:
+
+| File | Slides | Use |
+|---|---|---|
+| `deck-simple.pdf` | 13 | **Present this in the room.** Plainest language, one idea per line, a source under every number. |
+| `deck-13.pdf` | 13 | The version that matches your written slide spec exactly, if someone asks to check against it. |
+| `deck-uber.pdf` | 15 | Adds why-now, business model, team and the ask — use for a longer session or a partner meeting. |
+| `INDEX0_deck.pdf` | 13 | Dense diligence version. Send it, do not present it. |
+
+`ONE_PAGER.pdf` is the leave-behind for every meeting.

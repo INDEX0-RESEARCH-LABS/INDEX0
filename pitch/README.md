@@ -5,9 +5,10 @@ Nothing in this pack cites a benchmark score, a customer, or a revenue figure.
 
 | File | What it is |
 |---|---|
-| `deck-13.pdf` | **The 13-slide spec deck.** Title, problem, solution, how it works, differentiators, product, use cases, benefits, technology, market, scenarios, GTM, traction. Rebuild with `./build-deck-13.sh`. |
-| `SPEAKER_NOTES.md` | Per-slide on-slide text, icon/visual, layout, speaker note, and the claim → evidence table. Read this before rehearsing. |
-| `deck-uber.pdf` | 15-slide fundraising deck in the 2008 Uber layout: one idea per slide, alternating dark/light, and the four slides that actually close a round — why now, business model, team, ask. **Use this one if you get a 20-minute slot.** |
+| `deck-simple.pdf` | **Present this one.** The same 13 slides, rewritten in plain language: one idea per line, a verified source under every number, no jargon. 13 pp. Rebuild with `./build-deck-simple.sh`. |
+| `deck-13.pdf` | The version that matches your written 13-slide spec exactly. Same order, denser copy. Rebuild with `./build-deck-13.sh`. |
+| `SPEAKER_NOTES.md` | Per-slide on-slide text, icon/visual, layout, speaker note, a one-breath script for `deck-simple`, and the claim → evidence table. Read this before rehearsing. |
+| `deck-uber.pdf` | 15-slide fundraising deck in the 2008 Uber layout: one idea per slide, alternating dark/light, and the four slides that actually close a round — why now, business model, team, ask. **Use this one if you get 20 minutes instead of 5.** |
 | `deck.html` | Dense 13-slide version. Opens offline in any browser. `←/→` to move, `f` for fullscreen. |
 | `INDEX0_deck.pdf` | Print/email copy of the dense deck (13 pp). |
 | `ONE_PAGER.pdf` | One-page leave-behind. Print and hand over unprompted. |
