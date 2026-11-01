@@ -5,9 +5,11 @@ Nothing in this pack cites a benchmark score, a customer, or a revenue figure.
 
 | File | What it is |
 |---|---|
-| `deck.html` | 13-slide deck. Opens offline in any browser. `←/→` to move, `f` for fullscreen. |
-| `INDEX0_deck.pdf` | Print/email copy of the current deck (13 pp). |
-| `deck-uber.pdf` | 15-slide fundraising deck in the 2008 Uber layout: one idea per slide, alternating dark/light, and the four slides that actually close a round — why now, business model, team, ask. **Use this one in the room.** |
+| `deck-13.pdf` | **The 13-slide spec deck.** Title, problem, solution, how it works, differentiators, product, use cases, benefits, technology, market, scenarios, GTM, traction. Rebuild with `./build-deck-13.sh`. |
+| `SPEAKER_NOTES.md` | Per-slide on-slide text, icon/visual, layout, speaker note, and the claim → evidence table. Read this before rehearsing. |
+| `deck-uber.pdf` | 15-slide fundraising deck in the 2008 Uber layout: one idea per slide, alternating dark/light, and the four slides that actually close a round — why now, business model, team, ask. **Use this one if you get a 20-minute slot.** |
+| `deck.html` | Dense 13-slide version. Opens offline in any browser. `←/→` to move, `f` for fullscreen. |
+| `INDEX0_deck.pdf` | Print/email copy of the dense deck (13 pp). |
 | `ONE_PAGER.pdf` | One-page leave-behind. Print and hand over unprompted. |
 | `../demo/run-demo.sh` | The live demo. One command, real model, real sandbox, real test run. |
 | `../demo/runs/` | Six recorded runs with request, transcript and diff. |
@@ -60,7 +62,7 @@ Then the honest turn:
 
 **1. "What's your traction?"**
 Zero revenue, zero users, no design partners signed. We have a working verification
-loop, 28 orchestrator tests, and a published audit of our own claims. We're raising
+loop, 30 orchestrator tests, and a published audit of our own claims. We're raising
 to convert one paid pilot.
 
 **2. "Cursor/Copilot will bundle this."**
@@ -69,7 +71,7 @@ customer can verify without trusting them, inside the customer's own tenant. Tha
 the product, not the review.
 
 **3. "Qodo and OpenHands already self-host."**
-Correct, and we say so on slide 10. They ship review; the merge-blocking evidence
+Correct, and `deck.html` says so on slide 10. They ship review; the merge-blocking evidence
 artifact is not their product. Our wedge is sub-500-seat regulated buyers those
 vendors don't serve at that seat count.
 
