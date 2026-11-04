@@ -4,429 +4,849 @@
 <meta charset="utf-8">
 <title>INDEX0 AI — surface shots</title>
 <style>
-  @font-face { font-family:'Plex'; font-style:normal; font-weight:100 700; font-display:block;
-    src:url(data:font/woff2;base64,__PLEX_SANS__) format('woff2'); }
-  @font-face { font-family:'PlexMono'; font-style:normal; font-weight:400 600; font-display:block;
-    src:url(data:font/woff2;base64,__PLEX_MONO__) format('woff2'); }
+  @font-face{font-family:'Plex';font-weight:100 700;font-display:block;src:url(data:font/woff2;base64,__PLEX_SANS__) format('woff2');}
+  @font-face{font-family:'PlexMono';font-weight:400 600;font-display:block;src:url(data:font/woff2;base64,__PLEX_MONO__) format('woff2');}
+  @font-face{font-family:'Manrope';font-weight:200 800;font-display:block;src:url(data:font/woff2;base64,__MANROPE__) format('woff2');}
+  @font-face{font-family:'Fraunces';font-weight:300 700;font-display:block;src:url(data:font/woff2;base64,__FRAUNCES__) format('woff2');}
 
   :root{
-    --paper:#ECECE5;
-    --sheet:#F8F8F3;
-    --ink:#141619;
-    --ink-2:#4C5256;
-    --ink-3:#83898B;
-    --rule:#CBCDC3;
-    --oxide:#9E3527;
-    --sans:'Plex',system-ui,sans-serif;
-    --mono:'PlexMono',ui-monospace,monospace;
+    --paper:#ECECE5; --sheet:#F8F8F3; --ink:#141619; --ink-2:#4C5256; --ink-3:#83898B;
+    --rule:#CBCDC3; --oxide:#9E3527;
+    --sans:'Plex',system-ui,sans-serif; --mono:'PlexMono',ui-monospace,monospace;
+
+    --linen:#FDFBF6; --cream:#F4EEE3; --a-ink:#17161A; --a-muted:#6E6961; --a-hair:#E8E0D2;
+    --chili:#D33F1D; --leaf:#2E6B4F; --sesame:#F2B233;
   }
   *{box-sizing:border-box;margin:0;padding:0;}
   html,body{background:var(--paper);}
   body{font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased;}
 
   .shot{width:1600px;height:1000px;display:none;position:relative;
-    padding:74px 96px 0;flex-direction:column;background:var(--paper);overflow:hidden;}
+    padding:64px 96px 0;flex-direction:column;background:var(--paper);overflow:hidden;}
   .shot.on{display:flex;}
 
-  .head{flex:0 0 auto;max-width:1180px;}
-  .kicker{font-family:var(--mono);font-size:15px;color:var(--ink-3);letter-spacing:.01em;}
-  h1{margin-top:16px;font-size:47px;line-height:1.12;font-weight:400;letter-spacing:-.021em;}
+  .head{flex:0 0 auto;max-width:1200px;}
+  .kicker{font-family:var(--mono);font-size:14px;color:var(--ink-3);}
+  h1{margin-top:14px;font-size:44px;line-height:1.1;font-weight:400;letter-spacing:-.022em;}
   h1 em{font-style:normal;color:var(--oxide);}
 
-  .stage{flex:1 1 auto;min-height:0;margin-top:40px;display:flex;gap:34px;}
-  .col{display:flex;flex-direction:column;}
+  .stage{flex:1 1 auto;min-height:0;margin-top:34px;display:flex;gap:34px;}
 
   .sheet{background:var(--sheet);border:1px solid var(--rule);border-radius:2px;}
 
-  .field{font-size:14px;color:var(--ink-3);}
-  .lede{font-size:20px;line-height:1.55;color:var(--ink-2);max-width:56ch;}
-  .lede b{color:var(--ink);font-weight:500;}
+  .foot{flex:0 0 52px;display:flex;align-items:center;justify-content:space-between;
+    font-family:var(--mono);font-size:12.5px;color:var(--ink-3);border-top:1px solid var(--rule);margin-top:22px;}
 
-  .foot{flex:0 0 56px;display:flex;align-items:center;justify-content:space-between;
-    font-family:var(--mono);font-size:13px;color:var(--ink-3);border-top:1px solid var(--rule);margin-top:26px;}
+  /* ── THE APP ─────────────────────────────────────────────────────────── */
+  .phone{width:390px;height:844px;background:var(--linen);border-radius:42px;position:relative;
+  .phone overflow:hidden;font-family:'Manrope', .phone sans-serif;color:var(--a-ink);
+    border:1px solid #DED5C6;box-shadow:0 30px 60px -42px rgba(20, .phone 22, .phone 25, .phone .55);}
+  .zoom{zoom:.72;}
+  .zoom-sm{zoom:.70;}
+  .phone .status{height:46px;display:flex;align-items:flex-end;justify-content:space-between;
+  .phone padding:0 26px 6px;font-size:13px;font-weight:600;letter-spacing:.01em;}
+  .status .r{display:flex;gap:6px;align-items:center;}
+  .phone .bar{display:inline-block;width:3px;background:var(--a-ink);border-radius:1px;}
+  .phone .bat{width:22px;height:11px;border:1.4px solid var(--a-ink);border-radius:3px;position:relative;display:inline-block;}
+  .phone .bat::after{content:'';position:absolute;inset:1.5px;right:6px;background:var(--a-ink);border-radius:1px;}
+  .phone .bat::before{content:'';position:absolute;right:-3.4px;top:3px;width:2px;height:4px;background:var(--a-ink);border-radius:0 1px 1px 0;}
+  .phone .home{position:absolute;bottom:9px;left:50%;transform:translateX(-50%);width:126px;height:4.5px;
+  .phone border-radius:3px;background:rgba(23, .phone 22, .phone 26, .phone .22);}
 
-  /* ── 01 the ask ───────────────────────────────────────────── */
-  .ask-left{width:742px;padding-right:20px;}
-  .ask-left .lede{margin-top:26px;}
-  .req{margin-top:44px;border-top:1px solid var(--rule);padding-top:20px;}
-  .req .field{margin-bottom:12px;}
-  .req code{display:block;font-family:var(--mono);font-size:19px;line-height:1.6;color:var(--ink);
-    white-space:pre-wrap;word-break:break-word;}
-  .req .arrow{color:var(--oxide);}
-  .facts{margin-top:46px;display:flex;gap:44px;}
-  .fact b{display:block;font-size:26px;font-weight:400;letter-spacing:-.01em;}
-  .fact span{font-size:14px;color:var(--ink-3);}
+  .app-head{display:flex;align-items:center;justify-content:space-between;padding:6px 22px 0;}
+  .phone .ico{stroke:var(--a-ink);stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round;}
+  .phone .merchant{font-family:'Fraunces',serif;font-weight:600;font-size:23px;letter-spacing:-.01em;}
+  .phone .meta{font-size:12px;color:var(--a-muted);display:flex;gap:7px;align-items:center;}
+  .phone .dot{width:2.5px;height:2.5px;border-radius:50%;background:#B9B2A6;display:inline-block;}
+  .phone .star{color:var(--sesame);}
 
-  .ask-right{flex:1;display:flex;flex-direction:column;justify-content:flex-start;}
-  .file{display:flex;flex-direction:column;overflow:hidden;}
-  .file .bar{display:flex;justify-content:space-between;align-items:center;
-    padding:14px 22px;border-bottom:1px solid var(--rule);font-family:var(--mono);font-size:15px;color:var(--ink-2);}
-  .file .bar i{font-style:normal;color:var(--oxide);font-family:var(--sans);font-size:14px;}
-  .file pre{padding:22px 22px 6px;font-family:var(--mono);font-size:17px;line-height:1.78;color:var(--ink);
-    white-space:pre-wrap;}
-  .file pre .c{color:var(--ink-3);}
-  .file pre .hit{display:block;background:#F1E7E2;border-left:3px solid var(--oxide);
-    margin-left:-22px;padding:2px 0 2px 19px;}
-  .file pre .k{color:var(--ink-2);}
-  .file .cap{padding:14px 22px 20px;border-top:1px solid var(--rule);font-size:15px;line-height:1.5;color:var(--ink-2);}
+  .phone .hero{margin:14px 18px 0;height:142px;border-radius:22px;background:var(--cream);position:relative;overflow:hidden;
+  .phone display:flex;align-items:center;padding:0 18px;gap:14px;}
+  .hero .txt{position:relative;z-index:1;}
+  .phone .hero .t1{font-size:10px;letter-spacing:.14em;font-weight:700;color:#A8632F;}
+  .phone .hero .t2{font-family:'Fraunces',serif;font-size:20px;font-weight:600;margin-top:5px;line-height:1.15;}
+  .phone .hero .t3{font-size:11.5px;color:var(--a-muted);margin-top:5px;}
+  .phone .hero .price{margin-top:9px;display:inline-block;font-size:12px;font-weight:700;background:var(--a-ink);color:var(--linen);
+  .phone border-radius:20px;padding:5px 11px;}
+  .hero svg{position:absolute;right:-6px;bottom:-10px;width:168px;height:168px;}
 
-  /* ── 02 terminal ──────────────────────────────────────────── */
-  .log{flex:1;display:flex;flex-direction:column;padding:4px 44px 96px;position:relative;}
-  .log .row{display:grid;grid-template-columns:46px 196px 1fr 236px;align-items:baseline;
-    gap:0 24px;padding:18px 0;border-bottom:1px solid var(--rule);}
-  .log .row:last-child{border-bottom:0;}
-  .log .n{font-family:var(--mono);font-size:15px;color:var(--ink-3);}
-  .log .who{font-size:21px;font-weight:500;}
-  .log .what{font-size:19px;color:var(--ink-2);}
-  .log .what code{font-family:var(--mono);font-size:18px;color:var(--ink);}
-  .log .ver{font-family:var(--mono);font-size:15.5px;color:var(--ink-2);text-align:right;}
-  .log .ver.no{color:var(--oxide);}
-  .log .ver.yes{color:var(--ink);font-weight:500;}
-  .log .qa{border-top:2px solid var(--ink);margin-top:2px;padding-top:22px;}
-  .log .qa .who{font-size:23px;}
-  .log .qa .what{font-size:23px;color:var(--ink);}
+  .phone .tabs{display:flex;gap:7px;padding:18px 18px 4px;overflow:hidden;}
+  .phone .tab{font-size:12.5px;font-weight:600;padding:7px 13px;border-radius:20px;color:var(--a-muted);border:1px solid var(--a-hair);white-space:nowrap;}
+  .phone .tab.on{background:var(--a-ink);color:var(--linen);border-color:var(--a-ink);}
 
-  .stamp{position:absolute;right:30px;bottom:16px;transform:rotate(-7deg);
-    border:3px solid var(--oxide);color:var(--oxide);border-radius:3px;
-    padding:10px 20px 12px;font-family:var(--mono);font-size:22px;letter-spacing:.08em;line-height:1;}
-  .stamp b{display:block;font-weight:500;font-size:15px;letter-spacing:.02em;margin-top:8px;color:var(--oxide);}
+  .phone .dishes{padding:8px 18px 0;}
+  .phone .dish{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--a-hair);}
+  .phone .dish:last-child{border-bottom:0;}
+  .phone .thumb{width:54px;height:54px;border-radius:14px;background:var(--cream);display:flex;align-items:center;
+  .phone justify-content:center;flex:0 0 54px;position:relative;}
+  .thumb .qty{position:absolute;top:-5px;right:-5px;width:18px;height:18px;border-radius:50%;background:var(--a-ink);
+  .phone color:var(--linen);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+  .dish .n{font-size:14.5px;font-weight:700;letter-spacing:-.005em;}
+  .phone .dish .d{font-size:11.5px;color:var(--a-muted);margin-top:3px;line-height:1.35;}
+  .phone .dish .p{font-size:13px;font-weight:700;margin-top:5px;}
+  .phone .add{width:30px;height:30px;border-radius:15px;border:1.4px solid var(--a-hair);display:flex;align-items:center;
+  .phone justify-content:center;font-size:17px;font-weight:500;color:var(--a-ink);flex:0 0 30px;}
+  .add.solid{background:var(--a-ink);color:var(--linen);border-color:var(--a-ink);}
 
-  /* ── 03 editor ────────────────────────────────────────────── */
+  .phone .cartbar{position:absolute;left:16px;right:16px;bottom:24px;height:56px;border-radius:18px;background:var(--a-ink);
+  .phone display:flex;align-items:center;justify-content:space-between;padding:0 8px 0 18px;color:var(--linen);}
+  .cartbar .l{font-size:12.5px;font-weight:600;opacity:.72;}
+  .phone .cartbar .r{font-size:13px;font-weight:700;background:rgba(253,251,246,.14);border-radius:13px;padding:9px 14px;}
+
+  /* cart screen */
+  .phone .scr-head{padding:6px 22px 0;}
+  .phone .scr-title{font-family:'Fraunces',serif;font-size:27px;font-weight:600;letter-spacing:-.015em;}
+  .phone .scr-sub{font-size:12px;color:var(--a-muted);margin-top:5px;}
+  .phone .lines{padding:14px 18px 0;}
+  .phone .line{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--a-hair);}
+  .phone .line .n{font-size:13.5px;font-weight:700;}
+  .phone .line .d{font-size:11px;color:var(--a-muted);margin-top:2px;}
+  .phone .line .p{font-size:13px;font-weight:700;margin-left:auto;}
+  .phone .step{display:flex;align-items:center;border:1.3px solid var(--a-hair);border-radius:11px;height:30px;font-size:13px;}
+  .phone .step span{width:26px;text-align:center;color:var(--a-muted);}
+  .phone .step b{width:22px;text-align:center;font-weight:700;}
+  .phone .promo{display:flex;align-items:center;justify-content:space-between;margin:14px 18px 0;padding:11px 13px;
+  .phone border:1.3px dashed #D9C9A8;border-radius:13px;background:#FCF5E6;}
+  .promo .code{font-size:12px;font-weight:800;letter-spacing:.06em;color:#8A5A18;}
+  .phone .promo .amt{font-size:12.5px;font-weight:700;color:var(--leaf);}
+  .phone .freedel{margin:14px 18px 0;}
+  .phone .freedel .lbl{display:flex;justify-content:space-between;font-size:11.5px;color:var(--a-muted);font-weight:600;}
+  .phone .freedel .lbl b{color:var(--a-ink);}
+  .phone .track{height:5px;border-radius:3px;background:var(--a-hair);margin-top:7px;overflow:hidden;}
+  .phone .track i{display:block;height:100%;background:var(--chili);}
+  .phone .sum{margin:16px 18px 0;border-top:1px solid var(--a-hair);padding-top:12px;}
+  .phone .sum .r{display:flex;justify-content:space-between;font-size:12.5px;color:var(--a-muted);padding:5px 0;}
+  .phone .sum .r b{color:var(--a-ink);font-weight:700;font-variant-numeric:tabular-nums;}
+  .phone .sum .r.free b{color:var(--leaf);}
+  .phone .sum .r.tot{margin-top:9px;border-top:1px solid var(--a-hair);padding-top:11px;font-size:14px;font-weight:700;color:var(--a-ink);}
+  .phone .sum .r.tot b{font-size:19px;letter-spacing:-.02em;}
+  .phone .pay{position:absolute;left:16px;right:16px;bottom:24px;height:56px;border-radius:18px;background:var(--chili);
+  .phone color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;gap:8px;}
+
+  /* tracking screen */
+  .map{position:absolute;inset:0 0 auto 0;height:470px;background:#F1EADC;overflow:hidden;}
+  .phone .map svg{position:absolute;inset:0;width:100%;height:100%;}
+  .phone .sheet-top{position:absolute;top:392px;left:0;right:0;bottom:0;background:var(--linen);
+  .phone border-radius:26px 26px 0 0;padding:20px 22px 0;border-top:1px solid #EADFCC;}
+  .eta{font-family:'Fraunces',serif;font-size:29px;font-weight:600;letter-spacing:-.015em;}
+  .phone .eta span{color:var(--a-muted);font-family:'Manrope',sans-serif;font-size:12px;font-weight:600;display:block;margin-top:5px;letter-spacing:0;}
+  .phone .prog{display:flex;align-items:center;margin-top:18px;}
+  .phone .prog .s{flex:1;text-align:center;font-size:9.5px;font-weight:700;color:#B4ADA1;letter-spacing:.02em;}
+  .phone .prog .s.on{color:var(--a-ink);}
+  .phone .prog .s .d{width:9px;height:9px;border-radius:50%;background:var(--a-hair);margin:0 auto 7px;}
+  .phone .prog .s.on .d{background:var(--chili);}
+  .phone .prog .ln{height:1.5px;background:var(--a-hair);flex:0 0 26px;margin-bottom:19px;}
+  .phone .prog .ln.on{background:var(--chili);}
+  .phone .courier{display:flex;align-items:center;gap:12px;margin-top:20px;padding-top:16px;border-top:1px solid var(--a-hair);}
+  .phone .avatar{width:44px;height:44px;border-radius:22px;background:var(--cream);display:flex;align-items:center;
+  .phone justify-content:center;font-family:'Fraunces', .phone serif;font-size:19px;font-weight:600;}
+  .courier .n{font-size:13.5px;font-weight:700;}
+  .phone .courier .d{font-size:11.5px;color:var(--a-muted);margin-top:2px;}
+  .phone .cbtn{width:38px;height:38px;border-radius:19px;border:1.4px solid var(--a-hair);display:flex;align-items:center;justify-content:center;}
+  .phone .ordfoot{position:absolute;left:22px;right:22px;bottom:26px;display:flex;align-items:center;justify-content:space-between;
+  .phone font-size:11px;color:var(--a-muted);padding-top:12px;border-top:1px solid var(--a-hair);}
+  .ordfoot b{color:var(--a-ink);font-weight:700;}
+
+  .phone .addr{margin:14px 18px 0;padding:12px 13px;border:1px solid var(--a-hair);border-radius:13px;}
+  .phone .addr .k{font-size:10px;letter-spacing:.1em;font-weight:800;color:#B4ADA1;}
+  .phone .addr .v{font-size:12.5px;font-weight:700;margin-top:4px;}
+  .phone .addr .c{font-size:11.5px;font-weight:700;color:var(--chili);margin-top:3px;}
+  .phone .items{margin-top:16px;padding-top:14px;border-top:1px solid var(--a-hair);}
+  .phone .items .k{font-size:10px;letter-spacing:.1em;font-weight:800;color:#B4ADA1;}
+  .phone .items .v{font-size:12px;color:var(--a-muted);margin-top:4px;font-weight:600;}
+
+  /* fixture column */
+  .phone .fx{flex:1;padding:6px 0 0 18px;display:flex;flex-direction:column;}
+  .phone .fx .lbl{font-size:13px;color:var(--ink-3);margin-bottom:10px;}
+  .phone .fx .repo{font-family:var(--mono);font-size:17px;color:var(--ink);}
+  .phone .fx .row2{display:flex;justify-content:space-between;font-family:var(--mono);font-size:14px;
+  .phone color:var(--ink-2);padding:9px 0;border-bottom:1px dotted var(--rule);}
+  .fx .row2 b{font-weight:400;color:var(--ink);}
+  .phone .fx .note{font-size:15px;line-height:1.55;color:var(--ink-2);margin-top:18px;max-width:32ch;}
+  .phone .fx .note b{color:var(--ink);font-weight:500;}
+
+  /* phone row + captions */
+  .phones{display:flex;gap:34px;align-items:flex-start;}
+  .pcap{margin-top:16px;display:flex;gap:10px;align-items:baseline;}
+  .pcap .n{font-family:var(--mono);font-size:12px;color:var(--ink-3);}
+  .pcap .t{font-size:14px;color:var(--ink-2);}
+  .pcap .t b{color:var(--ink);font-weight:500;}
+
+  /* ── 02 the bug ──────────────────────────────────────────────────────── */
+  .bug-left{width:600px;display:flex;flex-direction:column;}
+  .bug-left .lede{font-size:19px;line-height:1.55;color:var(--ink-2);margin-top:22px;}
+  .bug-left .lede b{color:var(--ink);font-weight:500;}
+  .assert{margin-top:30px;border-top:1px solid var(--rule);padding-top:20px;}
+  .assert .l{font-family:var(--mono);font-size:12px;color:var(--ink-3);margin-bottom:10px;}
+  .assert pre{font-family:var(--mono);font-size:15px;line-height:1.75;color:var(--ink-2);white-space:pre-wrap;}
+  .assert pre b{color:var(--ink);font-weight:500;}
+  .assert pre i{font-style:normal;color:var(--oxide);}
+  .bug-right{flex:1;display:flex;justify-content:flex-end;position:relative;}
+  .callout{position:absolute;right:408px;top:600px;width:250px;text-align:right;}
+  .callout .t{font-size:15px;line-height:1.4;color:var(--oxide);font-weight:500;}
+  .callout .u{font-family:var(--mono);font-size:12px;color:var(--ink-3);margin-top:7px;}
+  .callout .arr{color:var(--oxide);font-size:18px;line-height:1;}
+
+  .arith{margin-top:26px;border-top:1px solid var(--rule);padding-top:8px;}
+  .arith .row{display:flex;justify-content:space-between;align-items:baseline;
+    font-family:var(--mono);font-size:14px;color:var(--ink-3);padding:7px 0;border-bottom:1px dotted var(--rule);}
+  .arith .row b{font-weight:400;color:var(--ink);font-size:15px;}
+  .arith .row.key b{color:var(--ink);}
+  .arith .row b.bad{color:var(--oxide);}
+
+  /* ── 03 the run ──────────────────────────────────────────────────────── */
+  .log{flex:1;display:flex;flex-direction:column;padding:6px 40px 84px;position:relative;min-width:0;}
+  .row{flex:1;display:grid;grid-template-columns:46px 186px 1fr 226px;align-items:center;gap:0 24px;
+    padding:0;border-bottom:1px solid var(--rule);min-height:0;}
+  .row:last-child{border-bottom:0;}
+  .row .n{font-family:var(--mono);font-size:13px;color:var(--ink-3);}
+  .row .who{font-size:20px;font-weight:500;}
+  .row .what{font-size:18px;color:var(--ink-2);}
+  .row .what code{font-family:var(--mono);font-size:16.5px;color:var(--ink);}
+  .row .ver{font-family:var(--mono);font-size:14rh;text-align:right;color:var(--ink-2);}
+  .row .ver.no{color:var(--oxide);}
+  .row .ver.yes{color:var(--ink);font-weight:500;}
+  .row.stop{border-top:2px solid var(--ink);margin-top:2px;padding-top:22px;}
+  .row.stop .who,.row.stop .what{font-size:22px;color:var(--ink);}
+  .stamp{position:absolute;right:30px;bottom:14px;transform:rotate(-6deg);border:3px solid var(--oxide);
+    color:var(--oxide);border-radius:3px;padding:9px 18px 11px;font-family:var(--mono);font-size:20px;letter-spacing:.07em;line-height:1;}
+  .stamp b{display:block;font-weight:500;font-size:13.5px;letter-spacing:.02em;margin-top:7px;}
+
+  .proof{width:466px;flex:0 0 466px;background:var(--sheet);border:1px solid var(--rule);border-radius:2px;
+    display:flex;flex-direction:column;padding:0 0 18px;}
+  .proof .p-head{padding:13px 20px;border-bottom:1px solid var(--rule);font-family:var(--mono);
+    font-size:12.5px;color:var(--ink-3);}
+  .proof pre{flex:1;padding:18px 20px;font-family:var(--mono);font-size:14px;line-height:1.8;
+    color:var(--ink-2);white-space:pre-wrap;}
+  .proof .ok{color:var(--ink);}
+  .proof .bad{color:var(--oxide);font-weight:500;}
+  .proof .p-hunk{border-top:1px solid var(--rule);margin:0 20px;padding-top:10px;}
+  .proof .p-head2{font-family:var(--mono);font-size:11.5px;color:var(--ink-3);margin-bottom:8px;}
+  .proof .p-hunk pre{flex:0;padding:0;font-size:12.5px;line-height:1.7;}
+  .proof .p-foot{display:flex;justify-content:space-between;border-top:1px solid var(--rule);
+    margin:0 20px;padding-top:14px;font-family:var(--mono);font-size:12px;color:var(--ink-3);}
+  .proof .p-foot b{display:block;font-size:19px;font-weight:400;color:var(--ink);margin-top:4px;}
+  .proof .p-foot b.bad{color:var(--oxide);}
+
+  /* ── 04 the patch ────────────────────────────────────────────────────── */
+  .patch{flex:1;display:grid;grid-template-columns:1fr 276px;gap:38px;min-height:0;}
+  .patch>*{min-width:0;}
   .ed{flex:1;display:flex;flex-direction:column;overflow:hidden;}
   .ed .tabs{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--rule);}
-  .ed .tab{display:flex;align-items:center;gap:10px;padding:16px 24px;font-family:var(--mono);font-size:16px;
-    border-right:1px solid var(--rule);color:var(--ink);}
-  .ed .toggle{padding:0 22px;font-size:15px;color:var(--ink-2);display:flex;gap:8px;align-items:center;}
+  .ed .tab{display:flex;align-items:center;gap:10px;padding:15px 22px;font-family:var(--mono);font-size:14.5px;border-right:1px solid var(--rule);}
+  .ed .toggle{padding:0 20px;font-size:14px;color:var(--ink-2);}
   .ed .toggle u{text-decoration:none;border-bottom:1px solid var(--ink);color:var(--ink);padding-bottom:2px;}
-  .ed .panes{flex:1;display:grid;grid-template-columns:1fr 1fr;}
-  .ed .pane{padding:22px 28px;border-right:1px solid var(--rule);overflow:hidden;}
+  .ed .panes{flex:1;display:grid;grid-template-columns:1fr 1fr;min-height:0;}
+  .ed .pane{padding:18px 24px;border-right:1px solid var(--rule);overflow:hidden;min-width:0;}
   .ed .pane:last-child{border-right:0;}
-  .ed .pane .label{font-size:15px;margin-bottom:16px;}
+  .ed .pane .label{font-size:13.5px;margin-bottom:14px;}
   .ed .pane.orig .label{color:var(--ink-3);}
   .ed .pane.new .label{color:var(--ink);}
-  .ed pre{font-family:var(--mono);font-size:18px;line-height:1.78;white-space:pre-wrap;}
+  .ed pre{font-family:var(--mono);font-size:14.5px;line-height:1.8;white-space:pre-wrap;color:var(--ink);}
   .ed .orig pre{color:var(--ink-3);}
   .ed .add{color:var(--ink);}
   .ed .del{color:var(--oxide);}
-  .ed .bar{border-top:1px solid var(--rule);display:flex;align-items:center;justify-content:space-between;
-    padding:14px 22px;font-size:15px;color:var(--ink-2);}
-  .ed .hint{font-family:var(--mono);font-size:15px;color:var(--ink-2);border:1px solid var(--rule);
-    border-radius:2px;padding:8px 12px;}
-  .ed .hint b{color:var(--ink);font-weight:500;}
-  .btn{background:var(--ink);color:var(--sheet);border:0;border-radius:2px;font-family:var(--sans);
-    font-size:15px;font-weight:500;padding:9px 22px;}
+  .ed .bar{border-top:1px solid var(--rule);display:flex;align-items:center;justify-content:space-between;padding:13px 22px;font-size:14px;color:var(--ink-2);}
+  .ed .hint{font-family:var(--mono);font-size:13.5px;}
+  .btn{background:var(--ink);color:var(--sheet);border:0;border-radius:2px;font-family:var(--sans);font-size:14px;font-weight:500;padding:9px 20px;}
 
-  /* ── 04 browser ───────────────────────────────────────────── */
+  /* ── 05 the browser ──────────────────────────────────────────────────── */
   .wb{flex:1;display:flex;flex-direction:column;overflow:hidden;}
-  .wb .top{display:flex;align-items:center;justify-content:space-between;
-    padding:13px 22px;border-bottom:1px solid var(--rule);font-size:15px;color:var(--ink-2);}
-  .wb .crumbs{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:15px;}
-  .wb .crumbs b{font-weight:500;color:var(--ink);}
-  .wb .crumbs .slash{color:var(--ink-3);}
-  .wb .chips{display:flex;gap:10px;font-size:14px;color:var(--ink-2);}
-  .wb .chips span{border:1px solid var(--rule);border-radius:2px;padding:5px 10px;}
-  .wb .chips .live{border-color:var(--ink);color:var(--ink);display:flex;align-items:center;gap:7px;}
-  .wb .chips .dot{width:6px;height:6px;border-radius:50%;background:var(--ink);}
-  .wb .main{flex:1;display:grid;grid-template-columns:430px 1fr;}
-  .wb .plan{border-right:1px solid var(--rule);padding:24px 26px;}
-  .wb .plan .t{font-size:15px;color:var(--ink-3);margin-bottom:20px;}
-  .wb .step{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--rule);}
-  .wb .step:last-child{border-bottom:0;}
-  .wb .step .mark{font-family:var(--mono);font-size:16px;width:18px;flex:0 0 18px;color:var(--ink-3);}
-  .wb .step.done .mark,.wb .step.done .txt{color:var(--ink);}
-  .wb .step.now .mark{color:var(--oxide);}
-  .wb .step.now .txt{color:var(--ink);font-weight:500;}
-  .wb .step .txt{font-size:18px;line-height:1.42;color:var(--ink-3);}
-  .wb .step .sub{display:block;font-size:14px;font-weight:400;color:var(--ink-3);margin-top:5px;}
-  .wb .note{margin-top:22px;border-top:1px solid var(--rule);padding-top:16px;}
-  .wb .note .t{font-size:14px;color:var(--ink-3);margin-bottom:8px;}
-  .wb .note p{font-size:16px;line-height:1.5;color:var(--ink-2);}
-  .wb .code{display:flex;flex-direction:column;}
-  .wb .term{flex:1;margin:24px 26px 0;border:1px solid var(--rule);border-radius:2px;display:flex;flex-direction:column;}
-  .wb .term .bar{padding:11px 16px;border-bottom:1px solid var(--rule);font-size:14px;color:var(--ink-3);}
-  .wb .term pre{flex:1;padding:18px 16px;font-family:var(--mono);font-size:16px;line-height:1.85;white-space:pre-wrap;}
+  .wb .top{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;
+    border-bottom:1px solid var(--rule);font-size:14px;color:var(--ink-2);}
+  .crumbs{display:flex;align-items:center;gap:9px;font-family:var(--mono);font-size:14px;}
+  .crumbs b{font-weight:500;color:var(--ink);}
+  .crumbs .slash{color:var(--ink-3);}
+  .chips{display:flex;gap:9px;font-size:13px;}
+  .chips span{border:1px solid var(--rule);border-radius:2px;padding:5px 9px;}
+  .chips .live{border-color:var(--ink);color:var(--ink);display:flex;align-items:center;gap:7px;}
+  .chips .dot{width:6px;height:6px;border-radius:50%;background:var(--ink);}
+  .wb .main{flex:1;display:grid;grid-template-columns:420px 1fr;min-height:0;}
+  .wb .plan{border-right:1px solid var(--rule);padding:22px 24px;}
+  .wb .plan .t{font-size:13.5px;color:var(--ink-3);margin-bottom:16px;}
+  .step{display:flex;gap:13px;padding:13px 0;border-bottom:1px solid var(--rule);}
+  .step:last-child{border-bottom:0;}
+  .step .mark{font-family:var(--mono);font-size:15px;width:16px;flex:0 0 16px;color:var(--ink-3);}
+  .step.done .mark,.step.done .txt{color:var(--ink);}
+  .step.now .mark{color:var(--oxide);}
+  .step .txt{font-size:16.5px;line-height:1.4;color:var(--ink-3);}
+  .step.now .txt{color:var(--ink);font-weight:500;}
+  .step .sub{display:block;font-size:13px;font-weight:400;color:var(--ink-3);margin-top:4px;}
+  .wb .code{display:flex;flex-direction:column;min-height:0;}
+  .wb .term{flex:1;margin:22px 24px 0;border:1px solid var(--rule);border-radius:2px;display:flex;flex-direction:column;min-height:0;}
+  .wb .term .bar{padding:10px 14px;border-bottom:1px solid var(--rule);font-size:13px;color:var(--ink-3);}
+  .wb .term pre{flex:1;padding:16px 14px;font-family:var(--mono);font-size:14.5px;line-height:1.85;white-space:pre-wrap;color:var(--ink);}
   .wb .term .p{color:var(--ink-3);}
-  .wb .term .ok{color:var(--ink);font-weight:500;}
-  .wb .verdict{margin:18px 26px 24px;border:1px solid var(--ink);border-radius:2px;
-    display:flex;align-items:center;justify-content:space-between;padding:16px 20px;}
-  .wb .verdict .v{font-size:21px;}
-  .wb .verdict .m{font-family:var(--mono);font-size:16px;color:var(--ink-2);}
+  .wb .term .bad{color:var(--oxide);font-weight:500;}
+  .wb .verdict{margin:16px 24px 22px;border:1px solid var(--oxide);border-radius:2px;display:flex;
+    align-items:center;justify-content:space-between;padding:15px 18px;}
+  .wb .verdict .v{font-size:20px;color:var(--oxide);}
+  .wb .verdict .m{font-family:var(--mono);font-size:15px;color:var(--ink-2);}
 
-  /* ── 05 receipt ───────────────────────────────────────────── */
-  .receipt-wrap{flex:1;display:flex;gap:56px;align-items:flex-start;padding-top:4px;}
-  .receipt{width:648px;background:#FBFBF7;border:1px solid var(--rule);position:relative;padding:26px 36px 22px;}
+  /* ── 06 the receipt ──────────────────────────────────────────────────── */
+  .receipt-wrap{flex:1;display:flex;gap:52px;align-items:flex-start;}
+  .receipt{width:640px;background:#FBFBF7;border:1px solid var(--rule);position:relative;padding:24px 34px 20px;}
   .receipt::before,.receipt::after{content:'';position:absolute;left:0;right:0;height:8px;
     background:repeating-linear-gradient(90deg,var(--rule) 0 6px,transparent 6px 12px);}
-  .receipt::before{top:-5px;}
-  .receipt::after{bottom:-5px;}
-  .receipt .r-top{display:flex;justify-content:space-between;align-items:baseline;
-    border-bottom:2px solid var(--ink);padding-bottom:14px;font-family:var(--mono);font-size:14px;color:var(--ink-2);}
-  .receipt .r-top b{font-weight:500;color:var(--ink);letter-spacing:.04em;}
-  .receipt .verdict{margin-top:20px;}
-  .receipt .verdict .field{margin-bottom:8px;}
-  .receipt .verdict h3{font-size:36px;font-weight:400;letter-spacing:-.02em;line-height:1.1;}
-  .receipt dl{margin-top:18px;display:grid;grid-template-columns:1fr auto;gap:0;}
-  .receipt dt,.receipt dd{padding:7.5px 0;border-bottom:1px dotted var(--rule);font-size:16px;}
-  .receipt dt{color:var(--ink-2);}
-  .receipt dd{text-align:right;font-family:var(--mono);font-size:15.5px;color:var(--ink);}
-  .receipt .sign{display:flex;justify-content:space-between;align-items:flex-end;margin-top:20px;gap:24px;}
-  .receipt .sign p{font-size:19px;line-height:1.35;max-width:16ch;}
-  .receipt .sign p b{font-weight:500;}
-  .receipt .sign .stamp2{border:2px solid var(--oxide);color:var(--oxide);border-radius:2px;
-    padding:8px 14px;font-family:var(--mono);font-size:16px;transform:rotate(-5deg);}
-  .receipt .r-foot{margin-top:16px;border-top:1px solid var(--rule);padding-top:14px;
-    font-family:var(--mono);font-size:13px;line-height:1.7;color:var(--ink-3);}
-  .receipt-side{flex:1;padding-top:14px;display:flex;flex-direction:column;justify-content:center;}
-  .receipt-side h4{font-size:23px;font-weight:400;line-height:1.35;letter-spacing:-.01em;}
-  .receipt-side p{margin-top:18px;font-size:18px;line-height:1.6;color:var(--ink-2);}
-  .receipt-side ul{margin-top:26px;list-style:none;}
-  .receipt-side li{font-size:16px;line-height:1.5;color:var(--ink-2);padding:12px 0;border-top:1px solid var(--rule);}
-  .receipt-side li b{display:block;font-family:var(--mono);font-weight:400;color:var(--ink);margin-bottom:4px;}
-</style></style>
+  .receipt::before{top:-5px;} .receipt::after{bottom:-5px;}
+  .r-top{display:flex;justify-content:space-between;align-items:baseline;border-bottom:2px solid var(--ink);
+    padding-bottom:12px;font-family:var(--mono);font-size:13px;color:var(--ink-2);}
+  .r-top b{font-weight:500;color:var(--ink);letter-spacing:.04em;}
+  .r-verdict{margin-top:18px;}
+  .r-verdict .f{font-size:13px;color:var(--ink-3);margin-bottom:6px;}
+  .r-verdict h3{font-size:32px;font-weight:400;letter-spacing:-.02em;line-height:1.1;}
+  .r-verdict h3 s{text-decoration:none;color:var(--oxide);}
+  dl{margin-top:16px;display:grid;grid-template-columns:1fr auto;}
+  dt,dd{padding:6.5px 0;border-bottom:1px dotted var(--rule);font-size:14.5px;}
+  dt{color:var(--ink-2);} dd{text-align:right;font-family:var(--mono);font-size:14px;color:var(--ink);}
+  .r-sign{display:flex;justify-content:space-between;align-items:flex-end;margin-top:18px;gap:20px;}
+  .r-sign p{font-size:18px;line-height:1.35;max-width:17ch;}
+  .r-sign p b{font-weight:500;}
+  .stamp2{border:2px solid var(--oxide);color:var(--oxide);border-radius:2px;padding:7px 12px;
+    font-family:var(--mono);font-size:14px;transform:rotate(-5deg);white-space:nowrap;}
+  .r-foot{margin-top:16px;border-top:1px solid var(--rule);padding-top:12px;font-family:var(--mono);font-size:12px;line-height:1.7;color:var(--ink-3);}
+  .r-side{flex:1;display:flex;flex-direction:column;padding-top:46px;}
+  .r-side h4{font-size:22px;font-weight:400;line-height:1.35;letter-spacing:-.01em;}
+  .r-side p{margin-top:14px;font-size:17px;line-height:1.6;color:var(--ink-2);}
+  .r-side ul{margin-top:22px;list-style:none;}
+  .r-side li{font-size:15px;line-height:1.5;color:var(--ink-2);padding:10px 0;border-top:1px solid var(--rule);}
+  .r-side li b{display:block;font-family:var(--mono);font-weight:400;color:var(--ink);margin-bottom:3px;}
+</style>
 </head>
 <body>
 
-<!-- 01 · THE ASK -->
+<!-- 01 · THE APP ─────────────────────────────────────────────────────────── -->
 <section class="shot" id="s1">
   <div class="head">
-    <div class="kicker">demo/workspace, a two-file app, three tests</div>
-    <h1>A customer typed <em>0</em> into the invoice.<br>The app answered <em>Infinity</em>.</h1>
+    <div class="kicker">banchan · a food-delivery app · checkout under review</div>
+    <h1>Three screens. One cart. <em>One bug.</em></h1>
   </div>
-  <div class="stage">
-    <div class="col ask-left">
-      <p class="lede">The guard is one line. The test that names the bug is already in the
-        repo — it has been failing since the app was written. <b>Nobody had to write a ticket
-        first.</b></p>
-      <div class="req">
-        <div class="field">What you type</div>
-        <code><span class="arrow">$</span> index0 run "divide by zero should throw, not return Infinity"</code>
+  <div class="stage" style="align-items:flex-start;">
+    <div class="phones">
+
+      <div>
+        <div class="zoom">
+          <div class="phone">
+            <div class="status"><span>9:41</span><span class="r">
+              <span class="bar" style="height:5px"></span><span class="bar" style="height:8px"></span>
+              <span class="bar" style="height:11px"></span><span class="bat"></span></span></div>
+            <div class="app-head">
+              <svg class="ico" width="20" height="20" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>
+              <div class="merchant">Banchan House</div>
+              <svg class="ico" width="20" height="20" viewBox="0 0 24 24"><path d="M12 3v12M12 3l4 4M12 3L8 7"/><path d="M5 14v5a2 2 0 002 2h10a2 2 0 002-2v-5"/></svg>
+            </div>
+            <div class="meta" style="padding:7px 22px 0;"><span class="star">★ 4.8</span><span class="dot"></span><span>1.2k ratings</span><span class="dot"></span><span>12–18 min</span></div>
+            <div class="hero">
+              <div class="txt">
+                <div class="t1">TODAY'S BOWL</div>
+                <div class="t2">Bibimbap,<br>extra gochujang</div>
+                <div class="t3">Rice, beef, egg, six sides</div>
+                <div class="price">$12.50</div>
+              </div>
+              <svg viewBox="0 0 200 200" aria-hidden="true">
+                <circle cx="100" cy="100" r="78" fill="#EADFCB"/>
+                <path d="M44 96h112a56 56 0 01-112 0z" fill="#D33F1D"/>
+                <path d="M44 96h112" stroke="#B83315" stroke-width="4"/>
+                <ellipse cx="100" cy="96" rx="56" ry="14" fill="#F6EFE2"/>
+                <circle cx="82" cy="92" r="13" fill="#F2B233"/><circle cx="82" cy="92" r="6" fill="#E88C1E"/>
+                <path d="M108 84c10-6 20-4 26 4-10 6-21 4-26-4z" fill="#2E6B4F"/>
+                <path d="M62 88c8-5 17-3 21 3-8 5-17 3-21-3z" fill="#3F845F"/>
+                <path d="M96 74v10M120 78v12" stroke="#17161A" stroke-width="3" stroke-linecap="round" opacity=".35"/>
+              </svg>
+            </div>
+            <div class="tabs"><span class="tab on">Popular</span><span class="tab">Rice</span><span class="tab">Sides</span><span class="tab">Drinks</span></div>
+            <div class="dishes">
+              <div class="dish">
+                <div class="thumb"><span class="qty">1</span>
+                  <svg width="30" height="30" viewBox="0 0 40 40"><ellipse cx="20" cy="20" rx="14" ry="9" fill="#E7D7BE"/><path d="M8 20h24a12 12 0 01-24 0z" fill="#C9562F"/><circle cx="20" cy="17" r="4" fill="#F2B233"/></svg></div>
+                <div><div class="n">Bibimbap</div><div class="d">Rice, beef, egg, six sides</div><div class="p">$12.50</div></div>
+                <div class="add solid" style="margin-left:auto;">−</div>
+              </div>
+              <div class="dish">
+                <div class="thumb"><span class="qty">1</span>
+                  <svg width="30" height="30" viewBox="0 0 40 40"><path d="M20 8c6 6 8 10 8 14a8 8 0 01-16 0c0-4 2-8 8-14z" fill="#2E6B4F"/><path d="M20 14v16" stroke="#1D4A37" stroke-width="2"/></svg></div>
+                <div><div class="n">Kimchi</div><div class="d">Napa cabbage, three weeks aged</div><div class="p">$9.90</div></div>
+                <div class="add solid" style="margin-left:auto;">−</div>
+              </div>
+              <div class="dish">
+                <div class="thumb"><span class="qty">1</span>
+                  <svg width="30" height="30" viewBox="0 0 40 40"><path d="M13 10h14l-2 20H15z" fill="#D9CBB4"/><path d="M13 10h14l-.7 7H13.7z" fill="#C9562F"/><rect x="17" y="4" width="6" height="6" rx="1.5" fill="#B9AC96"/></svg></div>
+                <div><div class="n">Soda</div><div class="d">Yuzu, 330 ml</div><div class="p">$4.25</div></div>
+                <div class="add solid" style="margin-left:auto;">−</div>
+              </div>
+              <div class="dish">
+                <div class="thumb">
+                  <svg width="30" height="30" viewBox="0 0 40 40"><circle cx="20" cy="20" r="12" fill="#E7D7BE"/><circle cx="20" cy="20" r="7" fill="#C9562F"/><circle cx="20" cy="20" r="3" fill="#F2B233"/></svg></div>
+                <div><div class="n">Tteokbokki</div><div class="d">Rice cakes, gochujang glaze</div><div class="p">$8.50</div></div>
+                <div class="add" style="margin-left:auto;">+</div>
+              </div>
+            </div>
+            <div class="cartbar"><span class="l">3 items</span><span class="r">View cart · $26.65</span></div>
+            <div class="home"></div>
+          </div>
+        </div>
+        <div class="pcap"><span class="n">01</span><span class="t"><b>Menu</b>, three items in the cart</span></div>
       </div>
-      <div class="facts">
-        <div class="fact"><b>2</b><span>files in the app</span></div>
-        <div class="fact"><b>3</b><span>tests it already has</span></div>
-        <div class="fact"><b>1</b><span>line that has to change</span></div>
+
+      <div>
+        <div class="zoom">
+          <div class="phone">
+            <div class="status"><span>9:41</span><span class="r">
+              <span class="bar" style="height:5px"></span><span class="bar" style="height:8px"></span>
+              <span class="bar" style="height:11px"></span><span class="bat"></span></span></div>
+            <div class="scr-head">
+              <div class="scr-title">Your cart</div>
+              <div class="scr-sub">Banchan House · 12–18 min</div>
+            </div>
+            <div class="lines">
+              <div class="line"><div><div class="n">Bibimbap</div><div class="d">Rice, beef, egg, six sides</div></div><div class="p">$12.50</div>
+                <div class="step"><span>−</span><b>1</b><span>+</span></div></div>
+              <div class="line"><div><div class="n">Kimchi</div><div class="d">Napa cabbage, three weeks aged</div></div><div class="p">$9.90</div>
+                <div class="step"><span>−</span><b>1</b><span>+</span></div></div>
+              <div class="line"><div><div class="n">Soda</div><div class="d">Yuzu, 330 ml</div></div><div class="p">$4.25</div>
+                <div class="step"><span>−</span><b>1</b><span>+</span></div></div>
+            </div>
+            <div class="promo"><span class="code">FIRSTBITE · −$5.00</span><span class="amt">applied</span></div>
+            <div class="freedel">
+              <div class="lbl"><span>Free delivery at $25.00</span><span><b>86%</b></span></div>
+              <div class="track"><i style="width:86%"></i></div>
+            </div>
+            <div class="addr">
+              <div class="k">Deliver to</div>
+              <div class="v">14 W 32nd St, 5th floor</div>
+              <div class="c">Change</div>
+            </div>
+            <div class="sum">
+              <div class="r"><span>Subtotal</span><b>$26.65</b></div>
+              <div class="r"><span>Delivery</span><b>$3.90</b></div>
+              <div class="r"><span>FIRSTBITE</span><b>−$5.00</b></div>
+              <div class="r tot"><span>Total</span><b>$25.55</b></div>
+            </div>
+            <div class="pay">Place order · $25.55</div>
+            <div class="home"></div>
+          </div>
+        </div>
+        <div class="pcap"><span class="n">02</span><span class="t"><b>Cart</b>, after the fix</span></div>
       </div>
+
+      <div>
+        <div class="zoom">
+          <div class="phone">
+            <div class="status"><span>9:41</span><span class="r">
+              <span class="bar" style="height:5px"></span><span class="bar" style="height:8px"></span>
+              <span class="bar" style="height:11px"></span><span class="bat"></span></span></div>
+            <div class="map">
+              <svg viewBox="0 0 390 470" preserveAspectRatio="none" aria-hidden="true">
+                <rect width="390" height="470" fill="#F1EADC"/>
+                <g stroke="#E2D7C2" stroke-width="10">
+                  <path d="M-20 130h430"/><path d="M-20 300h430"/><path d="M92 -20v510"/><path d="M268 -20v510"/>
+                </g>
+                <g stroke="#EAE1D0" stroke-width="4">
+                  <path d="M-20 210h430"/><path d="M-20 380h430"/><path d="M180 -20v510"/>
+                </g>
+                <g fill="#E6DCC8"><rect x="106" y="144" width="60" height="52" rx="4"/><rect x="196" y="144" width="58" height="52" rx="4"/>
+                  <rect x="106" y="224" width="60" height="62" rx="4"/><rect x="282" y="224" width="58" height="62" rx="4"/>
+                  <rect x="196" y="314" width="58" height="52" rx="4"/><rect x="106" y="314" width="60" height="52" rx="4"/></g>
+                <path d="M268 300 L268 210 L180 210 L180 130" stroke="#D33F1D" stroke-width="4" stroke-dasharray="9 8" fill="none" stroke-linecap="round"/>
+                <circle cx="268" cy="300" r="9" fill="#D33F1D"/><circle cx="268" cy="300" r="18" fill="#D33F1D" opacity=".16"/>
+                <g transform="translate(180 130)"><circle r="13" fill="#17161A"/><path d="M-4.5 0l3.2 3.2 5.8-6.4" stroke="#FDFBF6" stroke-width="2.4" fill="none" stroke-linecap="round"/></g>
+                <g transform="translate(268 300)"><circle r="17" fill="#FDFBF6" stroke="#D33F1D" stroke-width="2.5" opacity="0"/></g>
+              </svg>
+            </div>
+            <div class="sheet-top">
+              <div class="eta">Arriving 7:42<span>Jin is 4 stops away</span></div>
+              <div class="prog">
+                <div class="s on"><div class="d"></div>Confirmed</div><div class="ln on"></div>
+                <div class="s on"><div class="d"></div>Cooking</div><div class="ln on"></div>
+                <div class="s on"><div class="d"></div>Picked up</div><div class="ln"></div>
+                <div class="s"><div class="d"></div>Nearby</div>
+              </div>
+              <div class="courier">
+                <div class="avatar">J</div>
+                <div><div class="n">Jin</div><div class="d">Bicycle · 4.9 ★</div></div>
+                <div style="display:flex;gap:9px;margin-left:auto;">
+                  <div class="cbtn"><svg class="ico" width="17" height="17" viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 006 6L16 14l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z"/></svg></div>
+                  <div class="cbtn"><svg class="ico" width="17" height="17" viewBox="0 0 24 24"><path d="M4 6h16v10H9l-5 4z"/></svg></div>
+                </div>
+              </div>
+              <div class="items">
+                <div class="k">In this order</div>
+                <div class="v">Bibimbap · Kimchi · Soda</div>
+              </div>
+              <div class="items" style="border-top:0;padding-top:0;margin-top:14px;">
+                <div class="k">Note for Jin</div>
+                <div class="v">Leave at the door, ring once.</div>
+              </div>
+              <div class="ordfoot"><span>Order <b>BK-2291</b></span><span>3 items · <b>$25.55</b></span></div>
+            </div>
+            <div class="home"></div>
+          </div>
+        </div>
+        <div class="pcap"><span class="n">03</span><span class="t"><b>Tracking</b>, one order, four steps</span></div>
+      </div>
+
     </div>
-    <div class="col ask-right">
-      <div class="sheet file">
-        <div class="bar"><span>test/math.test.js</span><i>fails today</i></div>
-<pre>test(<span class="k">"divide returns the quotient"</span>, () =&gt; {
-  assert.equal(divide(10, 2), 5);
-});
-
-test(<span class="k">"average returns the mean"</span>, () =&gt; {
-  assert.equal(average([2, 4, 6]), 4);
-});
-
-<span class="c">// The zero-denominator case below is the one
-// this fixture is meant to catch.</span>
-<span class="hit">test(<span class="k">"divide rejects a zero denominator
-     instead of returning Infinity"</span>, () =&gt; {
-  assert.throws(() =&gt; divide(1, 0), RangeError);
-});</span></pre>
-        <div class="cap">Two tests pass. The third is the customer's report, written as an
-          assertion. <code>divide(1, 0)</code> returns <code>Infinity</code> today, so it fails.</div>
+    <div class="fx">
+      <div class="lbl">the fixture under review</div>
+      <div class="repo">banchan-checkout</div>
+      <div style="margin-top:14px;">
+        <div class="row2"><span>src/checkout.js</span><b>32 lines</b></div>
+        <div class="row2"><span>tests</span><b>4</b></div>
+        <div class="row2"><span>failing today</span><b>1</b></div>
+        <div class="row2"><span>dependencies</span><b>none</b></div>
+        <div class="row2"><span>runner</span><b>node --test</b></div>
       </div>
+      <p class="note">The app is the demo. The <b>cart module is real code</b> with real tests —
+        which is the only way a review can be worth anything.</p>
     </div>
   </div>
-  <div class="foot"><span>demo/workspace, src/math.js and test/math.test.js</span><span>the customer's report is one number</span></div>
+  <div class="foot"><span>design mockup · three screens of one app · every price from src/checkout.js</span><span>nothing here is a screenshot</span></div>
 </section>
 
-<!-- 02 · TERMINAL -->
+<!-- 02 · THE BUG ─────────────────────────────────────────────────────────── -->
 <section class="shot" id="s2">
   <div class="head">
-    <div class="kicker">index0 run, demo/workspace, 1192 ms, exit 0</div>
-    <h1>Three patches. Two rejections.<br>Then the tests ran.</h1>
+    <div class="kicker">banchan-checkout · test/checkout.test.js · fails today</div>
+    <h1>The cart said <em>free delivery</em><br>on a $21.65 order.</h1>
+  </div>
+  <div class="stage">
+    <div class="bug-left">
+      <p class="lede">The promo comes off the subtotal, then the free-delivery rule reads the
+        price <b>before</b> the promo. A $26.65 cart drops to $21.65 and still ships free.
+        <b>$3.90 missing on every discounted order.</b></p>
+      <div class="assert">
+        <div class="l">the assertion that decides the run</div>
+<pre>test(<b>"charges delivery when the promo drops
+     the subtotal below the minimum"</b>, () =&gt; {
+  assert.equal(deliveryFee(cart, "FIRSTBITE"), 3.9);
+  assert.equal(total(cart, "FIRSTBITE"), 25.55);
+});</pre>
+        <div class="l" style="margin-top:14px;">node --test → <i>0 !== 3.9</i></div>
+      </div>
+      <div class="arith">
+        <div class="row"><span>cart</span><b>26.65</b></div>
+        <div class="row"><span>promo FIRSTBITE</span><b>−5.00</b></div>
+        <div class="row key"><span>payable, below the $25 minimum</span><b>21.65</b></div>
+        <div class="row"><span>deliveryFee() reads</span><b class="bad">26.65</b></div>
+        <div class="row"><span>fee charged</span><b class="bad">0.00</b></div>
+      </div>
+      <div style="margin-top:18px;font-size:15px;line-height:1.5;color:var(--ink-2);">
+        One number is read before the discount is applied. That is the whole defect.
+      </div>
+    </div>
+    <div class="bug-right">
+      <div class="callout">
+        <div class="t">Delivery reads $0.00<br>on a discounted cart <span class="arr">→</span></div>
+        <div class="u">total $21.65, should be $25.55</div>
+      </div>
+      <div class="zoom">
+        <div class="phone">
+          <div class="status"><span>9:41</span><span class="r">
+            <span class="bar" style="height:5px"></span><span class="bar" style="height:8px"></span>
+            <span class="bar" style="height:11px"></span><span class="bat"></span></span></div>
+          <div class="scr-head">
+            <div class="scr-title">Your cart</div>
+            <div class="scr-sub">Banchan House · 12–18 min</div>
+          </div>
+          <div class="lines">
+            <div class="line"><div><div class="n">Bibimbap</div><div class="d">Rice, beef, egg, six sides</div></div><div class="p">$12.50</div>
+              <div class="step"><span>−</span><b>1</b><span>+</span></div></div>
+            <div class="line"><div><div class="n">Kimchi</div><div class="d">Napa cabbage, three weeks aged</div></div><div class="p">$9.90</div>
+              <div class="step"><span>−</span><b>1</b><span>+</span></div></div>
+            <div class="line"><div><div class="n">Soda</div><div class="d">Yuzu, 330 ml</div></div><div class="p">$4.25</div>
+              <div class="step"><span>−</span><b>1</b><span>+</span></div></div>
+          </div>
+          <div class="promo"><span class="code">FIRSTBITE · −$5.00</span><span class="amt">applied</span></div>
+          <div class="addr">
+            <div class="k">Deliver to</div>
+            <div class="v">14 W 32nd St, 5th floor</div>
+            <div class="c">Change</div>
+          </div>
+          <div class="freedel" style="margin-top:12px;">
+            <div class="lbl"><span>Free delivery unlocked</span><span><b>100%</b></span></div>
+            <div class="track"><i style="width:100%"></i></div>
+          </div>
+          <div class="sum">
+            <div class="r"><span>Subtotal</span><b>$26.65</b></div>
+            <div class="r free"><span>Delivery</span><b>Free</b></div>
+            <div class="r"><span>FIRSTBITE</span><b>−$5.00</b></div>
+            <div class="r tot"><span>Total</span><b>$21.65</b></div>
+          </div>
+          <div class="pay">Place order · $21.65</div>
+          <div class="home"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>demo/workspace-delivery · src/checkout.js, test/checkout.test.js</span><span>the customer never filed a ticket</span></div>
+</section>
+
+<!-- 03 · THE RUN ─────────────────────────────────────────────────────────── -->
+<section class="shot" id="s3">
+  <div class="head">
+    <div class="kicker">index0 run, delivery-free-threshold, cycle-b4d72d36cc67</div>
+    <h1>The critic approved it.<br><em>The suite refused it.</em></h1>
   </div>
   <div class="stage">
     <div class="sheet log">
       <div class="row">
         <div class="n">01</div><div class="who">Architect</div>
-        <div class="what">read the app, wrote 2 hypotheses and 4 invariants</div>
-        <div class="ver ">plan</div>
+        <div class="what">read the cart module, wrote hypotheses and invariants</div>
+        <div class="ver">plan</div>
       </div>
       <div class="row">
         <div class="n">02</div><div class="who">Developer</div>
-        <div class="what">patch one, <code>26 lines</code></div>
-        <div class="ver "></div>
+        <div class="what">patch one, <code>10 lines</code>, fee now reads the promo</div>
+        <div class="ver"></div>
       </div>
       <div class="row">
         <div class="n">03</div><div class="who">Critic</div>
-        <div class="what">2 findings against the first patch</div>
-        <div class="ver no">request changes</div>
+        <div class="what">"preserves signatures and purity"</div>
+        <div class="ver">approve</div>
       </div>
-      <div class="row">
-        <div class="n">04</div><div class="who">Developer</div>
-        <div class="what">patch two, <code>47 lines</code></div>
-        <div class="ver "></div>
+      <div class="row stop">
+        <div class="n">04</div><div class="who">QA</div>
+        <div class="what"><code style="display:block;margin-bottom:7px;">25.549999999999997 !== 25.55</code>the fee is right, the cent is not</div>
+        <div class="ver no">3 passed / 1 failed</div>
       </div>
-      <div class="row">
-        <div class="n">05</div><div class="who">Critic</div>
-        <div class="what">3 findings against the second patch</div>
-        <div class="ver no">request changes</div>
+      <div class="stamp">NOT VERIFIED<b>exit 1 · 2530 ms</b></div>
+    </div>
+    <div class="proof">
+      <div class="p-head">sandbox output, verbatim</div>
+      <pre><span class="ok">✔</span> adds up the cart by quantity
+<span class="ok">✔</span> applies the FIRSTBITE promo to the
+  item subtotal
+<span class="ok">✔</span> charges no delivery fee at or above
+  the minimum
+<span class="bad">✖</span> charges delivery when the promo
+  drops the subtotal below the minimum
+
+<span class="bad">AssertionError [ERR_ASSERTION]:</span>
+  Expected values to be strictly equal:
+  <span class="bad">+ 25.549999999999997</span>
+  <span class="ok">- 25.55</span>
+
+  at test/checkout.test.js:29:10
+
+ℹ tests 4 · pass 3 · fail 1 · 2530 ms</pre>
+      <div class="p-hunk">
+        <div class="p-head2">candidate.patch ++ /src/checkout.js</div>
+<pre><span class="ok">+</span> const effectiveSubtotal =
+<span class="ok">+</span>   subtotal(items) - discount(items, promo);
+<span class="ok">+</span> return effectiveSubtotal &gt;= FREE_DELIVERY_MINIMUM</pre>
       </div>
-      <div class="row">
-        <div class="n">06</div><div class="who">Developer</div>
-        <div class="what">patch three, <code>24 lines</code></div>
-        <div class="ver "></div>
+      <div class="p-foot">
+        <div><span>tests</span><b>4</b></div>
+        <div><span>pass</span><b>3</b></div>
+        <div><span>fail</span><b class="bad">1</b></div>
+        <div><span>exit</span><b class="bad">1</b></div>
       </div>
-      <div class="row">
-        <div class="n">07</div><div class="who">Critic</div>
-        <div class="what">no findings left</div>
-        <div class="ver ">approve</div>
-      </div>
-      <div class="row qa">
-        <div class="n">08</div><div class="who">QA</div>
-        <div class="what">ran the app's own suite in a sealed container</div>
-        <div class="ver yes">3 passed / 0 failed</div>
-      </div>
-      <div class="stamp">VERIFIED<b>exit 0, 1192 ms</b></div>
     </div>
   </div>
-  <div class="foot"><span>demo/runs/example-3-iterations, transcript committed</span><span>the critic can refuse. it cannot merge.</span></div>
+  <div class="foot"><span>demo/runs/20261104T090956Z · cycle.json, candidate.patch</span><span>an approval is not evidence</span></div>
 </section>
 
-<!-- 03 · EDITOR -->
-<section class="shot" id="s3">
+<!-- 04 · THE PATCH ───────────────────────────────────────────────────────── -->
+<section class="shot" id="s4">
   <div class="head">
-    <div class="kicker">VS Code extension, seven commands in the palette</div>
-    <h1>You read both versions.<br>Then you decide.</h1>
+    <div class="kicker">github-style diff · src/checkout.js, after QA said no</div>
+    <h1>Two lines the approval missed.<br>Now the cart is exact.</h1>
   </div>
-  <div class="stage">
+  <div class="stage patch">
     <div class="sheet ed">
       <div class="tabs">
-        <div class="tab">src/math.js</div>
+        <div class="tab">src/checkout.js</div>
         <div class="toggle">Viewing <u>Diff View</u></div>
       </div>
       <div class="panes">
         <div class="pane orig">
           <div class="label">Original Version</div>
-<pre><span class="c">// Billing rate helper.</span>
-export function divide(numerator, denominator) {
-  <span class="del">return numerator / denominator;</span>
+<pre>export function deliveryFee(items, promo) {
+  // Free delivery once the order
+  // clears the minimum.
+  return subtotal(items)
+    &gt;= FREE_DELIVERY_MINIMUM
+    ? 0 : DELIVERY_FEE;
 }
 
-export function average(values) {
-  return values.reduce((total, value) =&gt; total + value, 0)
-    / values.length;
+export function total(items, promo) {
+  return subtotal(items)
+    - discount(items, promo)
+    + deliveryFee(items, promo);
 }</pre>
         </div>
         <div class="pane new">
           <div class="label">Agent Proposed Changes</div>
-<pre><span class="c">// Billing rate helper.</span>
-export function divide(numerator, denominator) {
-  <span class="add">if (denominator === 0) {
-    throw new RangeError('division by zero');
-  }</span>
-  return numerator / denominator;
+<pre>export function deliveryFee(items, promo) {
+  <span class="add">// read the subtotal after the promo</span>
+  <span class="add">const effectiveSubtotal =</span>
+    <span class="add">subtotal(items) - discount(items, promo);</span>
+  return <span class="add">effectiveSubtotal</span>
+    &gt;= FREE_DELIVERY_MINIMUM
+    ? 0 : DELIVERY_FEE;
 }
 
-export function average(values) {
-  return values.reduce((total, value) =&gt; total + value, 0)
-    / values.length;
+export function total(items, promo) {
+  <span class="add">const cents =</span> subtotal(items)
+    - discount(items, promo)
+    + deliveryFee(items, promo);
+  <span class="add">return Math.round(cents * 100) / 100;</span>
 }</pre>
         </div>
       </div>
       <div class="bar">
-        <span class="hint"><b>Tab</b> accepts ghost text. The agent never writes the file.</span>
+        <span class="hint">4 passed / 0 failed · 196 ms · exit 0</span>
         <button class="btn">Approve</button>
       </div>
     </div>
+    <div style="width:276px;padding-top:6px;">
+      <div class="zoom-sm">
+        <div class="phone" style="width:390px;transform:none;">
+          <div class="status"><span>9:41</span><span class="r">
+            <span class="bar" style="height:5px"></span><span class="bar" style="height:8px"></span>
+            <span class="bar" style="height:11px"></span><span class="bat"></span></span></div>
+          <div class="scr-head">
+            <div class="scr-title">Your cart</div>
+            <div class="scr-sub">Banchan House · 12–18 min</div>
+          </div>
+          <div class="lines">
+            <div class="line"><div><div class="n">Bibimbap</div><div class="d">Rice, beef, egg, six sides</div></div><div class="p">$12.50</div>
+              <div class="step"><span>−</span><b>1</b><span>+</span></div></div>
+            <div class="line"><div><div class="n">Kimchi</div><div class="d">Napa cabbage, three weeks aged</div></div><div class="p">$9.90</div>
+              <div class="step"><span>−</span><b>1</b><span>+</span></div></div>
+            <div class="line"><div><div class="n">Soda</div><div class="d">Yuzu, 330 ml</div></div><div class="p">$4.25</div>
+              <div class="step"><span>−</span><b>1</b><span>+</span></div></div>
+          </div>
+          <div class="promo"><span class="code">FIRSTBITE · −$5.00</span><span class="amt">applied</span></div>
+          <div class="freedel">
+            <div class="lbl"><span>Free delivery at $25.00</span><span><b>86%</b></span></div>
+            <div class="track"><i style="width:86%"></i></div>
+          </div>
+          <div class="addr">
+            <div class="k">Deliver to</div>
+            <div class="v">14 W 32nd St, 5th floor</div>
+            <div class="c">Change</div>
+          </div>
+          <div class="sum">
+            <div class="r"><span>Subtotal</span><b>$26.65</b></div>
+            <div class="r"><span>Delivery</span><b>$3.90</b></div>
+            <div class="r"><span>FIRSTBITE</span><b>−$5.00</b></div>
+            <div class="r tot"><span>Total</span><b>$25.55</b></div>
+          </div>
+          <div class="pay">Place order · $25.55</div>
+          <div class="home"></div>
+        </div>
+      </div>
+      <div class="pcap" style="margin-top:14px;"><span class="t">the cart <b>after</b> the patch</span></div>
+    </div>
   </div>
-  <div class="foot"><span>apps/ide/extension, apps/ide/web/src/components/Editor.tsx</span><span>the merge is a person's move</span></div>
+  <div class="foot"><span>apps/ide/web/src/components/Editor.tsx · the same diff in the extension</span><span>the agent never writes the file</span></div>
 </section>
 
-<!-- 04 · BROWSER -->
-<section class="shot" id="s4">
+<!-- 05 · THE BROWSER ─────────────────────────────────────────────────────── -->
+<section class="shot" id="s5">
   <div class="head">
     <div class="kicker">workbench, nothing to install</div>
-    <h1>The same run, in a tab.<br>The plan reads like English.</h1>
+    <h1>The plan in English.<br>The failure in the open.</h1>
   </div>
   <div class="stage">
     <div class="sheet wb">
       <div class="top">
-        <div class="crumbs"><b>index0-core</b><span class="slash">/</span><span>ws-main-dev</span><span class="slash">/</span><span>main</span></div>
+        <div class="crumbs"><b>banchan</b><span class="slash">/</span><span>ws-delivery</span><span class="slash">/</span><span>fix/free-delivery</span></div>
         <div class="chips"><span class="live"><i class="dot"></i>Gateway Connected (8000)</span><span>MCP Tools</span><span>Telemetry</span></div>
       </div>
       <div class="main">
         <div class="plan">
-          <div class="t">Execution Plan (1/3)</div>
-          <div class="step done"><span class="mark">✓</span><span class="txt">Inspect workspace and math specifications</span></div>
-          <div class="step now"><span class="mark">→</span><span class="txt">Verify math utilities implementation in src/math.ts</span></div>
-          <div class="step"><span class="mark">·</span><span class="txt">Run sandbox verification test suite<span class="sub">3 tests, node --test</span></span></div>
-          <div class="note">
-            <div class="t">Agent</div>
-            <p>I have analyzed the workspace structure. Let me know when to verify src/math.ts.</p>
+          <div class="t">Execution Plan (2/4)</div>
+          <div class="step done"><span class="mark">✓</span><span class="txt">Read the cart module and the checkout tests</span></div>
+          <div class="step done"><span class="mark">✓</span><span class="txt">Charge delivery on the discounted subtotal</span></div>
+          <div class="step now"><span class="mark">→</span><span class="txt">Round the cart total to the cent<span class="sub">4 tests, node --test</span></span></div>
+          <div class="step"><span class="mark">·</span><span class="txt">Re-run the suite in the sandbox</span></div>
+          <div style="margin-top:20px;border-top:1px solid var(--rule);padding-top:14px;">
+            <div style="font-size:13px;color:var(--ink-3);margin-bottom:6px;">Active Tool Invocations</div>
+            <div style="font-family:var(--mono);font-size:14px;">read_workspace_file<br>/src/checkout.js</div>
           </div>
-          <div class="note">
-            <div class="t">Active Tool Invocations</div>
-            <p><b style="font-family:var(--mono);font-weight:400">read_workspace_file</b><br>/src/math.ts</p>
+          <div style="margin-top:18px;border-top:1px solid var(--rule);padding-top:14px;">
+            <div style="font-size:13px;color:var(--ink-3);margin-bottom:8px;">Sandbox</div>
+            <div style="font-family:var(--mono);font-size:13.5px;line-height:1.95;color:var(--ink-2);">
+              live_microvm &nbsp;iteration 1<br>
+              --network none<br>
+              -v /src:ro &nbsp;read-only<br>
+              --pids-limit=64
+            </div>
           </div>
         </div>
         <div class="code">
           <div class="term">
             <div class="bar">INDEX0 Agent &amp; Sandbox Terminal</div>
-<pre><span class="p">$</span> index0 runtime status
-Sovereign E2B MicroVM active on index0-net
-(Port 4001 via Gateway 8000)
+<pre><span class="p">$</span> npm test
 
-<span class="p">$</span> npm test
+<span class="p">✓</span> adds up the cart by quantity
+<span class="p">✓</span> applies the FIRSTBITE promo to the item subtotal
+<span class="p">✓</span> charges no delivery fee at or above the minimum
+<span class="bad">✗ charges delivery when the promo drops the subtotal below the minimum</span>
 
-<span class="ok">✓ divide returns the quotient</span>
-<span class="ok">✓ average returns the mean</span>
-<span class="ok">✓ divide rejects a zero denominator</span>
+<span class="bad">  AssertionError [ERR_ASSERTION]:
+    Expected values to be strictly equal:
+    + 25.549999999999997
+    - 25.55</span>
 
-3 passed / 0 failed in 1192 ms, exit 0</pre>
+<span class="p">ℹ</span> tests 4
+<span class="p">ℹ</span> pass 3
+<span class="p">ℹ</span> fail 1
+<span class="p">ℹ</span> duration_ms 2530</pre>
           </div>
           <div class="verdict">
-            <div class="v">QA verified.</div>
-            <div class="m">3 passed / 0 failed, 1192 ms, exit 0</div>
+            <div class="v">Verification failed.</div>
+            <div class="m">exit 1 · 2530 ms · live_microvm</div>
           </div>
         </div>
       </div>
     </div>
   </div>
-  <div class="foot"><span>apps/ide/web/src/workbench/Workbench.tsx</span><span>same loop, no install</span></div>
+  <div class="foot"><span>apps/ide/web/src/workbench/Workbench.tsx</span><span>the run is the review</span></div>
 </section>
 
-<!-- 05 · RECEIPT -->
-<section class="shot" id="s5">
+<!-- 06 · THE RECEIPT ─────────────────────────────────────────────────────── -->
+<section class="shot" id="s6">
   <div class="head">
-    <div class="kicker">artifact, demo/runs/example-3-iterations/cycle.json</div>
-    <h1>What you keep afterwards<br>is not a chat log.</h1>
+    <div class="kicker">artifact, demo/runs/20261104T090956Z/cycle.json</div>
+    <h1>What you keep is <em>the failure</em>,<br>not a summary of it.</h1>
   </div>
   <div class="stage receipt-wrap">
     <div class="receipt">
       <div class="r-top"><b>RUN RECEIPT</b><span>INDEX0 AI · GNAP</span></div>
-      <div class="verdict">
-        <div class="field">Verdict</div>
-        <h3>QA verified.</h3>
+      <div class="r-verdict">
+        <div class="f">Verdict</div>
+        <h3>QA failed at iteration 1.<br><s>Merge blocked.</s></h3>
       </div>
       <dl>
-        <dt>cycle</dt><dd>cycle-6ae0724a4b6d</dd>
-        <dt>task</dt><dd>demo-divide-zero</dd>
+        <dt>cycle</dt><dd>cycle-b4d72d36cc67</dd>
+        <dt>task</dt><dd>delivery-free-threshold</dd>
         <dt>model route</dt><dd>groq</dd>
-        <dt>iterations</dt><dd>3</dd>
         <dt>critic</dt><dd>approve</dd>
-        <dt>tests</dt><dd>3 passed / 0 failed</dd>
-        <dt>duration</dt><dd>1192 ms</dd>
-        <dt>sandbox</dt><dd>live_micromv, exit 0</dd>
-        <dt>files</dt><dd>src/math.js</dd>
+        <dt>tests</dt><dd>3 pass / 1 fail</dd>
+        <dt>duration</dt><dd>2530 ms</dd>
+        <dt>after fix</dt><dd>4 / 0 · 196 ms</dd>
+        <dt>sandbox</dt><dd>live_microvm, exit 1</dd>
+        <dt>files</dt><dd>src/checkout.js</dd>
+        <dt>cost</dt><dd>$0.00, free route</dd>
       </dl>
-      <div class="sign">
+      <div class="r-sign">
         <p>Nothing merges <b>until it runs.</b></p>
-        <div class="stamp2">VERIFIED</div>
+        <div class="stamp2">REJECTED · RE-RAN</div>
       </div>
-      <div class="r-foot">network none, test edits dropped, read-only source mount<br>replay offline, no vendor call required</div>
+      <div class="r-foot">--network none &nbsp; -v /src:ro &nbsp; --pids-limit=64<br>replay offline, no vendor call required</div>
     </div>
-    <div class="receipt-side">
-      <h4>One page that answers the only question that matters: did it run?</h4>
-      <p>Every cycle leaves this. It names the suite, the pass count, the exit code and the
-        hash of the diff, so a reviewer can check the work without trusting the vendor or the model.</p>
+    <div class="r-side">
+      <h4>An approval that turned out to be wrong, kept on file.</h4>
+      <p>The critic read the diff and said yes. The suite ran the app and said no — the fee
+        was fixed, the cent was not. Both results stay in the artifact, so the next
+        reviewer sees what the model got wrong, not a polished summary.</p>
       <ul>
-        <li><b>3 passed / 0 failed</b>printed by the app's own suite</li>
-        <li><b>exit 0</b>the only thing that counts as done</li>
-        <li><b>read-only mount</b>the candidate cannot rewrite its judge</li>
+        <li><b>3 / 1 → 4 / 0</b>the app's own suite, in 2530 ms then 196 ms</li>
+        <li><b>exit 1</b>the run that was allowed to block the merge</li>
+        <li><b>-v /src:ro</b>the source tree cannot change mid-run</li>
         <li><b>hash-chained</b>every cycle attributable, replayable offline</li>
       </ul>
     </div>

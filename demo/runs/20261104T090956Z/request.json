@@ -1,0 +1,10 @@
+{
+  "taskId": "delivery-free-threshold",
+  "userPrompt": "src/checkout.js decides free delivery from the cart subtotal before the promo is applied, so an order with the FIRSTBITE code still shows Free delivery when the discounted subtotal is under the $25 minimum. Charge DELIVERY_FEE when subtotal(items) minus discount(items, promo) is below FREE_DELIVERY_MINIMUM. Do not change the signature of deliveryFee, and keep subtotal(), discount() and total() working as they are.",
+  "repositoryRoot": "/home/darion-dev/Dev/Incubator/INDEX0/demo/workspace-delivery",
+  "contextFiles": [
+    "src/checkout.js",
+    "test/checkout.test.js"
+  ],
+  "maxIterations": 5
+}

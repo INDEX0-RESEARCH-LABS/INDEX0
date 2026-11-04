@@ -339,7 +339,7 @@
         <div class="cell">
           <svg class="ic"><use href="#i-shield"/></svg>
           <span class="label">Cannot cheat</span>
-          <span class="desc">test edits are dropped</span>
+          <span class="desc">test files hashed, then compared</span>
         </div>
         <div class="cell">
           <svg class="ic"><use href="#i-lock"/></svg>
@@ -358,32 +358,41 @@
         </div>
       </div>
     </div>
-    <div class="note">The cheat guard exists because a Gemini run edited the very test that judged it.</div>
+    <div class="note">Test, evaluator and harness files are hashed before a run; a diff marks it INVALID_RUN.</div>
   </section>
 
   <!-- 6 · PRODUCT -->
   <section class="slide dark">
     <header>
-      <h2>One bug, three ways to fix it.</h2>
-      <p class="sub">The same run, reviewed in the terminal, the editor, or a browser tab.</p>
+      <h2>One cart. One run. One refusal.</h2>
+      <p class="sub">A food-delivery checkout, a $5 promo, and a fee that still read the pre-promo cart.</p>
     </header>
     <div class="body">
-      <div class="shots">
-        <figure class="shot">
-          <img src="shots/02-terminal.png" alt="Terminal mockup: three patches, two rejections, QA passed, exit 0.">
-          <span class="cap"><b>01 · Terminal</b><span>Three patches. Two rejected. Then the tests ran.</span></span>
+      <div class="split" style="grid-template-columns:1.34fr 1fr;align-items:start;">
+        <figure class="shot" style="margin:0;">
+          <img src="shots/04-patch.png" alt="Editor mockup: Original Version beside Agent Proposed Changes, a Diff View toggle, the corrected cart, and Approve.">
+          <span class="cap"><b>04 · The patch</b><span>Two lines: read the payable subtotal, round the total. 4 passed, 196 ms.</span></span>
         </figure>
-        <figure class="shot">
-          <img src="shots/03-editor.png" alt="Editor mockup: original file beside the agent's patch, then Approve.">
-          <span class="cap"><b>02 · Editor</b><span>Both versions side by side. You approve.</span></span>
-        </figure>
-        <figure class="shot">
-          <img src="shots/04-browser.png" alt="Browser workbench mockup: plain-English plan, terminal, QA verified verdict.">
-          <span class="cap"><b>03 · Browser</b><span>A plan in English. Tests in a sealed box.</span></span>
-        </figure>
+        <div class="points">
+          <div class="pt">
+            <svg class="ic"><use href="#i-term"/></svg>
+            <div><div class="t"><b>Terminal.</b> The critic approved the diff. QA exited 1.</div>
+              <span class="desc" style="display:block;margin-top:8px;font-family:var(--mono);font-size:13px;">3 passed / 1 failed · 2530 ms</span></div>
+          </div>
+          <div class="pt">
+            <svg class="ic"><use href="#i-code"/></svg>
+            <div><div class="t"><b>Editor.</b> Both versions on screen. You approve.</div>
+              <span class="desc" style="display:block;margin-top:8px;font-family:var(--mono);font-size:13px;">Original Version · Agent Proposed Changes</span></div>
+          </div>
+          <div class="pt">
+            <svg class="ic"><use href="#i-window"/></svg>
+            <div><div class="t"><b>Browser.</b> A plan in English, the failure in the open.</div>
+              <span class="desc" style="display:block;margin-top:8px;font-family:var(--mono);font-size:13px;">Execution Plan · INDEX0 Agent &amp; Sandbox Terminal</span></div>
+          </div>
+        </div>
       </div>
-      <div class="note" style="border: 0; padding: 0; margin-top: 26px; font-size: 12px;">
-        Design mockups built from the shipped components, not screen captures · full set in <code>pitch/shots.html</code>
+      <div class="note" style="border: 0; padding: 0; margin-top: 22px; font-size: 12px;">
+        Design mockups from the shipped components, not screen captures · all six frames in <code>pitch/shots.html</code>
       </div>
     </div>
     <div class="note">37 CLI tests · 94 web-workbench tests · 4 extension tests · 15 of 36 capabilities verifiable (PROOF_STATUS.md)</div>

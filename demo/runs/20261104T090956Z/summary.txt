@@ -1,0 +1,13 @@
+model        : groq
+status       : qa_failed
+iterations   : 1
+critic       : approve
+qa passed    : False
+tests        : 3 passed / 1 failed in 2530 ms
+sandbox      : live_microvm (exit 1)
+files        : src/checkout.js
+history      :
+  architect  plan_proposal    
+  developer  implementation   
+  critic     review_verdict   approve
+  qa         test_result      failed

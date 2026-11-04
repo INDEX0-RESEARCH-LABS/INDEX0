@@ -19,7 +19,7 @@
   .kicker{font:400 13px/1 'IBM Plex Mono',ui-monospace,monospace;color:var(--ink-3);}
   h1{margin:18px 0 0;font-size:44px;line-height:1.1;font-weight:400;letter-spacing:-.022em;}
   h1 em{font-style:normal;color:var(--oxide);}
-  p.lede{margin:16px 0 0;max-width:66ch;color:var(--ink-2);}
+  p.lede{margin:16px 0 0;max-width:68ch;color:var(--ink-2);}
   p.lede b{color:var(--ink);font-weight:500;}
   ol{margin:52px 0 0;padding:0;list-style:none;}
   li{margin-bottom:52px;}
@@ -39,72 +39,87 @@
   .rules ul{margin:0;padding-left:18px;color:var(--ink-2);font-size:14px;}
   .rules li{margin-bottom:7px;}
   .rules code{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:13px;}
+  .sw{display:inline-block;width:9px;height:9px;border-radius:2px;vertical-align:baseline;margin-right:5px;
+    border:1px solid rgba(0,0,0,.14);}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
-    <div class="kicker">pitch/shots · five stills · 1600 × 1000</div>
-    <h1>One bug, one run, three surfaces.</h1>
-    <p class="lede">A two-file app returns <b>Infinity</b> when a customer types <b>0</b>.
-      The test that names the bug is already in the repo. These five frames follow that one
-      run from the ask to the receipt. Every string is in the code; the frames are
-      <b>design mockups</b>, not screen captures.</p>
+    <div class="kicker">pitch/shots · six stills · 1600 × 1000</div>
+    <h1>One app, one cart, <em>one wrong total.</em></h1>
+    <p class="lede"><b>Banchan</b> is a Korean food-delivery app: three screens, a real cart module,
+      four tests that run on <code>node --test</code>. A $5 promo drops a $26.65 cart to $21.65 and the
+      app still says <b>free delivery</b>. These six frames build that app, hit the defect, and show the
+      run that refused to merge it. Every price, ID and millisecond comes from
+      <code>demo/workspace-delivery</code> and <code>demo/runs/20261104T090956Z</code>.
+      The frames are <b>design mockups</b>, not screen captures.</p>
   </header>
 
   <ol>
     <li>
       <figure>
-        <a class="shot" href="shots/01-ask.png"><img src="shots/01-ask.png" alt="Paper-style frame: the failing test file, the one-line command, and three facts about the app."></a>
+        <a class="shot" href="shots/01-app.png"><img src="shots/01-app.png" alt="Three phone mockups: menu with three items in the cart, the cart after the fix, and order tracking."></a>
         <figcaption>
           <div class="id">01</div>
-          <div><div class="ttl">The ask</div>
-            <div class="why">The bug report is already an assertion. Nothing has to be written first.</div></div>
-          <div class="src">demo/workspace/test/math.test.js<br>packages/client-harness/src/cli.ts</div>
+          <div><div class="ttl">The app</div>
+            <div class="why">Three screens of one app: menu, cart, tracking. The cart total is the thing under review.</div></div>
+          <div class="src">demo/workspace-delivery/src/checkout.js<br>subtotal 26.65 · delivery 3.90 · total 25.55</div>
         </figcaption>
       </figure>
     </li>
     <li>
       <figure>
-        <a class="shot" href="shots/02-terminal.png"><img src="shots/02-terminal.png" alt="Terminal frame: architect, three developer patches, two critic rejections, QA passed, VERIFIED stamp."></a>
+        <a class="shot" href="shots/02-bug.png"><img src="shots/02-bug.png" alt="The failing assertion beside the cart screen reading Free delivery and a total of 21.65."></a>
         <figcaption>
           <div class="id">02</div>
-          <div><div class="ttl">The run</div>
-            <div class="why">Three patches, two rejections, then the app's own suite says 3 passed.</div></div>
-          <div class="src">demo/runs/example-3-iterations/cycle.json<br>demo/runs/example-3-iterations/summary.txt</div>
+          <div><div class="ttl">The bug</div>
+            <div class="why">The fee reads the cart before the promo. The customer sees $21.65 and free delivery.</div></div>
+          <div class="src">demo/workspace-delivery/test/checkout.test.js<br>node --test → 0 !== 3.9</div>
         </figcaption>
       </figure>
     </li>
     <li>
       <figure>
-        <a class="shot" href="shots/03-editor.png"><img src="shots/03-editor.png" alt="Editor frame: Original Version beside Agent Proposed Changes, Tab hint, Approve button."></a>
+        <a class="shot" href="shots/03-run.png"><img src="shots/03-run.png" alt="Run log: architect, developer, critic approves, QA fails with 3 passed and 1 failed, NOT VERIFIED stamp."></a>
         <figcaption>
           <div class="id">03</div>
-          <div><div class="ttl">The editor</div>
-            <div class="why">Both versions on screen. The agent proposes; a person approves.</div></div>
-          <div class="src">apps/ide/web/src/components/Editor.tsx<br>apps/ide/extension/package.json</div>
+          <div><div class="ttl">The run</div>
+            <div class="why">The critic read the diff and approved. The suite ran the app and said no.</div></div>
+          <div class="src">demo/runs/20261104T090956Z/cycle.json<br>3 passed / 1 failed · 2530 ms · exit 1</div>
         </figcaption>
       </figure>
     </li>
     <li>
       <figure>
-        <a class="shot" href="shots/04-browser.png"><img src="shots/04-browser.png" alt="Workbench frame: execution plan in English, sandbox terminal with four green checks, QA verified verdict."></a>
+        <a class="shot" href="shots/04-patch.png"><img src="shots/04-patch.png" alt="Editor with Original Version beside Agent Proposed Changes, a diff toggle, and the corrected cart on a phone."></a>
         <figcaption>
           <div class="id">04</div>
-          <div><div class="ttl">The browser</div>
-            <div class="why">Same loop, nothing to install. The plan is a sentence, not a graph.</div></div>
+          <div><div class="ttl">The patch</div>
+            <div class="why">Two lines the approval missed: read the payable subtotal, round the total to the cent.</div></div>
+          <div class="src">apps/ide/web/src/components/Editor.tsx<br>4 passed / 0 failed · 196 ms · exit 0</div>
+        </figcaption>
+      </figure>
+    </li>
+    <li>
+      <figure>
+        <a class="shot" href="shots/05-browser.png"><img src="shots/05-browser.png" alt="Browser workbench: execution plan in English, sandbox terminal with the failing assertion, verification failed."></a>
+        <figcaption>
+          <div class="id">05</div>
+          <div><div class="ttl">The workbench</div>
+            <div class="why">Same loop, nothing to install. The plan is in English; the failure is in the open.</div></div>
           <div class="src">apps/ide/web/src/workbench/Workbench.tsx<br>apps/ide/web/src/components/AgentPanel.tsx</div>
         </figcaption>
       </figure>
     </li>
     <li>
       <figure>
-        <a class="shot" href="shots/05-receipt.png"><img src="shots/05-receipt.png" alt="Receipt frame: cycle id, task, model route, iterations, tests, duration, sandbox, VERIFIED stamp."></a>
+        <a class="shot" href="shots/06-receipt.png"><img src="shots/06-receipt.png" alt="Run receipt: cycle id, task, critic approve, tests 3 pass 1 fail, exit 1, REJECTED stamp."></a>
         <figcaption>
-          <div class="id">05</div>
+          <div class="id">06</div>
           <div><div class="ttl">The receipt</div>
-            <div class="why">What survives the session: the suite, the pass count, the exit code, the hash.</div></div>
-          <div class="src">demo/runs/example-3-iterations/cycle.json<br>packages/client-harness/src/run-artifacts.ts</div>
+            <div class="why">What survives the session is the failure: the suite output, the exit code, the cycle id.</div></div>
+          <div class="src">demo/runs/20261104T090956Z/{cycle.json,summary.txt,candidate.patch}<br>replay: ./demo/run-demo.sh</div>
         </figcaption>
       </figure>
     </li>
@@ -112,27 +127,27 @@
 
   <div class="rules">
     <div>
-      <h3>Palette</h3>
+      <h3>Two palettes</h3>
       <ul>
-        <li>Paper <code>#ECECE5</code>, sheet <code>#F8F8F3</code></li>
-        <li>Ink <code>#141619</code>, rules <code>#CBCDC3</code></li>
-        <li>One accent: oxide <code>#9E3527</code></li>
+        <li>Frame: paper <code>#ECECE5</code>, sheet <code>#F8F8F3</code>, ink <code>#141619</code></li>
+        <li>App: linen <code>#FDFBF6</code>, cream <code>#F4EEE3</code>, chili <code>#D33F1D</code></li>
+        <li>App accents: leaf <code>#2E6B4F</code>, sesame <code>#F2B233</code></li>
       </ul>
     </div>
     <div>
       <h3>What oxide means</h3>
       <ul>
-        <li>Something is still wrong: the bug, <code>request changes</code>, the stamp</li>
-        <li>Approval is ink, never green</li>
-        <li>No gradients, no glows, no shadows</li>
+        <li>Still wrong, in the frame: the defect, <code>NOT VERIFIED</code>, <code>Merge blocked</code></li>
+        <li>Approval is ink, never green — a check mark is not evidence</li>
+        <li>Chili belongs to the app; oxide never appears inside a phone</li>
       </ul>
     </div>
     <div>
       <h3>Honesty</h3>
       <ul>
-        <li>Every string exists in source; no invented buttons</li>
+        <li>Prices, IDs and timings copied from the fixture and the run directory</li>
+        <li>The 196 ms is the fixed copy, measured; 2530 ms is the recorded run</li>
         <li>Mockups, not screenshots — say so out loud</li>
-        <li>Numbers match <code>demo/runs/</code> exactly</li>
       </ul>
     </div>
   </div>

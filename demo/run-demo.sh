@@ -159,15 +159,10 @@ fi
 RUN_DIR="$ROOT/demo/runs/$(date -u +%Y%m%dT%H%M%SZ)"
 mkdir -p "$RUN_DIR"
 
-cat > "$RUN_DIR/request.json" <<JSON
-{
-  "taskId": "demo-divide-zero",
-  "userPrompt": "src/math.js exports divide(numerator, denominator), which returns Infinity when the denominator is 0. Make divide throw a RangeError with the message 'division by zero' when the denominator is 0. Keep average() working exactly as it is.",
-  "repositoryRoot": "$WORKSPACE",
-  "contextFiles": ["src/math.js", "test/math.test.js"],
-  "maxIterations": 5
-}
-JSON
+# The default fixture is the divide-by-zero repo. Point the demo at another
+# dependency-free workspace with DEMO_WORKSPACE, DEMO_TASK_ID, DEMO_PROMPT and
+# DEMO_CONTEXT_FILES (comma separated).
+DEMO_ROOT="$WORKSPACE" "$PYTHON" "$ROOT/demo/request-template.py" > "$RUN_DIR/request.json"
 
 echo "==> running the review cycle (this makes 4-8 model calls; ~20-60s)"
 curl -fsS -m 900 -X POST "$ORCHESTRATOR_URL/cycles/start" \

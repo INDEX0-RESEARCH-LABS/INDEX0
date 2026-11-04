@@ -1,0 +1,10 @@
+{
+  "name": "banchan-checkout",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Cart pricing for the Banchan food-delivery app: subtotal, promo, delivery fee, total.",
+  "scripts": {
+    "test": "node --test"
+  }
+}

@@ -97,30 +97,32 @@ Sub: `Each one came from a mistake we found in our own code.` (3×2)
 
 **Background / layout** — light, 3×2, 34px icons.
 
-**Speaker note** — "Each of these exists because it bit us. A Gemini run once edited the very test that was judging it — that is why the QA node now drops candidate writes to test paths and restores the file before it runs. The guard is not a feature we thought of; it is a bug we shipped and then closed."
+**Speaker note** — "Each of these exists because it bit us. We found runs that edited the very test that was judging them, so `packages/client-harness/src/anti-cheat.ts` hashes the test, evaluator and harness files before a run and compares them after: a modified, deleted or weakened test marks the run `INVALID_RUN` instead of passing. The sandbox mounts the source read-only, so the tree under review cannot move while it is being reviewed."
 
 ---
 
 ## 6 · PRODUCT
 
-**On-slide text** — *One bug, three ways to fix it.*
- Sub: `The same run, reviewed in the terminal, the editor, or a browser tab.`
+**On-slide text** — *One cart. One run. One refusal.*
+ Sub: `A food-delivery checkout, a $5 promo, and a fee that still read the pre-promo cart.`
 
-`DARK SLIDE`. Three stills, each with a two-line caption:
+`DARK SLIDE`. One still on the left, three named surfaces on the right:
 
-| Shot | Caption | Image |
+| Surface | Line | Mono detail |
 |---|---|---|
-| `01 · Terminal` | Three patches. Two rejected. Then the tests ran. | `shots/02-terminal.png` |
-| `02 · Editor` | Both versions side by side. You approve. | `shots/03-editor.png` |
-| `03 · Browser` | A plan in English. Tests in a sealed box. | `shots/04-browser.png` |
+| Terminal | The critic approved the diff. QA exited 1. | `3 passed / 1 failed · 2530 ms` |
+| Editor | Both versions on screen. You approve. | `Original Version · Agent Proposed Changes` |
+| Browser | A plan in English, the failure in the open. | `Execution Plan · INDEX0 Agent & Sandbox Terminal` |
 
-Line under the row: `Design mockups built from the shipped components, not screen captures · full set in pitch/shots.html`
+Image: `shots/04-patch.png`, captioned `04 · The patch — Two lines: read the payable subtotal, round the total. 4 passed, 196 ms.`
 
-**Background / layout** — dark, 3-up row, captions beneath, no bullets. Page note stays: `37 CLI tests · 94 web-workbench tests · 4 extension tests · 15 of 36 capabilities verifiable (PROOF_STATUS.md)`.
+Line under the row: `Design mockups from the shipped components, not screen captures · all six frames in pitch/shots.html`
 
-**Speaker note** — "One story, three doors. A two-file app returns `Infinity` when someone types `0` into an invoice. The test that names that bug is already in the repo, so nobody writes a ticket first. The terminal shows the whole run: three patches, two of them rejected by the critic, and only then the suite passes — 3 passed, exit 0. The editor shows the same fix as a side-by-side you read before you press Approve. The browser is that run in a tab, with the plan written in English. Same loop, three entry points. These are design mockups drawn from the components that ship — every string is real; the full set is in `pitch/shots.html`."
+**Background / layout** — dark, 1.34 / 1 split, image left, no bullet glyphs. Page note stays: `37 CLI tests · 94 web-workbench tests · 4 extension tests · 15 of 36 capabilities verifiable (PROOF_STATUS.md)`.
 
-**If challenged on honesty** — say it plainly: the surfaces ship, these frames are drawn from their source, and slide 12 lists what is verified versus claimed. Do not call them screenshots.
+**Speaker note** — "This is Banchan, a Korean food-delivery app — the kind of thing a customer would actually order from. Three screens: menu, cart, tracking. The cart module is real code with four tests, and one of them fails: a $5 promo drops the subtotal to $21.65, below the $25 free-delivery minimum, and the app still says free delivery. Three dollars ninety lost on every discounted order, and nobody filed a ticket. The agent fixes the fee — reads the subtotal after the promo — and the critic approves it. QA refuses: `25.549999999999997 !== 25.55`. The fee was right, the cent was not. The second pass adds the rounding, and then the suite goes 4 and 0. In the editor you read both versions before you press Approve; in the browser it is the same run in a tab, plan in English, terminal in the open. Same loop, three entry points. These are design mockups drawn from the components that ship — every price and millisecond is from the fixture or from `demo/runs/20261104T090956Z`; the full set is in `pitch/shots.html`."
+
+**If challenged on honesty** — say it plainly: the surfaces ship, the fixture ships, the run directory ships and replays offline with `./demo/run-demo.sh`. The frames are drawn from their source, not captured. Slide 12 lists what is verified versus claimed.
 
 ---
 
