@@ -103,19 +103,24 @@ Sub: `Each one came from a mistake we found in our own code.` (3×2)
 
 ## 6 · PRODUCT
 
-**On-slide text** — *What ships today.*
-Sub: `Screenshots from the repository at HEAD, not a mockup.`
+**On-slide text** — *What you can run today.*
+ Sub: `Three surfaces, all from the repository at HEAD.`
 
-Three captures: `01 · CLI`, `02 · Artifact` (`"status": "qa_verified"`, `"iterations": 1`, `"passed": 3`, `"exit_code": 0`), `03 · Diff` (the three-line zero-division guard).
+`DARK SLIDE`. Three stills, each with a two-line caption:
 
-Three bullets:
-- **One command** from any terminal.
-- **Artifact** carries status, tests, diff hash.
-- **Replay offline** without trusting the vendor.
+| Shot | Caption | Image |
+|---|---|---|
+| `01 · Terminal` | One command. Three iterations, then exit 0. | `shots/01-cli-deck.png` |
+| `02 · Editor` | One panel. Ghost text, diff, seven commands. | `shots/02-editor-bare.png` |
+| `03 · Browser` | One tab. Plan, tools, terminal, verdict. | `shots/03-browser-bare.png` |
 
-**Background / layout** — light, 3-up capture row, bullets beneath.
+Line under the row: `Design mockups built from the shipped components, not screen captures · full-size set in pitch/shots.html`
 
-**Speaker note** — "Left to right: what you type, what it leaves behind, and the patch it approved. The middle one is the point — a JSON artifact that names the suite, the pass count, the exit code and the hash of the diff. Anyone can re-run it and get the same verdict without taking our word for anything."
+**Background / layout** — dark, 3-up row, captions beneath, no bullets. Page note stays: `37 CLI tests · 94 web-workbench tests · 4 extension tests · 15 of 36 capabilities verifiable (PROOF_STATUS.md)`.
+
+**Speaker note** — "Three ways in, one loop behind them. The terminal is the honest one: three iterations, two rejections, then `exit 0`. The editor is ghost text you accept with Tab, a GNAP diff, and seven commands in the palette. The browser is the same run with no install. These are design mockups drawn from the components that ship — every string is real, and the full-size set is in the shots folder if you want to read them."
+
+**If challenged on honesty** — say it plainly: the surfaces ship, these frames are drawn from their source, and slide 12 lists what is verified versus claimed. Do not call them screenshots.
 
 ---
 

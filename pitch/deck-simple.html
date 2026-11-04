@@ -103,10 +103,14 @@
   .cmp .row div.us b { color: var(--blue); font-weight: 640; }
 
   /* shots */
-  .shots { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; align-items: end; }
-  .shot { background: #0c0f15; border: 1px solid #232833; border-radius: 4px; padding: 20px; font-family: var(--mono);
-    font-size: 10.5px; line-height: 1.65; color: #cfd5df; white-space: pre; overflow: hidden; }
-  .shot .cap { display: block; font-size: 8.5px; letter-spacing: .14em; text-transform: uppercase; color: #6b7382; margin-bottom: 10px; font-family: var(--sans); }
+  .shots { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; align-items: start; }
+  .shot { margin: 0; }
+  .shot img { display: block; width: 100%; height: auto; border: 1px solid var(--night-rule); border-radius: 5px; }
+  .shot .cap { display: block; margin-top: 11px; font-size: 9px; letter-spacing: .15em;
+    text-transform: uppercase; color: var(--night-muted); }
+  .shot .cap b { color: var(--night-ink); font-weight: 620; }
+  .shot .cap span { display: block; margin-top: 5px; letter-spacing: 0; text-transform: none;
+    font-size: 13px; line-height: 1.35; color: var(--night-muted); }
 
   /* timeline */
   .tl { position: relative; display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px; padding-top: 56px; }
@@ -358,42 +362,28 @@
   </section>
 
   <!-- 6 · PRODUCT -->
-  <section class="slide">
+  <section class="slide dark">
     <header>
       <h2>What you can run today.</h2>
       <p class="sub">Three surfaces, all from the repository at HEAD.</p>
     </header>
     <div class="body">
       <div class="shots">
-        <div class="shot"><span class="cap">01 · CLI</span><span class="d">$</span> index0 review
-<span class="d">surface</span>  terminal
-<span class="d">suite</span>    npm test
-
-<span class="b">qa</span>    <span class="g">3 passed</span>
-<span class="b">exit</span>  <span class="g">0</span>
-<span class="b">time</span>  1.6 s</div>
-        <div class="shot"><span class="cap">02 · Editor</span>INDEX0: Start agent run
-INDEX0: Open agent panel
-INDEX0: Open MCP tools
-INDEX0: Toggle GhostText
-INDEX0: Review GNAP diff
-
-<span class="d">7 commands, VS Code</span>
-<span class="g">+ Cloud IDE</span></div>
-        <div class="shot"><span class="cap">03 · Receipt</span>{
-  <span class="k">"status"</span>: <span class="g">"qa_verified"</span>,
-  <span class="k">"iterations"</span>: 1,
-  <span class="k">"tests"</span>: {
-    <span class="k">"passed"</span>: 3,
-    <span class="k">"failed"</span>: 0
-  },
-  <span class="k">"exit_code"</span>: 0
-}</div>
+        <figure class="shot">
+          <img src="shots/01-cli-deck.png" alt="Terminal mockup: index0 run, three review iterations, VERIFIED, exit 0.">
+          <span class="cap"><b>01 · Terminal</b><span>One command. Three iterations, then exit 0.</span></span>
+        </figure>
+        <figure class="shot">
+          <img src="shots/02-editor-bare.png" alt="Editor mockup: ghost-text patch, GNAP diff, agent panel, seven commands.">
+          <span class="cap"><b>02 · Editor</b><span>One panel. Ghost text, diff, seven commands.</span></span>
+        </figure>
+        <figure class="shot">
+          <img src="shots/03-browser-bare.png" alt="Browser workbench mockup: plan, tools, terminal, signed QA verdict.">
+          <span class="cap"><b>03 · Browser</b><span>One tab. Plan, tools, terminal, verdict.</span></span>
+        </figure>
       </div>
-      <div class="grid3" style="margin-top: 44px; gap: 0 52px;">
-        <div class="cell"><span class="label" style="font-size:19px"><strong class="blue">One command</strong> in your terminal.</span></div>
-        <div class="cell"><span class="label" style="font-size:19px"><strong class="blue">One panel</strong> in your editor.</span></div>
-        <div class="cell"><span class="label" style="font-size:19px"><strong class="blue">One tab</strong> in your browser.</span></div>
+      <div class="note" style="border: 0; padding: 0; margin-top: 26px; font-size: 12px;">
+        Design mockups built from the shipped components, not screen captures · full-size set in <code>pitch/shots.html</code>
       </div>
     </div>
     <div class="note">37 CLI tests · 94 web-workbench tests · 4 extension tests · 15 of 36 capabilities verifiable (PROOF_STATUS.md)</div>

@@ -12,6 +12,7 @@ Nothing in this pack cites a benchmark score, a customer, or a revenue figure.
 | `deck.html` | Dense 13-slide version. Opens offline in any browser. `←/→` to move, `f` for fullscreen. |
 | `INDEX0_deck.pdf` | Print/email copy of the dense deck (13 pp). **Old positioning.** |
 | `ONE_PAGER.pdf` | One-page leave-behind, platform positioning. Print and hand over unprompted. |
+| `shots.html` | Gallery of the five surface stills (terminal, editor, browser, surfaces hero, loop). Every string traceable to source; **mockups, not screen captures** — the gallery and slide 6 say so. Design rules and provenance in `shots/README.md`. |
 | `../demo/run-demo.sh` | The live demo. One command, real model, real sandbox, real test run. |
 | `../demo/runs/` | Six recorded runs with request, transcript and diff. |
 | `../PROOF_STATUS.md` | 15 of 36 capabilities verifiable; 0 of 3 benchmark scores. Hand this over. |
