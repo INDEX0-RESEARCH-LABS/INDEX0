@@ -4,799 +4,441 @@
 <meta charset="utf-8">
 <title>INDEX0 AI — surface shots</title>
 <style>
-  @font-face{font-family:"Inter";font-style:normal;font-weight:100 900;font-display:block;
-    src:url(data:font/woff2;base64,__INTER__) format("woff2");}
+  @font-face { font-family:'Plex'; font-style:normal; font-weight:100 700; font-display:block;
+    src:url(data:font/woff2;base64,__PLEX_SANS__) format('woff2'); }
+  @font-face { font-family:'PlexMono'; font-style:normal; font-weight:400 600; font-display:block;
+    src:url(data:font/woff2;base64,__PLEX_MONO__) format('woff2'); }
 
   :root{
-    --void:#07080b; --panel:#0d1015; --panel2:#11151b; --panel3:#151a22;
-    --line:#232a33; --line2:#1a2028;
-    --chalk:#e9ecf1; --dim:#8b93a0; --faint:#5a6270;
-    --blue:#8fb0ff; --green:#4cd18e; --amber:#e0a958; --red:#f0715c;
-    --paper:#f2eee4; --ink:#14120e; --paper-line:#d6cfbe;
-    --sans:"Inter","Helvetica Neue",Helvetica,Arial,sans-serif;
-    --mono:"DejaVu Sans Mono",ui-monospace,"SF Mono",Menlo,monospace;
+    --paper:#ECECE5;
+    --sheet:#F8F8F3;
+    --ink:#141619;
+    --ink-2:#4C5256;
+    --ink-3:#83898B;
+    --rule:#CBCDC3;
+    --oxide:#9E3527;
+    --sans:'Plex',system-ui,sans-serif;
+    --mono:'PlexMono',ui-monospace,monospace;
   }
-  *{box-sizing:border-box;}
-  html,body{margin:0;padding:0;background:#000;}
-  body{font-family:var(--sans);font-feature-settings:"tnum" 1,"ss01" 1;-webkit-font-smoothing:antialiased;}
-  .shot{position:relative;width:1600px;height:1000px;overflow:hidden;background:var(--void);color:var(--chalk);}
-  .shot:not(:first-child){display:none;}
-  body.bare .strip{display:none;}
-  body.bare .shot{height:940px;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{background:var(--paper);}
+  body{font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased;}
 
-  /* ---------- shared furniture ---------- */
-  .strip{position:absolute;left:0;right:0;bottom:0;height:60px;display:flex;align-items:center;
-    justify-content:space-between;padding:0 40px;border-top:1px solid var(--line2);background:#080a0e;
-    font-family:var(--mono);font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--faint);}
-  .strip b{font-weight:400;color:var(--dim);letter-spacing:.13em;}
-  .strip .r{display:flex;gap:22px;align-items:center;}
-  .strip .r i{font-style:normal;color:var(--blue);}
+  .shot{width:1600px;height:1000px;display:none;position:relative;
+    padding:74px 96px 0;flex-direction:column;background:var(--paper);overflow:hidden;}
+  .shot.on{display:flex;}
 
-  .grid-bg{position:absolute;inset:0;
-    background-image:radial-gradient(circle at 1px 1px,rgba(255,255,255,.055) 1px,transparent 0);
-    background-size:28px 28px;}
+  .head{flex:0 0 auto;max-width:1180px;}
+  .kicker{font-family:var(--mono);font-size:15px;color:var(--ink-3);letter-spacing:.01em;}
+  h1{margin-top:16px;font-size:47px;line-height:1.12;font-weight:400;letter-spacing:-.021em;}
+  h1 em{font-style:normal;color:var(--oxide);}
 
-  .mono{font-family:var(--mono);}
-  .cap{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);}
-  .k{color:var(--dim);}
-  .g{color:var(--green);}
-  .b{color:var(--blue);}
-  .a{color:var(--amber);}
-  .r{color:var(--red);}
+  .stage{flex:1 1 auto;min-height:0;margin-top:40px;display:flex;gap:34px;}
+  .col{display:flex;flex-direction:column;}
 
-  /* ---------- 1 · cli ---------- */
-  .win{position:absolute;border:1px solid var(--line);border-radius:9px;background:var(--panel);
-    box-shadow:0 40px 120px rgba(0,0,0,.65),0 2px 0 rgba(255,255,255,.02) inset;overflow:hidden;}
-  .win-bar{height:38px;display:flex;align-items:center;gap:14px;padding:0 16px;
-    border-bottom:1px solid var(--line);background:#0b0e13;}
-  .dots{display:flex;gap:6px;}
-  .dots span{width:9px;height:9px;border-radius:50%;background:#2c333d;}
-  .win-title{font-family:var(--mono);font-size:11px;color:var(--faint);letter-spacing:.06em;}
+  .sheet{background:var(--sheet);border:1px solid var(--rule);border-radius:2px;}
 
-  #s1 .win{left:88px;top:118px;width:1180px;height:708px;}
-  #s1 .body{padding:26px 34px;font-family:var(--mono);font-size:14.5px;line-height:1.62;color:#cfd5df;}
-    #s1 .brand{padding-top:4px;font-size:14px;color:var(--chalk);}
-  #s1 .brand span{color:var(--faint);}
-  #s1 .motto{margin-top:4px;font-size:12px;color:#4f5866;}
-  #s1 .prompt{margin:22px 0 4px;font-size:15px;color:var(--chalk);}
-  #s1 .prompt .u{color:var(--blue);}
-  #s1 .meta{margin:12px 0 0;display:grid;grid-template-columns:118px 1fr;gap:2px 0;font-size:12.5px;color:var(--dim);}
-  #s1 .meta b{font-weight:400;color:#586171;}
+  .field{font-size:14px;color:var(--ink-3);}
+  .lede{font-size:20px;line-height:1.55;color:var(--ink-2);max-width:56ch;}
+  .lede b{color:var(--ink);font-weight:500;}
 
-  .tui{margin-top:20px;border:1px solid #262e39;border-radius:3px;position:relative;padding:26px 22px 18px;background:#0a0c11;}
-  .tui-title{position:absolute;top:-8px;left:14px;background:#0a0c11;padding:0 9px;
-    font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--faint);text-transform:uppercase;}
-  .tui-title em{font-style:normal;color:var(--blue);}
-  .row{display:grid;grid-template-columns:22px 104px 1fr auto;gap:10px;align-items:baseline;
-    font-size:13.5px;line-height:2.02;white-space:nowrap;}
-  .row .gl{color:var(--faint);}
-  .row .role{color:var(--dim);}
-  .row .act{color:#c3cad5;}
-  .row .note{color:#69717e;font-size:11.5px;}
-  .row .pass{color:var(--green);}
-  .row .rej{color:var(--amber);}
-  .iter{display:flex;align-items:center;gap:10px;margin:10px 0 2px;font-size:10px;letter-spacing:.16em;
-    color:#454e5b;text-transform:uppercase;}
-  .iter::after{content:"";flex:1;height:1px;background:#1b222b;}
-  .exit{margin-top:18px;padding-top:16px;border-top:1px solid #1f2730;display:flex;align-items:baseline;gap:26px;}
-  .exit .word{font-size:15px;letter-spacing:.16em;color:var(--green);}
-  .exit .detail{font-size:12px;color:var(--faint);}
-  .exit .stamp{margin-left:auto;font-size:10px;letter-spacing:.14em;color:#3f7f5f;border:1px solid #24513d;
-    padding:4px 9px;border-radius:2px;}
+  .foot{flex:0 0 56px;display:flex;align-items:center;justify-content:space-between;
+    font-family:var(--mono);font-size:13px;color:var(--ink-3);border-top:1px solid var(--rule);margin-top:26px;}
 
-  .notes{position:absolute;left:1310px;top:196px;width:210px;}
-  .note-item{margin-bottom:172px;position:relative;padding-left:34px;}
-  .note-item::before{content:"";position:absolute;left:-22px;top:7px;width:44px;height:1px;background:#2b3340;}
-  .note-item .n{font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;color:#4d5563;}
-  .note-item .t{margin-top:6px;font-size:13px;line-height:1.4;color:#9aa2ae;letter-spacing:-.01em;}
-  .note-item .t em{font-style:normal;color:var(--chalk);}
+  /* ── 01 the ask ───────────────────────────────────────────── */
+  .ask-left{width:742px;padding-right:20px;}
+  .ask-left .lede{margin-top:26px;}
+  .req{margin-top:44px;border-top:1px solid var(--rule);padding-top:20px;}
+  .req .field{margin-bottom:12px;}
+  .req code{display:block;font-family:var(--mono);font-size:19px;line-height:1.6;color:var(--ink);
+    white-space:pre-wrap;word-break:break-word;}
+  .req .arrow{color:var(--oxide);}
+  .facts{margin-top:46px;display:flex;gap:44px;}
+  .fact b{display:block;font-size:26px;font-weight:400;letter-spacing:-.01em;}
+  .fact span{font-size:14px;color:var(--ink-3);}
 
-  #s1 .src{position:absolute;left:88px;top:856px;font-family:var(--mono);font-size:10.5px;color:#3d4553;letter-spacing:.05em;}
+  .ask-right{flex:1;display:flex;flex-direction:column;justify-content:flex-start;}
+  .file{display:flex;flex-direction:column;overflow:hidden;}
+  .file .bar{display:flex;justify-content:space-between;align-items:center;
+    padding:14px 22px;border-bottom:1px solid var(--rule);font-family:var(--mono);font-size:15px;color:var(--ink-2);}
+  .file .bar i{font-style:normal;color:var(--oxide);font-family:var(--sans);font-size:14px;}
+  .file pre{padding:22px 22px 6px;font-family:var(--mono);font-size:17px;line-height:1.78;color:var(--ink);
+    white-space:pre-wrap;}
+  .file pre .c{color:var(--ink-3);}
+  .file pre .hit{display:block;background:#F1E7E2;border-left:3px solid var(--oxide);
+    margin-left:-22px;padding:2px 0 2px 19px;}
+  .file pre .k{color:var(--ink-2);}
+  .file .cap{padding:14px 22px 20px;border-top:1px solid var(--rule);font-size:15px;line-height:1.5;color:var(--ink-2);}
 
-  /* ---------- 2 · editor ---------- */
-  #s2 .app{position:absolute;left:0;top:0;width:1600px;height:940px;background:#0b0e13;}
-  .titlebar{height:38px;display:flex;align-items:center;padding:0 14px;gap:14px;background:#0a0c10;border-bottom:1px solid #191f27;}
-  .titlebar .t{flex:1;text-align:center;font-size:12px;color:#7d8592;}
-  .tb-actions{display:flex;gap:16px;color:#4c545f;font-size:11px;}
+  /* ── 02 terminal ──────────────────────────────────────────── */
+  .log{flex:1;display:flex;flex-direction:column;padding:4px 44px 96px;position:relative;}
+  .log .row{display:grid;grid-template-columns:46px 196px 1fr 236px;align-items:baseline;
+    gap:0 24px;padding:18px 0;border-bottom:1px solid var(--rule);}
+  .log .row:last-child{border-bottom:0;}
+  .log .n{font-family:var(--mono);font-size:15px;color:var(--ink-3);}
+  .log .who{font-size:21px;font-weight:500;}
+  .log .what{font-size:19px;color:var(--ink-2);}
+  .log .what code{font-family:var(--mono);font-size:18px;color:var(--ink);}
+  .log .ver{font-family:var(--mono);font-size:15.5px;color:var(--ink-2);text-align:right;}
+  .log .ver.no{color:var(--oxide);}
+  .log .ver.yes{color:var(--ink);font-weight:500;}
+  .log .qa{border-top:2px solid var(--ink);margin-top:2px;padding-top:22px;}
+  .log .qa .who{font-size:23px;}
+  .log .qa .what{font-size:23px;color:var(--ink);}
 
-  .shell{position:absolute;left:0;top:38px;right:0;bottom:26px;display:flex;}
-  .actbar{width:48px;background:#090b0f;border-right:1px solid #191f27;display:flex;flex-direction:column;
-    align-items:center;padding-top:12px;gap:20px;color:#565e6b;}
-  .actbar .on{color:var(--chalk);position:relative;}
-  .actbar .on::before{content:"";position:absolute;left:-15px;top:-2px;bottom:-2px;width:2px;background:var(--blue);}
+  .stamp{position:absolute;right:30px;bottom:16px;transform:rotate(-7deg);
+    border:3px solid var(--oxide);color:var(--oxide);border-radius:3px;
+    padding:10px 20px 12px;font-family:var(--mono);font-size:22px;letter-spacing:.08em;line-height:1;}
+  .stamp b{display:block;font-weight:500;font-size:15px;letter-spacing:.02em;margin-top:8px;color:var(--oxide);}
 
-  .side{width:250px;background:#0a0d12;border-right:1px solid #191f27;padding:0 0 10px;}
-  .side .h{height:34px;display:flex;align-items:center;padding:0 14px;font-size:10px;letter-spacing:.14em;color:#616a77;}
-  .tree{font-size:12px;color:#aab2be;line-height:2.2;}
-  .tree div{padding-left:14px;display:flex;gap:7px;align-items:center;white-space:nowrap;}
-  .tree .i1{padding-left:26px;}
-  .tree .i2{padding-left:40px;}
-  .tree .sel{background:#151b24;color:#e9ecf1;box-shadow:inset 2px 0 0 var(--blue);}
-  .tree .dir{color:#8d96a3;}
+  /* ── 03 editor ────────────────────────────────────────────── */
+  .ed{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+  .ed .tabs{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--rule);}
+  .ed .tab{display:flex;align-items:center;gap:10px;padding:16px 24px;font-family:var(--mono);font-size:16px;
+    border-right:1px solid var(--rule);color:var(--ink);}
+  .ed .toggle{padding:0 22px;font-size:15px;color:var(--ink-2);display:flex;gap:8px;align-items:center;}
+  .ed .toggle u{text-decoration:none;border-bottom:1px solid var(--ink);color:var(--ink);padding-bottom:2px;}
+  .ed .panes{flex:1;display:grid;grid-template-columns:1fr 1fr;}
+  .ed .pane{padding:22px 28px;border-right:1px solid var(--rule);overflow:hidden;}
+  .ed .pane:last-child{border-right:0;}
+  .ed .pane .label{font-size:15px;margin-bottom:16px;}
+  .ed .pane.orig .label{color:var(--ink-3);}
+  .ed .pane.new .label{color:var(--ink);}
+  .ed pre{font-family:var(--mono);font-size:18px;line-height:1.78;white-space:pre-wrap;}
+  .ed .orig pre{color:var(--ink-3);}
+  .ed .add{color:var(--ink);}
+  .ed .del{color:var(--oxide);}
+  .ed .bar{border-top:1px solid var(--rule);display:flex;align-items:center;justify-content:space-between;
+    padding:14px 22px;font-size:15px;color:var(--ink-2);}
+  .ed .hint{font-family:var(--mono);font-size:15px;color:var(--ink-2);border:1px solid var(--rule);
+    border-radius:2px;padding:8px 12px;}
+  .ed .hint b{color:var(--ink);font-weight:500;}
+  .btn{background:var(--ink);color:var(--sheet);border:0;border-radius:2px;font-family:var(--sans);
+    font-size:15px;font-weight:500;padding:9px 22px;}
 
-  .editor{flex:1;display:flex;flex-direction:column;min-width:0;background:#0d1015;position:relative;}
-  .tabs{height:36px;display:flex;border-bottom:1px solid #191f27;background:#0b0e13;}
-  .tab{display:flex;align-items:center;gap:8px;padding:0 16px;font-size:12px;color:#8a929e;border-right:1px solid #191f27;}
-  .tab.on{background:#0d1015;color:#e9ecf1;box-shadow:inset 0 1px 0 var(--blue);}
-  .crumb{height:28px;display:flex;align-items:center;gap:8px;padding:0 18px;font-size:11px;color:#5c6470;}
-  .code{padding:14px 0 0;font-family:var(--mono);font-size:13px;line-height:2.05;color:#c7ced9;position:relative;flex:1;}
-  .cl{display:flex;padding-right:24px;}
-  .cl .ln{width:56px;text-align:right;padding-right:22px;color:#3d4552;user-select:none;}
-  .cl.hl{background:rgba(143,176,255,.045);box-shadow:inset 2px 0 0 rgba(143,176,255,.55);}
-  .kw{color:#8fb0ff;} .st{color:#9ed6a9;} .cm{color:#4e5765;font-style:italic;} .fn{color:#dcd2f0;}
-  .ghost{color:#4f5866;font-style:italic;}
-  .pill{position:absolute;right:26px;top:286px;display:flex;align-items:center;gap:9px;
-    background:#10151d;border:1px solid #2b3442;border-radius:5px;padding:6px 10px;
-    font-family:var(--sans);font-size:11px;color:#7c8592;box-shadow:0 10px 30px rgba(0,0,0,.5);}
-  .pill kbd{font-family:var(--mono);font-size:9.5px;color:#aeb6c2;border:1px solid #303947;border-bottom-width:2px;
-    border-radius:3px;padding:1px 5px;background:#0c1118;}
+  /* ── 04 browser ───────────────────────────────────────────── */
+  .wb{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+  .wb .top{display:flex;align-items:center;justify-content:space-between;
+    padding:13px 22px;border-bottom:1px solid var(--rule);font-size:15px;color:var(--ink-2);}
+  .wb .crumbs{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:15px;}
+  .wb .crumbs b{font-weight:500;color:var(--ink);}
+  .wb .crumbs .slash{color:var(--ink-3);}
+  .wb .chips{display:flex;gap:10px;font-size:14px;color:var(--ink-2);}
+  .wb .chips span{border:1px solid var(--rule);border-radius:2px;padding:5px 10px;}
+  .wb .chips .live{border-color:var(--ink);color:var(--ink);display:flex;align-items:center;gap:7px;}
+  .wb .chips .dot{width:6px;height:6px;border-radius:50%;background:var(--ink);}
+  .wb .main{flex:1;display:grid;grid-template-columns:430px 1fr;}
+  .wb .plan{border-right:1px solid var(--rule);padding:24px 26px;}
+  .wb .plan .t{font-size:15px;color:var(--ink-3);margin-bottom:20px;}
+  .wb .step{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--rule);}
+  .wb .step:last-child{border-bottom:0;}
+  .wb .step .mark{font-family:var(--mono);font-size:16px;width:18px;flex:0 0 18px;color:var(--ink-3);}
+  .wb .step.done .mark,.wb .step.done .txt{color:var(--ink);}
+  .wb .step.now .mark{color:var(--oxide);}
+  .wb .step.now .txt{color:var(--ink);font-weight:500;}
+  .wb .step .txt{font-size:18px;line-height:1.42;color:var(--ink-3);}
+  .wb .step .sub{display:block;font-size:14px;font-weight:400;color:var(--ink-3);margin-top:5px;}
+  .wb .note{margin-top:22px;border-top:1px solid var(--rule);padding-top:16px;}
+  .wb .note .t{font-size:14px;color:var(--ink-3);margin-bottom:8px;}
+  .wb .note p{font-size:16px;line-height:1.5;color:var(--ink-2);}
+  .wb .code{display:flex;flex-direction:column;}
+  .wb .term{flex:1;margin:24px 26px 0;border:1px solid var(--rule);border-radius:2px;display:flex;flex-direction:column;}
+  .wb .term .bar{padding:11px 16px;border-bottom:1px solid var(--rule);font-size:14px;color:var(--ink-3);}
+  .wb .term pre{flex:1;padding:18px 16px;font-family:var(--mono);font-size:16px;line-height:1.85;white-space:pre-wrap;}
+  .wb .term .p{color:var(--ink-3);}
+  .wb .term .ok{color:var(--ink);font-weight:500;}
+  .wb .verdict{margin:18px 26px 24px;border:1px solid var(--ink);border-radius:2px;
+    display:flex;align-items:center;justify-content:space-between;padding:16px 20px;}
+  .wb .verdict .v{font-size:21px;}
+  .wb .verdict .m{font-family:var(--mono);font-size:16px;color:var(--ink-2);}
 
-  .diffpane{height:186px;border-top:1px solid #1d242d;background:#0a0d12;display:flex;flex-direction:column;}
-  .dh{height:34px;display:flex;align-items:center;gap:12px;padding:0 16px;border-bottom:1px solid #191f27;font-size:11px;color:#69717e;}
-  .dh .t{color:#aeb6c2;letter-spacing:.02em;}
-  .dh .chip{font-family:var(--mono);font-size:9px;letter-spacing:.12em;border:1px solid #2a3340;border-radius:2px;padding:2px 6px;color:#7c8592;}
-  .dh .sp{flex:1;}
-  .dh .btn{font-size:11px;padding:3px 9px;border-radius:3px;border:1px solid #2a3340;color:#9aa2ae;}
-  .dh .btn.ok{background:#123024;border-color:#24513d;color:#63d69c;}
-
-  .dl{font-family:var(--mono);font-size:12px;line-height:1.92;padding:6px 0;}
-  .dl div{padding:0 16px;white-space:pre;}
-  .dl .add{background:rgba(76,209,142,.055);color:#a8e3c2;}
-  .dl .del{background:rgba(240,113,92,.05);color:#d9a8a1;}
-  .dl .hunk{color:#5b6472;}
-
-  .agentpane{width:336px;background:#0a0d12;border-left:1px solid #191f27;display:flex;flex-direction:column;}
-  .ph{height:38px;display:flex;align-items:center;gap:9px;padding:0 14px;border-bottom:1px solid #191f27;}
-  .ph .ttl{font-size:11.5px;font-weight:600;letter-spacing:.02em;}
-  .ph .sp{flex:1;}
-  .badge{font-family:var(--mono);font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;padding:2px 6px;border-radius:2px;border:1px solid #2b3442;color:#8b93a0;}
-  .badge.ok{border-color:#24513d;color:#5fd39a;background:#0f2019;}
-  .psec{padding:12px 14px;border-bottom:1px solid var(--line2);}
-  .psec .lbl{font-size:9.5px;letter-spacing:.15em;text-transform:uppercase;color:#5f6875;margin-bottom:9px;}
-  .step{display:flex;gap:9px;font-size:12px;line-height:1.55;color:#b3bbc7;margin-bottom:7px;}
-  .step .ic{color:var(--green);flex:0 0 auto;margin-top:2px;}
-  .step .sub{display:block;color:#5f6875;font-size:10.5px;}
-  .kv{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10.5px;line-height:1.95;color:#69717e;}
-  .kv b{font-weight:400;color:#aeb6c2;}
-  .kv b.ok2{color:#5fd39a;}
-  .gate{margin-top:auto;padding:14px;border-top:1px solid #1d242d;background:#0c1016;}
-  .gate .q{font-size:11.5px;color:#8b93a0;line-height:1.5;margin-bottom:10px;}
-  .gate .btns{display:flex;gap:8px;}
-  .gate .go{flex:1;text-align:center;font-size:11.5px;font-weight:600;padding:7px 0;border-radius:4px;background:var(--blue);color:#0a1020;}
-  .gate .no{flex:1;text-align:center;font-size:11.5px;padding:7px 0;border-radius:4px;border:1px solid #2b3442;color:#9aa2ae;}
-
-  .cmd{position:absolute;left:316px;top:452px;width:620px;background:#12161d;
-    border:1px solid #2b3442;border-radius:8px;box-shadow:0 30px 90px rgba(0,0,0,.7);overflow:hidden;z-index:5;}
-  .cmd input{width:100%;height:44px;background:#0e1218;border:0;border-bottom:1px solid #232b36;
-    color:#e9ecf1;font-family:var(--sans);font-size:14px;padding:0 18px;outline:none;}
-  .cmd .list{padding:6px;}
-  .cmd .it{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:4px;font-size:12.5px;color:#aeb6c2;}
-  .cmd .it .cat{font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:#4f5866;}
-  .cmd .it .sp{flex:1;}
-  .cmd .it .key{font-family:var(--mono);font-size:9.5px;color:#4f5866;}
-  .cmd .it.on{background:#1b2431;color:#fff;box-shadow:inset 2px 0 0 var(--blue);}
-  .cmd .it.on .cat{color:var(--blue);}
-
-  .statusbar{position:absolute;left:0;right:0;bottom:0;height:26px;background:#0a0c10;border-top:1px solid #191f27;
-    display:flex;align-items:center;padding:0 14px;gap:18px;font-size:11px;color:#69717e;}
-  .statusbar .sp{flex:1;}
-  .statusbar .on{color:#5fd39a;}
-
-  /* ---------- 3 · browser ---------- */
-  #s3 .app{position:absolute;inset:0 0 60px 0;background:#0b0e13;display:flex;flex-direction:column;}
-  .topbar{height:52px;display:flex;align-items:center;gap:14px;padding:0 18px;border-bottom:1px solid #1b222b;background:#0a0d12;}
-  .topbar .brand{display:flex;align-items:center;gap:9px;font-size:12.5px;color:#e9ecf1;}
-  .topbar .brand i{width:18px;height:18px;display:grid;place-items:center;border:1px solid var(--blue);color:var(--blue);
-    font-family:var(--mono);font-size:9px;font-style:normal;border-radius:3px;}
-  .topbar .path{font-family:var(--mono);font-size:11.5px;color:#5f6875;}
-  .topbar .path b{color:#9aa2ae;font-weight:400;}
-  .topbar .sp{flex:1;}
-  .gw{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--green);font-family:var(--mono);letter-spacing:.03em;}
-  .gw i{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 0 3px rgba(76,209,142,.13);}
-  .tbtn{display:flex;align-items:center;gap:6px;font-size:11px;color:#9aa2ae;border:1px solid #232b36;
-    border-radius:4px;padding:5px 9px;background:#0d1117;}
-  .tbtn.on{color:#a9bdff;border-color:#2f4266;background:rgba(143,176,255,.09);}
-  .av{width:24px;height:24px;border-radius:50%;background:#1b2431;border:1px solid #2b3442;display:grid;place-items:center;
-    font-family:var(--mono);font-size:9px;color:#8b93a0;}
-
-  .wb{flex:1;display:flex;min-height:0;}
-  .exp{width:232px;border-right:1px solid #191f27;background:#0a0d12;padding-bottom:10px;}
-  .exp .h{height:32px;padding:0 14px;display:flex;align-items:center;font-size:9.5px;letter-spacing:.16em;color:#5f6875;}
-  .mid{flex:1;display:flex;flex-direction:column;min-width:0;background:#0d1015;}
-  .agent{width:400px;border-left:1px solid #191f27;background:#0a0d12;display:flex;flex-direction:column;}
-
-  .mstatus{height:24px;display:flex;align-items:center;gap:16px;padding:0 14px;border-top:1px solid #191f27;
-    background:#0a0c10;font-size:10.5px;color:#5f6875;flex:0 0 auto;}
-  .mstatus .sp{flex:1;}
-  .mstatus .on{color:#5fd39a;}
-  .termbox{margin:0 12px 12px;border:1px solid #1f2732;border-radius:5px;background:#080a0e;overflow:hidden;flex:0 0 300px;display:flex;flex-direction:column;}
-  .termbox .th{height:32px;display:flex;align-items:center;gap:10px;padding:0 12px;border-bottom:1px solid #1a212a;}
-  .termbox .th .t{font-size:11px;color:#aeb6c2;}
-  .termbox .th .env{font-family:var(--mono);font-size:9px;color:#7c8592;border:1px solid #232b36;border-radius:2px;padding:2px 6px;}
-  .termbox .th .sp{flex:1;}
-  .termbox .out{flex:1;padding:10px 14px;font-family:var(--mono);font-size:11.5px;line-height:1.8;color:#aeb6c2;overflow:hidden;white-space:pre;}
-  .termbox .out .runline{color:#e9ecf1;}
-  .termbox .out .runline::first-letter{color:var(--blue);}
-  .termbox .out .ok{color:var(--green);}
-
-  .chat{flex:1;display:flex;flex-direction:column;gap:10px;padding:14px;overflow:hidden;}
-  .msg{max-width:88%;font-size:12px;line-height:1.55;padding:8px 11px;border-radius:7px;border:1px solid #1f2732;background:#10151c;color:#b3bbc7;}
-  .msg.sys{border-color:#1b222b;background:transparent;color:#6f7784;font-family:var(--mono);font-size:10.5px;}
-  .msg.me{align-self:flex-end;background:#1a2434;border-color:#2b3a52;color:#dfe5ee;}
-  .msg .who{display:block;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:#5f6875;margin-bottom:4px;}
-  .prompt{margin-top:auto;padding:12px 14px;border-top:1px solid #1b222b;background:#0b0e13;}
-  .prompt .box{display:flex;align-items:center;gap:10px;border:1px solid #232b36;border-radius:6px;background:#0e1218;padding:9px 11px;}
-  .prompt .box span{flex:1;font-size:12px;color:#5f6875;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .prompt .send{width:26px;height:22px;border-radius:4px;background:var(--blue);display:grid;place-items:center;color:#0a1020;}
-
-  .verdict{margin:0 14px 12px;border:1px solid #24513d;border-radius:5px;background:linear-gradient(180deg,rgba(76,209,142,.075),rgba(76,209,142,.02));padding:11px 12px;}
-  .verdict .t{display:flex;align-items:center;gap:8px;font-size:11.5px;color:#8fe3b8;letter-spacing:.02em;}
-  .verdict .t b{font-weight:600;}
-  .verdict .m{margin-top:7px;display:flex;gap:16px;font-family:var(--mono);font-size:10px;color:#5f8f77;}
-
-  /* ---------- 4 · hero ---------- */
-  #s4 .art{position:absolute;inset:0 0 60px 0;}
-  #s4 .lead{position:absolute;left:72px;top:58px;}
-  #s4 .lead .n{font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:#4f5866;}
-  #s4 .lead h3{margin:10px 0 0;font-size:30px;font-weight:300;letter-spacing:-.035em;color:#e9ecf1;}
-  #s4 .lead h3 b{font-weight:500;color:var(--blue);}
-  .mini{position:absolute;left:72px;width:704px;height:150px;border:1px solid #232b36;border-radius:6px;
-    background:#0b0e13;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.45);}
-  .mini .mh{height:30px;display:flex;align-items:center;gap:10px;padding:0 12px;border-bottom:1px solid #1a212a;
-    font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:#5f6875;}
-  .mini .mh .sp{flex:1;}
-  .mini .mh i{font-style:normal;color:var(--blue);}
-  .mini .mb{padding:12px 14px;font-family:var(--mono);font-size:11.5px;line-height:1.75;color:#aeb6c2;white-space:pre;}
-  .chipmini{display:inline-block;border:1px solid #232b36;border-radius:2px;padding:0 6px;color:#7c8592;font-size:10px;}
-
-  .receipt{position:absolute;top:150px;left:872px;width:656px;height:604px;background:var(--paper);color:var(--ink);
-    box-shadow:0 40px 110px rgba(0,0,0,.7);padding:44px 46px 34px;
-    -webkit-mask:radial-gradient(9px at 50% 0,#0000 98%,#000) 0 0/18px 9px repeat-x,
-                 radial-gradient(9px at 50% 100%,#0000 98%,#000) 0 100%/18px 9px repeat-x,
-                 linear-gradient(#000,#000) 0 9px/100% calc(100% - 18px) no-repeat;
-    mask:radial-gradient(9px at 50% 0,#0000 98%,#000) 0 0/18px 9px repeat-x,
-         radial-gradient(9px at 50% 100%,#0000 98%,#000) 0 100%/18px 9px repeat-x,
-         linear-gradient(#000,#000) 0 9px/100% calc(100% - 18px) no-repeat;}
-  .receipt .rh{display:flex;align-items:baseline;justify-content:space-between;border-bottom:2px solid var(--ink);padding-bottom:10px;}
-  .receipt .rh .n{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;}
-  .receipt .rh .q{font-family:var(--mono);font-size:9px;color:#6d6555;letter-spacing:.1em;}
-  .receipt .rk{margin:15px 0 3px;font-family:var(--mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:#6d6555;}
-  .receipt .rt{font-size:30px;font-weight:400;letter-spacing:-.03em;line-height:1.15;}
-  .receipt .rt b{font-weight:600;}
-  .receipt table{width:100%;border-collapse:collapse;margin-top:16px;font-family:var(--mono);font-size:11.5px;}
-  .receipt td{padding:5.5px 0;border-bottom:1px dotted #c9c1b0;vertical-align:baseline;}
-  .receipt td:first-child{color:#6d6555;width:120px;letter-spacing:.04em;}
-  .receipt td:last-child{text-align:right;color:#1c1a15;}
-  .receipt .big{margin-top:22px;display:flex;align-items:flex-end;justify-content:space-between;}
-  .receipt .big .v{font-size:19px;line-height:1.3;letter-spacing:-.02em;color:#1c1a15;font-weight:500;}
-  .receipt .big .ex{display:flex;flex-direction:column;align-items:flex-end;gap:2px;}
-  .receipt .big .ex em{font-style:normal;font-family:var(--mono);font-size:8.5px;letter-spacing:.18em;text-transform:uppercase;color:#6d6555;}
-  .receipt .big .ex b{font-family:var(--sans);font-weight:300;font-size:44px;line-height:.9;letter-spacing:-.05em;color:#1d6b47;}
-  .receipt .foot{margin-top:24px;padding-top:10px;border-top:1px solid #c9c1b0;font-family:var(--mono);
-    font-size:8.5px;line-height:1.7;color:#7b7362;letter-spacing:.04em;}
-  .stamp{position:absolute;right:40px;bottom:44px;transform:rotate(-7deg);border:2px solid rgba(29,107,71,.45);
-    color:rgba(29,107,71,.55);font-family:var(--mono);font-size:13px;letter-spacing:.28em;padding:6px 11px;border-radius:2px;}
-
-  .link{position:absolute;height:1px;background:#2a3240;}
-  .link i{position:absolute;right:-3px;top:-2px;width:5px;height:5px;border-radius:50%;background:var(--blue);}
-  .link span{position:absolute;left:0;top:-20px;white-space:nowrap;font-family:var(--mono);font-size:9px;letter-spacing:.14em;color:#4f5866;}
-
-  /* ---------- 5 · loop ---------- */
-  #s5 .art{position:absolute;inset:0 0 60px 0;}
-  #s5 .lead{position:absolute;left:72px;top:56px;}
-  #s5 .lead .n{font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:#4f5866;}
-  #s5 .lead h3{margin:10px 0 0;font-size:30px;font-weight:300;letter-spacing:-.035em;}
-  #s5 .lead h3 b{font-weight:500;color:var(--blue);}
-
-  .flow{position:absolute;left:72px;right:72px;top:184px;display:grid;grid-template-columns:repeat(5,1fr);gap:30px;align-items:stretch;}
-  .node{border:1px solid #232b36;border-radius:6px;background:#0b0e13;padding:18px 16px 16px;position:relative;
-    min-height:300px;display:flex;flex-direction:column;}
-  .node .idx{font-family:var(--mono);font-size:9px;letter-spacing:.18em;color:#4a5360;position:relative;z-index:1;}
-  .node .gnum{position:absolute;right:10px;bottom:6px;font-family:var(--sans);font-weight:300;font-size:118px;
-    line-height:1;letter-spacing:-.06em;color:#fff;opacity:.016;pointer-events:none;}
-  .node.qa .gnum{opacity:.03;}
-  .node .nm{margin-top:9px;font-size:17px;font-weight:600;letter-spacing:-.015em;}
-  .node .role{margin-top:4px;font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:#5f6875;}
-  .node .ln{margin:14px 0 12px;height:1px;background:#1e252f;}
-  .node .tx{font-size:12px;line-height:1.62;color:#8b93a0;}
-  .node .facts{margin-top:auto;padding-top:14px;display:flex;flex-direction:column;gap:4px;font-family:var(--mono);font-size:9.5px;color:#5f6875;}
-  .node .facts div{display:flex;justify-content:space-between;gap:8px;border-top:1px dotted #1e252f;padding-top:5px;}
-  .node .facts b{font-weight:400;color:#aeb6c2;}
-  .node .facts b.a{color:var(--amber);} .node .facts b.g{color:var(--green);}
-  .node.qa{border-color:#24513d;background:linear-gradient(180deg,rgba(76,209,142,.055),rgba(0,0,0,0));}
-  .node.exit{border-color:#2f4266;background:linear-gradient(180deg,rgba(143,176,255,.075),rgba(0,0,0,0));
-    display:flex;flex-direction:column;justify-content:center;}
-  .node.exit .big{font-family:var(--sans);font-weight:300;font-size:44px;letter-spacing:-.03em;color:var(--blue);line-height:1;margin-top:10px;}
-  .node.exit .sm{margin-top:8px;font-family:var(--mono);font-size:10px;letter-spacing:.16em;color:#7d90b8;text-transform:uppercase;}
-  .node.exit .tx{margin-top:14px;font-family:var(--mono);font-size:10px;color:#7d90b8;}
-  .testlist{margin-top:12px;display:flex;flex-direction:column;gap:6px;font-family:var(--mono);font-size:9px;line-height:1.35;color:#7fa892;}
-  .testlist span::before{content:"ok ";color:#3f7f5f;}
-
-  .loopback{position:absolute;left:72px;top:520px;width:1456px;height:74px;}
-  .loopback .path{position:absolute;left:430px;width:298px;top:0;height:34px;border:1px solid #2a3240;border-top:0;border-radius:0 0 4px 4px;}
-  .loopback .lab{position:absolute;left:430px;width:298px;text-align:center;top:47px;white-space:nowrap;
-    font-family:var(--mono);font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;color:#8a6a3a;}
-
-  .band{position:absolute;left:72px;right:72px;top:736px;display:grid;grid-template-columns:repeat(4,1fr);gap:30px;}
-  .band div{display:flex;flex-direction:column;gap:6px;padding-top:12px;border-top:1px solid #232b36;}
-  .band .n{font-family:var(--mono);font-size:9px;letter-spacing:.18em;color:#414a56;}
-  .band b{font-size:12.5px;font-weight:500;color:#cfd5df;letter-spacing:-.01em;}
-  .band em{font-style:normal;font-size:11px;line-height:1.5;color:#6f7784;}
-  .closing{position:absolute;left:72px;top:856px;font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:#3d4553;}
-
-  .srcline{position:absolute;left:72px;bottom:82px;font-family:var(--mono);font-size:10px;color:#3d4553;letter-spacing:.06em;}
-</style>
+  /* ── 05 receipt ───────────────────────────────────────────── */
+  .receipt-wrap{flex:1;display:flex;gap:56px;align-items:flex-start;padding-top:4px;}
+  .receipt{width:648px;background:#FBFBF7;border:1px solid var(--rule);position:relative;padding:26px 36px 22px;}
+  .receipt::before,.receipt::after{content:'';position:absolute;left:0;right:0;height:8px;
+    background:repeating-linear-gradient(90deg,var(--rule) 0 6px,transparent 6px 12px);}
+  .receipt::before{top:-5px;}
+  .receipt::after{bottom:-5px;}
+  .receipt .r-top{display:flex;justify-content:space-between;align-items:baseline;
+    border-bottom:2px solid var(--ink);padding-bottom:14px;font-family:var(--mono);font-size:14px;color:var(--ink-2);}
+  .receipt .r-top b{font-weight:500;color:var(--ink);letter-spacing:.04em;}
+  .receipt .verdict{margin-top:20px;}
+  .receipt .verdict .field{margin-bottom:8px;}
+  .receipt .verdict h3{font-size:36px;font-weight:400;letter-spacing:-.02em;line-height:1.1;}
+  .receipt dl{margin-top:18px;display:grid;grid-template-columns:1fr auto;gap:0;}
+  .receipt dt,.receipt dd{padding:7.5px 0;border-bottom:1px dotted var(--rule);font-size:16px;}
+  .receipt dt{color:var(--ink-2);}
+  .receipt dd{text-align:right;font-family:var(--mono);font-size:15.5px;color:var(--ink);}
+  .receipt .sign{display:flex;justify-content:space-between;align-items:flex-end;margin-top:20px;gap:24px;}
+  .receipt .sign p{font-size:19px;line-height:1.35;max-width:16ch;}
+  .receipt .sign p b{font-weight:500;}
+  .receipt .sign .stamp2{border:2px solid var(--oxide);color:var(--oxide);border-radius:2px;
+    padding:8px 14px;font-family:var(--mono);font-size:16px;transform:rotate(-5deg);}
+  .receipt .r-foot{margin-top:16px;border-top:1px solid var(--rule);padding-top:14px;
+    font-family:var(--mono);font-size:13px;line-height:1.7;color:var(--ink-3);}
+  .receipt-side{flex:1;padding-top:14px;display:flex;flex-direction:column;justify-content:center;}
+  .receipt-side h4{font-size:23px;font-weight:400;line-height:1.35;letter-spacing:-.01em;}
+  .receipt-side p{margin-top:18px;font-size:18px;line-height:1.6;color:var(--ink-2);}
+  .receipt-side ul{margin-top:26px;list-style:none;}
+  .receipt-side li{font-size:16px;line-height:1.5;color:var(--ink-2);padding:12px 0;border-top:1px solid var(--rule);}
+  .receipt-side li b{display:block;font-family:var(--mono);font-weight:400;color:var(--ink);margin-bottom:4px;}
+</style></style>
 </head>
 <body>
 
-<!-- ══════════════════════ 1 · TERMINAL ══════════════════════ -->
+<!-- 01 · THE ASK -->
 <section class="shot" id="s1">
-  <div class="grid-bg"></div>
-
-  <div class="win">
-    <div class="win-bar">
-      <div class="dots"><span></span><span></span><span></span></div>
-      <div class="win-title">index0 — cli — 152×44 — bash</div>
-    </div>
-    <div class="body">
-      <div class="brand"><span class="b">INDEX0 AI</span> <span>// Sovereign Software Engineering Operating System</span></div>
-      <div class="motto">"People Over Tools. Work Verified. Time to Unplug."</div>
-
-      <div class="prompt"><span class="u">$</span> index0 run "divide by zero returns Infinity"</div>
-
-      <div class="meta">
-        <b>surface</b><span>cli</span>
-        <b>repository</b><span>acme/billing · main · clean</span>
-        <b>suite</b><span>npm test</span>
-        <b>sandbox</b><span>live_microvm · --network none</span>
+  <div class="head">
+    <div class="kicker">demo/workspace, a two-file app, three tests</div>
+    <h1>A customer typed <em>0</em> into the invoice.<br>The app answered <em>Infinity</em>.</h1>
+  </div>
+  <div class="stage">
+    <div class="col ask-left">
+      <p class="lede">The guard is one line. The test that names the bug is already in the
+        repo — it has been failing since the app was written. <b>Nobody had to write a ticket
+        first.</b></p>
+      <div class="req">
+        <div class="field">What you type</div>
+        <code><span class="arrow">$</span> index0 run "divide by zero should throw, not return Infinity"</code>
       </div>
+      <div class="facts">
+        <div class="fact"><b>2</b><span>files in the app</span></div>
+        <div class="fact"><b>3</b><span>tests it already has</span></div>
+        <div class="fact"><b>1</b><span>line that has to change</span></div>
+      </div>
+    </div>
+    <div class="col ask-right">
+      <div class="sheet file">
+        <div class="bar"><span>test/math.test.js</span><i>fails today</i></div>
+<pre>test(<span class="k">"divide returns the quotient"</span>, () =&gt; {
+  assert.equal(divide(10, 2), 5);
+});
 
-      <div class="tui">
-        <div class="tui-title">review loop <em>· 3 iterations</em></div>
+test(<span class="k">"average returns the mean"</span>, () =&gt; {
+  assert.equal(average([2, 4, 6]), 4);
+});
 
-        <div class="iter">iteration 1</div>
-        <div class="row"><span class="gl">▸</span><span class="role">architect</span><span class="act">plan_proposal</span><span class="note">2 hypotheses · 4 invariants</span></div>
-        <div class="row"><span class="gl">▸</span><span class="role">developer</span><span class="act">implementation</span><span class="note">26 lines</span></div>
-        <div class="row"><span class="gl">▸</span><span class="role">critic</span><span class="act">review_verdict</span><span class="rej">request_changes</span></div>
-
-        <div class="iter">iteration 2</div>
-        <div class="row"><span class="gl">▸</span><span class="role">developer</span><span class="act">implementation</span><span class="note">47 lines</span></div>
-        <div class="row"><span class="gl">▸</span><span class="role">critic</span><span class="act">review_verdict</span><span class="rej">request_changes</span></div>
-
-        <div class="iter">iteration 3</div>
-        <div class="row"><span class="gl">▸</span><span class="role">developer</span><span class="act">implementation</span><span class="note">24 lines</span></div>
-        <div class="row"><span class="gl">▸</span><span class="role">critic</span><span class="act">review_verdict</span><span class="pass">approve</span></div>
-        <div class="row"><span class="gl">▸</span><span class="role">qa</span><span class="act">test_result</span><span class="pass">passed</span></div>
-
-        <div class="exit">
-          <span class="word">VERIFIED</span>
-          <span class="detail">3 passed / 0 failed in 1192 ms · exit 0 · src/math.js</span>
-        </div>
+<span class="c">// The zero-denominator case below is the one
+// this fixture is meant to catch.</span>
+<span class="hit">test(<span class="k">"divide rejects a zero denominator
+     instead of returning Infinity"</span>, () =&gt; {
+  assert.throws(() =&gt; divide(1, 0), RangeError);
+});</span></pre>
+        <div class="cap">Two tests pass. The third is the customer's report, written as an
+          assertion. <code>divide(1, 0)</code> returns <code>Infinity</code> today, so it fails.</div>
       </div>
     </div>
   </div>
-
-  <div class="notes">
-    <div class="note-item"><div class="n">01</div><div class="t">The motto prints on <em>every boot</em>. It is the argument, not a slogan.</div></div>
-    <div class="note-item"><div class="n">02</div><div class="t">The critic rejected twice. The terminal shows the <em>rejections</em>, not just the win.</div></div>
-    <div class="note-item"><div class="n">03</div><div class="t">The last line is an <em>exit code</em>. Nothing else counts as done.</div></div>
-  </div>
-
-  <div class="src">demo/runs/example-3-iterations · 3 iterations · 1192 ms</div>
-  <div class="strip"><span><b>01 / 05</b> · Terminal</span><span class="r"><span>packages/client-harness</span><i>index0 run</i></span></div>
+  <div class="foot"><span>demo/workspace, src/math.js and test/math.test.js</span><span>the customer's report is one number</span></div>
 </section>
 
-<!-- ══════════════════════ 2 · EDITOR ══════════════════════ -->
+<!-- 02 · TERMINAL -->
 <section class="shot" id="s2">
-  <div class="app">
-    <div class="titlebar">
-      <div class="dots"><span></span><span></span><span></span></div>
-      <div class="t">math.js — acme-billing — Visual Studio Code</div>
-      <div class="tb-actions"><span>—</span><span>□</span><span>×</span></div>
-    </div>
-
-    <div class="shell">
-      <div class="actbar">
-        <span class="on"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/></svg></span>
-        <span><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="11" cy="11" r="6"/><path d="m16 16 4 4"/></svg></span>
-        <span><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="7" cy="5" r="2"/><circle cx="7" cy="19" r="2"/><circle cx="17" cy="9" r="2"/><path d="M7 7v10M7 15a5 5 0 0 0 5-5h3"/></svg></span>
-        <span><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M7 4v13l10-6z"/></svg></span>
-        <span><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="4" y="4" width="7" height="7"/><rect x="13" y="4" width="7" height="7"/><rect x="4" y="13" width="7" height="7"/><rect x="13" y="13" width="7" height="7"/></svg></span>
-        <span><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"/></svg></span>
+  <div class="head">
+    <div class="kicker">index0 run, demo/workspace, 1192 ms, exit 0</div>
+    <h1>Three patches. Two rejections.<br>Then the tests ran.</h1>
+  </div>
+  <div class="stage">
+    <div class="sheet log">
+      <div class="row">
+        <div class="n">01</div><div class="who">Architect</div>
+        <div class="what">read the app, wrote 2 hypotheses and 4 invariants</div>
+        <div class="ver ">plan</div>
       </div>
-
-      <div class="side">
-        <div class="h">EXPLORER</div>
-        <div class="tree">
-          <div class="dir">▾ acme-billing</div>
-          <div class="i1 dir">▾ .gnap</div>
-          <div class="i2">state.json</div>
-          <div class="i1 dir">▾ src</div>
-          <div class="i2 sel">math.js</div>
-          <div class="i2">index.js</div>
-          <div class="i1 dir">▾ test</div>
-          <div class="i2">math.test.js</div>
-          <div class="i1">package.json</div>
-          <div class="i1">README.md</div>
-        </div>
+      <div class="row">
+        <div class="n">02</div><div class="who">Developer</div>
+        <div class="what">patch one, <code>26 lines</code></div>
+        <div class="ver "></div>
       </div>
-
-      <div class="editor">
-        <div class="tabs">
-          <div class="tab on">math.js <span style="color:#5f6875">●</span></div>
-          <div class="tab">math.test.js</div>
-        </div>
-        <div class="crumb">src <span>›</span> math.js <span>›</span> <span style="color:#6f5f8f">divide</span></div>
-
-        <div class="code">
-          <div class="cl"><span class="ln">1</span><span><span class="cm">// Billing rate helper.</span></span></div>
-          <div class="cl"><span class="ln">2</span><span><span class="kw">export function</span> <span class="fn">divide</span>(numerator, denominator) {</span></div>
-          <div class="cl"><span class="ln">3</span><span>  <span class="kw">if</span> (denominator === <span class="st">0</span>) {</span></div>
-          <div class="cl hl"><span class="ln">4</span><span>    <span class="kw">throw new</span> <span class="fn">RangeError</span>(<span class="st">'division by zero'</span>);</span></div>
-          <div class="cl"><span class="ln">5</span><span>  }</span></div>
-          <div class="cl"><span class="ln">6</span><span>  <span class="kw">return</span> numerator / denominator;</span></div>
-          <div class="cl"><span class="ln">7</span><span>}</span></div>
-          <div class="cl"><span class="ln">8</span><span>  <span class="ghost">export function percentage(part, whole) {</span></span></div>
-          <div class="cl"><span class="ln">9</span><span>  <span class="ghost">  return (part / whole) * 100;</span></span></div>
-          <div class="cl"><span class="ln">10</span><span><span class="ghost">}</span></span></div>
-          <div class="cl"><span class="ln">11</span><span></span></div>
-          <div class="cl"><span class="ln">12</span><span><span class="kw">export function</span> <span class="fn">average</span>(values) {</span></div>
-        </div>
-
-        <div class="pill">Tab to accept <kbd>Tab</kbd> <span style="color:#4f5866">Tabby Edge · 16 ms</span></div>
-
-        <div class="diffpane">
-          <div class="dh">
-            <span class="t">GNAP · agent diff</span>
-            <span class="chip">cycle-6ae0724a4b6d</span>
-            <span class="sp"></span>
-            <span class="btn ok">Approve</span>
-            <span class="btn">Request changes</span>
-          </div>
-          <div class="dl">
-            <div class="hunk">@@ -2,4 +2,7 @@  src/math.js</div>
-            <div class="del">-  return numerator / denominator;</div>
-            <div class="add">+  if (denominator === 0) {</div>
-            <div class="add">+    throw new RangeError('division by zero');</div>
-            <div class="add">+  }</div>
-          </div>
-        </div>
+      <div class="row">
+        <div class="n">03</div><div class="who">Critic</div>
+        <div class="what">2 findings against the first patch</div>
+        <div class="ver no">request changes</div>
       </div>
-
-      <div class="agentpane">
-        <div class="ph">
-          <span style="color:#8fb0ff">◈</span>
-          <span class="ttl">INDEX0 AUTONOMOUS AGENT</span>
-          <span class="sp"></span>
-          <span class="badge ok">QA VERIFIED</span>
-        </div>
-        <div class="psec">
-          <div class="lbl">Execution Plan 3/3</div>
-          <div class="step"><span class="ic">✓</span><span>Inspect workspace and math specifications</span></div>
-          <div class="step"><span class="ic">✓</span><span>Verify math utilities in src/math.ts</span></div>
-          <div class="step"><span class="ic">✓</span><span>Run sandbox verification suite<span class="sub">3 passed / 0 failed · 1192 ms</span></span></div>
-        </div>
-        <div class="psec">
-          <div class="lbl">Tool invocation</div>
-          <div class="step"><span class="ic" style="color:#8fb0ff">⌘</span><span>read_workspace_file<span class="sub">{ path: "/src/math.ts" } → { lines: 25, status: "valid" }</span></span></div>
-        </div>
-        <div class="psec">
-          <div class="lbl">Run · cycle-6ae0724a4b6d</div>
-          <div class="kv"><span>iterations</span><b>3</b></div>
-          <div class="kv"><span>critic</span><b>approve</b></div>
-          <div class="kv"><span>sandbox</span><b>live_microvm</b></div>
-          <div class="kv"><span>exit</span><b class="ok2">0</b></div>
-        </div>
-        <div class="gate">
-          <div class="q">The suite passed. Merge is <em style="font-style:normal;color:#e9ecf1">your</em> call — not the model's.</div>
-          <div class="btns"><span class="go">Merge</span><span class="no">Review diff</span></div>
-        </div>
+      <div class="row">
+        <div class="n">04</div><div class="who">Developer</div>
+        <div class="what">patch two, <code>47 lines</code></div>
+        <div class="ver "></div>
       </div>
-    </div>
-
-    <div class="cmd">
-      <input value="> index0" readonly>
-      <div class="list">
-        <div class="it on"><span class="cat">INDEX0</span><span>Start Autonomous Agent Run</span><span class="sp"></span></div>
-        <div class="it"><span class="cat">INDEX0</span><span>Open Agent Execution Pane</span><span class="sp"></span></div>
-        <div class="it"><span class="cat">INDEX0</span><span>Inspect MCP Tools &amp; Sandbox</span><span class="sp"></span></div>
-        <div class="it"><span class="cat">INDEX0</span><span>Open Telemetry Dashboard</span><span class="sp"></span></div>
-        <div class="it"><span class="cat">INDEX0</span><span>Start Voice Agent Session</span><span class="sp"></span></div>
-        <div class="it"><span class="cat">INDEX0</span><span>Toggle GhostText Autocomplete</span><span class="sp"></span></div>
-        <div class="it"><span class="cat">INDEX0</span><span>Review GNAP Agent Diff</span><span class="sp"></span></div>
+      <div class="row">
+        <div class="n">05</div><div class="who">Critic</div>
+        <div class="what">3 findings against the second patch</div>
+        <div class="ver no">request changes</div>
       </div>
-    </div>
-
-    <div class="statusbar">
-      <span>⑂ main*</span><span>⊕ 0</span><span>△ 0</span>
-      <span class="sp"></span>
-      <span class="on">● Tabby Edge: Active (16ms)</span>
-      <span>Ln 4, Col 5</span><span>JavaScript</span><span>UTF-8</span>
+      <div class="row">
+        <div class="n">06</div><div class="who">Developer</div>
+        <div class="what">patch three, <code>24 lines</code></div>
+        <div class="ver "></div>
+      </div>
+      <div class="row">
+        <div class="n">07</div><div class="who">Critic</div>
+        <div class="what">no findings left</div>
+        <div class="ver ">approve</div>
+      </div>
+      <div class="row qa">
+        <div class="n">08</div><div class="who">QA</div>
+        <div class="what">ran the app's own suite in a sealed container</div>
+        <div class="ver yes">3 passed / 0 failed</div>
+      </div>
+      <div class="stamp">VERIFIED<b>exit 0, 1192 ms</b></div>
     </div>
   </div>
-  <div class="strip"><span><b>02 / 05</b> · Editor</span><span class="r"><span>apps/ide/extension</span><i>7 commands</i></span></div>
+  <div class="foot"><span>demo/runs/example-3-iterations, transcript committed</span><span>the critic can refuse. it cannot merge.</span></div>
 </section>
 
-<!-- ══════════════════════ 3 · BROWSER ══════════════════════ -->
+<!-- 03 · EDITOR -->
 <section class="shot" id="s3">
-  <div class="app">
-    <div class="topbar">
-      <div class="brand"><i>0</i> INDEX0 AI</div>
-      <div class="path"><b>index0-core</b> / ws-main-dev / main</div>
-      <div class="sp"></div>
-      <div class="gw"><i></i>Gateway Connected (8000)</div>
-      <div class="tbtn on"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 4a4 4 0 0 0-3.9 5.1L4 16.2V20h3.8l7.1-7.1A4 4 0 1 0 15 4Z"/></svg>MCP Tools</div>
-      <div class="tbtn"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 17l5-6 4 3 5-7 4 4"/></svg>Telemetry</div>
-      <div class="tbtn"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg>Plans</div>
-      <div class="tbtn"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>Voice Agent</div>
-      <div class="av">DV</div>
-    </div>
+  <div class="head">
+    <div class="kicker">VS Code extension, seven commands in the palette</div>
+    <h1>You read both versions.<br>Then you decide.</h1>
+  </div>
+  <div class="stage">
+    <div class="sheet ed">
+      <div class="tabs">
+        <div class="tab">src/math.js</div>
+        <div class="toggle">Viewing <u>Diff View</u></div>
+      </div>
+      <div class="panes">
+        <div class="pane orig">
+          <div class="label">Original Version</div>
+<pre><span class="c">// Billing rate helper.</span>
+export function divide(numerator, denominator) {
+  <span class="del">return numerator / denominator;</span>
+}
 
-    <div class="wb">
-      <div class="exp">
-        <div class="h">WORKSPACE</div>
-        <div class="tree">
-          <div class="dir">▾ index0-core</div>
-          <div class="i1 dir">▾ src</div>
-          <div class="i2 sel">math.js</div>
-          <div class="i2">index.ts</div>
-          <div class="i1 dir">▾ test</div>
-          <div class="i2">math.test.js</div>
-          <div class="i1">package.json</div>
-          <div class="i1">README.md</div>
+export function average(values) {
+  return values.reduce((total, value) =&gt; total + value, 0)
+    / values.length;
+}</pre>
+        </div>
+        <div class="pane new">
+          <div class="label">Agent Proposed Changes</div>
+<pre><span class="c">// Billing rate helper.</span>
+export function divide(numerator, denominator) {
+  <span class="add">if (denominator === 0) {
+    throw new RangeError('division by zero');
+  }</span>
+  return numerator / denominator;
+}
+
+export function average(values) {
+  return values.reduce((total, value) =&gt; total + value, 0)
+    / values.length;
+}</pre>
         </div>
       </div>
-
-      <div class="mid">
-        <div class="tabs">
-          <div class="tab on">math.js <span style="color:#5f6875">●</span></div>
-          <div class="tab">index.ts</div>
-        </div>
-        <div class="code" style="padding-top:6px;font-size:12px;line-height:1.92">
-          <div class="cl"><span class="ln">1</span><span><span class="cm">// Billing rate helper. NOTE: divide() has no zero guard.</span></span></div>
-          <div class="cl"><span class="ln">2</span><span><span class="kw">export function</span> <span class="fn">divide</span>(numerator, denominator) {</span></div>
-          <div class="cl hl"><span class="ln">3</span><span>  <span class="kw">if</span> (denominator === <span class="st">0</span>) <span class="kw">throw new</span> <span class="fn">RangeError</span>(<span class="st">'division by zero'</span>);</span></div>
-          <div class="cl"><span class="ln">4</span><span>  <span class="kw">return</span> numerator / denominator;</span></div>
-          <div class="cl"><span class="ln">5</span><span>}</span></div>
-          <div class="cl"><span class="ln">6</span><span></span></div>
-          <div class="cl"><span class="ln">7</span><span><span class="kw">export function</span> <span class="fn">average</span>(values) {</span></div>
-          <div class="cl"><span class="ln">8</span><span>  <span class="kw">if</span> (values.length === <span class="st">0</span>) <span class="kw">return</span> <span class="st">0</span>;</span></div>
-          <div class="cl"><span class="ln">9</span><span>  <span class="kw">return</span> values.<span class="fn">reduce</span>((a, b) =&gt; a + b, <span class="st">0</span>) / values.length;</span></div>
-          <div class="cl"><span class="ln">10</span><span>}</span></div>
-          <div class="cl"><span class="ln">11</span><span></span></div>
-          <div class="cl"><span class="ln">12</span><span><span class="cm">/**</span></span></div>
-          <div class="cl"><span class="ln">13</span><span><span class="cm"> * Round a currency amount to two decimals.</span></span></div>
-          <div class="cl"><span class="ln">14</span><span><span class="cm"> */</span></span></div>
-          <div class="cl"><span class="ln">15</span><span><span class="kw">export function</span> <span class="fn">round2</span>(amount) {</span></div>
-          <div class="cl"><span class="ln">16</span><span>  <span class="kw">return</span> Math.<span class="fn">round</span>(amount * <span class="st">100</span>) / <span class="st">100</span>;</span></div>
-          <div class="cl"><span class="ln">17</span><span>}</span></div>
-          <div class="cl"><span class="ln">18</span><span></span></div>
-          <div class="cl"><span class="ln">19</span><span><span class="kw">export</span> { divide <span class="kw">as</span> rate };</span></div>
-        </div>
-
-        <div class="mstatus"><span>Lines: 19</span><span>Language: JavaScript</span><span class="sp"></span><span class="on">● Tabby Edge: Active (16ms)</span><span>Ln 3, Col 5</span></div>
-
-        <div class="termbox">
-          <div class="th">
-            <span style="color:#4cd18e;font-size:9px">●</span>
-            <span class="t">INDEX0 MicroVM Terminal</span>
-            <span class="env">live_microvm</span>
-            <span class="sp"></span>
-            <span class="cap" style="font-size:8.5px">e2b-sandbox-microvm</span>
-          </div>
-          <div class="out"><span class="runline">$ index0 run "guard divide by zero"</span>
-<span style="color:#5a6270">▸ architect   plan_proposal</span>
-<span style="color:#5a6270">▸ developer   implementation</span>
-<span style="color:#5a6270">▸ critic      review_verdict      </span><span style="color:#e0a958">request_changes</span>
-<span style="color:#5a6270">▸ developer   implementation</span>
-<span style="color:#5a6270">▸ critic      review_verdict      </span><span class="ok">approve</span>
-<span style="color:#5a6270">▸ qa          test_result         </span><span class="ok">passed</span>
-<span class="ok">  ok 1 - divide returns the quotient</span>
-<span class="ok">  ok 2 - average returns the mean</span>
-<span class="ok">  ok 3 - divide rejects a zero denominator instead of returning Infinity</span>
-<span class="ok">✓ 3 passed / 0 failed in 1192 ms · exit 0</span></div>
-        </div>
-      </div>
-
-      <div class="agent">
-        <div class="ph">
-          <span style="color:#8fb0ff">◈</span>
-          <span class="ttl">INDEX0 Autonomous Agent</span>
-          <span class="sp"></span>
-          <span class="badge ok">qa_verified</span>
-        </div>
-
-        <div class="psec">
-          <div class="lbl">Execution Plan 3/3</div>
-          <div class="step"><span class="ic">✓</span><span>Inspect workspace and math specifications</span></div>
-          <div class="step"><span class="ic">✓</span><span>Verify math utilities in src/math.ts</span></div>
-          <div class="step"><span class="ic">✓</span><span>Run sandbox verification test suite</span></div>
-        </div>
-
-        <div class="psec">
-          <div class="lbl">Active tool invocations</div>
-          <div class="step"><span class="ic" style="color:#8fb0ff">⌘</span><span>read_workspace_file<span class="sub">{ path: "/src/math.ts" } → { lines: 25, status: "valid" }</span></span></div>
-          <div class="step"><span class="ic" style="color:#8fb0ff">⌘</span><span>run_sandbox_test<span class="sub">--network none → exit 0</span></span></div>
-        </div>
-
-        <div class="chat">
-          <div class="msg sys">INDEX0 Autonomous Agent runtime initialized. Awaiting developer tasks.</div>
-          <div class="msg"><span class="who">Agent</span>I have analyzed the workspace structure. Let me know when to verify src/math.ts.</div>
-          <div class="msg me"><span class="who">You</span>Verify src/math.ts</div>
-          <div class="msg"><span class="who">Agent</span>Acknowledged: "Verify src/math.ts". Dispatching microVM execution workflow.</div>
-        </div>
-
-        <div class="verdict">
-          <div class="t"><b>Nothing merges until it runs.</b></div>
-          <div class="m"><span>exit 0</span><span>3 / 0</span><span>1.19 s</span><span>signed</span></div>
-        </div>
-
-        <div class="prompt">
-          <div class="box"><span>Instruct the autonomous agent...</span><span class="send">↑</span></div>
-        </div>
+      <div class="bar">
+        <span class="hint"><b>Tab</b> accepts ghost text. The agent never writes the file.</span>
+        <button class="btn">Approve</button>
       </div>
     </div>
   </div>
-  <div class="strip"><span><b>03 / 05</b> · Browser</span><span class="r"><span>apps/ide/web</span><i>94 tests</i></span></div>
+  <div class="foot"><span>apps/ide/extension, apps/ide/web/src/components/Editor.tsx</span><span>the merge is a person's move</span></div>
 </section>
 
-<!-- ══════════════════════ 4 · HERO ══════════════════════ -->
+<!-- 04 · BROWSER -->
 <section class="shot" id="s4">
-  <div class="grid-bg"></div>
-  <div class="art">
-    <div class="lead">
-      <div class="n">Three surfaces · one loop</div>
-      <h3>Ask anywhere. <b>Prove it once.</b></h3>
-    </div>
-
-    <div class="mini" style="top:172px">
-      <div class="mh"><span><i>01</i> · Terminal</span><span class="sp"></span><span>152×44 · index0 run</span></div>
-      <div class="mb"><span class="b">$</span> index0 review
-<span class="k">qa</span>    <span class="g">3 passed / 0 failed</span>
-<span class="k">exit</span>  <span class="g">0</span>        <span class="k">sandbox</span>  live_microvm
-<span class="g">VERIFIED</span> <span class="k">· nothing merges until it runs</span></div>
-    </div>
-
-    <div class="mini" style="top:352px">
-      <div class="mh"><span><i>02</i> · Editor</span><span class="sp"></span><span>VS Code · 7 commands</span></div>
-      <div class="mb">  <span class="kw">if</span> (denominator === <span class="st">0</span>) {
-    <span class="kw">throw new</span> RangeError(<span class="st">'division by zero'</span>);
-  }
-<span class="ghost">  // ghost text · tab to accept · 16 ms</span></div>
-    </div>
-
-    <div class="mini" style="top:532px">
-      <div class="mh"><span><i>03</i> · Browser</span><span class="sp"></span><span>no install</span></div>
-      <div class="mb"><span class="chipmini">MCP Tools</span> <span class="chipmini">Telemetry</span> <span class="chipmini">Voice</span>
-<span class="k">plan</span> <span class="g">3/3</span>   <span class="k">tools</span> 2   <span class="g">qa_verified</span>
-<span class="g">✓ 3 passed / 0 failed · exit 0 · signed</span></div>
-    </div>
-
-    <div class="link" style="left:790px;top:252px;width:66px"><span>same loop</span><i></i></div>
-    <div class="link" style="left:790px;top:432px;width:66px"><span>same run</span><i></i></div>
-    <div class="link" style="left:790px;top:612px;width:66px"><span>same receipt</span><i></i></div>
-
-    <div class="receipt">
-      <div class="rh"><span class="n">Run receipt</span><span class="q">INDEX0 AI · GNAP</span></div>
-      <div class="rk">Verdict</div>
-      <div class="rt">QA <b>verified</b>.</div>
-
-      <table>
-        <tr><td>cycle</td><td>cycle-6ae0724a4b6d</td></tr>
-        <tr><td>task</td><td>demo-divide-zero</td></tr>
-        <tr><td>model route</td><td>groq</td></tr>
-        <tr><td>iterations</td><td>3</td></tr>
-        <tr><td>critic</td><td>approve</td></tr>
-        <tr><td>tests</td><td>3 passed / 0 failed</td></tr>
-        <tr><td>duration</td><td>1192 ms</td></tr>
-        <tr><td>sandbox</td><td>live_microvm · exit 0</td></tr>
-        <tr><td>files</td><td>src/math.js</td></tr>
-      </table>
-
-      <div class="big">
-        <span class="v">Nothing merges<br>until it runs.</span>
-        <span class="ex"><em>exit code</em><b>0</b></span>
+  <div class="head">
+    <div class="kicker">workbench, nothing to install</div>
+    <h1>The same run, in a tab.<br>The plan reads like English.</h1>
+  </div>
+  <div class="stage">
+    <div class="sheet wb">
+      <div class="top">
+        <div class="crumbs"><b>index0-core</b><span class="slash">/</span><span>ws-main-dev</span><span class="slash">/</span><span>main</span></div>
+        <div class="chips"><span class="live"><i class="dot"></i>Gateway Connected (8000)</span><span>MCP Tools</span><span>Telemetry</span></div>
       </div>
+      <div class="main">
+        <div class="plan">
+          <div class="t">Execution Plan (1/3)</div>
+          <div class="step done"><span class="mark">✓</span><span class="txt">Inspect workspace and math specifications</span></div>
+          <div class="step now"><span class="mark">→</span><span class="txt">Verify math utilities implementation in src/math.ts</span></div>
+          <div class="step"><span class="mark">·</span><span class="txt">Run sandbox verification test suite<span class="sub">3 tests, node --test</span></span></div>
+          <div class="note">
+            <div class="t">Agent</div>
+            <p>I have analyzed the workspace structure. Let me know when to verify src/math.ts.</p>
+          </div>
+          <div class="note">
+            <div class="t">Active Tool Invocations</div>
+            <p><b style="font-family:var(--mono);font-weight:400">read_workspace_file</b><br>/src/math.ts</p>
+          </div>
+        </div>
+        <div class="code">
+          <div class="term">
+            <div class="bar">INDEX0 Agent &amp; Sandbox Terminal</div>
+<pre><span class="p">$</span> index0 runtime status
+Sovereign E2B MicroVM active on index0-net
+(Port 4001 via Gateway 8000)
 
-      <div class="foot">network none · test edits dropped · read-only source mount<br>replays offline · no vendor call required</div>
-      <div class="stamp">VERIFIED</div>
+<span class="p">$</span> npm test
+
+<span class="ok">✓ divide returns the quotient</span>
+<span class="ok">✓ average returns the mean</span>
+<span class="ok">✓ divide rejects a zero denominator</span>
+
+3 passed / 0 failed in 1192 ms, exit 0</pre>
+          </div>
+          <div class="verdict">
+            <div class="v">QA verified.</div>
+            <div class="m">3 passed / 0 failed, 1192 ms, exit 0</div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-  <div class="strip"><span><b>04 / 05</b> · Surfaces</span><span class="r"><span>CLI · Editor · Browser</span><i>one verdict</i></span></div>
+  <div class="foot"><span>apps/ide/web/src/workbench/Workbench.tsx</span><span>same loop, no install</span></div>
 </section>
 
-<!-- ══════════════════════ 5 · LOOP ══════════════════════ -->
+<!-- 05 · RECEIPT -->
 <section class="shot" id="s5">
-  <div class="grid-bg"></div>
-  <div class="art">
-    <div class="lead">
-      <div class="n">How it works · demo/runs/example-3-iterations</div>
-      <h3>Four agents. <b>One exit code.</b></h3>
-    </div>
-
-    <div class="flow" style="top:248px">
-      <div class="node"><span class="gnum">01</span>
-        <div class="idx">01</div>
-        <div class="nm">Architect</div>
-        <div class="role">plan_proposal</div>
-        <div class="ln"></div>
-        <div class="tx">Reads the repo and states invariants before a line is written.</div>
-        <div class="facts">
-          <div><span>hypotheses</span><b>2</b></div>
-          <div><span>invariants</span><b>4</b></div>
-        </div>
-      </div>
-
-      <div class="node"><span class="gnum">02</span>
-        <div class="idx">02</div>
-        <div class="nm">Developer</div>
-        <div class="role">implementation</div>
-        <div class="ln"></div>
-        <div class="tx">Returns whole files. We derive the diff — models are bad at hunk arithmetic.</div>
-        <div class="facts">
-          <div><span>patch</span><b>26 → 47 → 24 lines</b></div>
-          <div><span>output</span><b>whole files</b></div>
-        </div>
-      </div>
-
-      <div class="node"><span class="gnum">03</span>
-        <div class="idx">03</div>
-        <div class="nm">Critic</div>
-        <div class="role">review_verdict</div>
-        <div class="ln"></div>
-        <div class="tx">Advisory. It rejects twice here, then approves. It cannot merge.</div>
-        <div class="facts">
-          <div><span>verdicts</span><b class="a">request_changes ×2</b></div>
-          <div><span>then</span><b class="g">approve</b></div>
-        </div>
-      </div>
-
-      <div class="node qa"><span class="gnum">04</span>
-        <div class="idx">04</div>
-        <div class="nm">QA</div>
-        <div class="role">test_result</div>
-        <div class="ln"></div>
-        <div class="tx">Copies the repo into a sealed container and runs the repository's own suite.</div>
-        <div class="testlist">
-          <span>divide returns the quotient</span>
-          <span>average returns the mean</span>
-          <span>divide rejects zero</span>
-        </div>
-      </div>
-
-      <div class="node exit"><span class="gnum">05</span>
-        <div class="idx">05</div>
-        <div class="big">exit 0</div>
-        <div class="sm">qa_verified</div>
-        <div class="ln"></div>
-        <div class="tx">3 passed / 0 failed · 1192 ms</div>
-      </div>
-    </div>
-
-    <div class="loopback" style="top:572px">
-      <div class="path"></div>
-      <div class="lab">request_changes → patch again · never past QA</div>
-    </div>
-
-    <div class="band">
-      <div><span class="n">01</span><b>--network none</b><em>the suite runs with no route out</em></div>
-      <div><span class="n">02</span><b>test edits dropped</b><em>the assertions stay the repo's own</em></div>
-      <div><span class="n">03</span><b>read-only source mount</b><em>the candidate cannot rewrite its judge</em></div>
-      <div><span class="n">04</span><b>hash-chained</b><em>every cycle attributable by GNAP</em></div>
-    </div>
-
-    <div class="closing">replay it: ./demo/run-demo.sh · transcript: demo/runs/example-3-iterations · exit code is the only pass</div>
+  <div class="head">
+    <div class="kicker">artifact, demo/runs/example-3-iterations/cycle.json</div>
+    <h1>What you keep afterwards<br>is not a chat log.</h1>
   </div>
-  <div class="strip"><span><b>05 / 05</b> · The loop</span><span class="r"><span>services/agent-orchestrator</span><i>30 tests</i></span></div>
+  <div class="stage receipt-wrap">
+    <div class="receipt">
+      <div class="r-top"><b>RUN RECEIPT</b><span>INDEX0 AI · GNAP</span></div>
+      <div class="verdict">
+        <div class="field">Verdict</div>
+        <h3>QA verified.</h3>
+      </div>
+      <dl>
+        <dt>cycle</dt><dd>cycle-6ae0724a4b6d</dd>
+        <dt>task</dt><dd>demo-divide-zero</dd>
+        <dt>model route</dt><dd>groq</dd>
+        <dt>iterations</dt><dd>3</dd>
+        <dt>critic</dt><dd>approve</dd>
+        <dt>tests</dt><dd>3 passed / 0 failed</dd>
+        <dt>duration</dt><dd>1192 ms</dd>
+        <dt>sandbox</dt><dd>live_micromv, exit 0</dd>
+        <dt>files</dt><dd>src/math.js</dd>
+      </dl>
+      <div class="sign">
+        <p>Nothing merges <b>until it runs.</b></p>
+        <div class="stamp2">VERIFIED</div>
+      </div>
+      <div class="r-foot">network none, test edits dropped, read-only source mount<br>replay offline, no vendor call required</div>
+    </div>
+    <div class="receipt-side">
+      <h4>One page that answers the only question that matters: did it run?</h4>
+      <p>Every cycle leaves this. It names the suite, the pass count, the exit code and the
+        hash of the diff, so a reviewer can check the work without trusting the vendor or the model.</p>
+      <ul>
+        <li><b>3 passed / 0 failed</b>printed by the app's own suite</li>
+        <li><b>exit 0</b>the only thing that counts as done</li>
+        <li><b>read-only mount</b>the candidate cannot rewrite its judge</li>
+        <li><b>hash-chained</b>every cycle attributable, replayable offline</li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot"><span>cycle.json, summary.txt, candidate.patch</span><span>replay it: ./demo/run-demo.sh</span></div>
 </section>
 
 <script>
 (() => {
   const p = new URLSearchParams(location.search);
-  if (p.get('bare') === '1') document.body.classList.add('bare');
   const n = parseInt(p.get('n') || '1', 10);
-  const shots = [...document.querySelectorAll('.shot')];
-  shots.forEach((s, i) => { s.style.display = (i + 1 === n) ? 'block' : 'none'; });
+  document.querySelectorAll('.shot').forEach((s, i) => s.classList.toggle('on', i + 1 === n));
 })();
 </script>
 </body>

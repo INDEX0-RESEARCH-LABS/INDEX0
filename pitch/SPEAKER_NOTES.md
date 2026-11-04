@@ -103,22 +103,22 @@ Sub: `Each one came from a mistake we found in our own code.` (3×2)
 
 ## 6 · PRODUCT
 
-**On-slide text** — *What you can run today.*
- Sub: `Three surfaces, all from the repository at HEAD.`
+**On-slide text** — *One bug, three ways to fix it.*
+ Sub: `The same run, reviewed in the terminal, the editor, or a browser tab.`
 
 `DARK SLIDE`. Three stills, each with a two-line caption:
 
 | Shot | Caption | Image |
 |---|---|---|
-| `01 · Terminal` | One command. Three iterations, then exit 0. | `shots/01-cli-deck.png` |
-| `02 · Editor` | One panel. Ghost text, diff, seven commands. | `shots/02-editor-bare.png` |
-| `03 · Browser` | One tab. Plan, tools, terminal, verdict. | `shots/03-browser-bare.png` |
+| `01 · Terminal` | Three patches. Two rejected. Then the tests ran. | `shots/02-terminal.png` |
+| `02 · Editor` | Both versions side by side. You approve. | `shots/03-editor.png` |
+| `03 · Browser` | A plan in English. Tests in a sealed box. | `shots/04-browser.png` |
 
-Line under the row: `Design mockups built from the shipped components, not screen captures · full-size set in pitch/shots.html`
+Line under the row: `Design mockups built from the shipped components, not screen captures · full set in pitch/shots.html`
 
 **Background / layout** — dark, 3-up row, captions beneath, no bullets. Page note stays: `37 CLI tests · 94 web-workbench tests · 4 extension tests · 15 of 36 capabilities verifiable (PROOF_STATUS.md)`.
 
-**Speaker note** — "Three ways in, one loop behind them. The terminal is the honest one: three iterations, two rejections, then `exit 0`. The editor is ghost text you accept with Tab, a GNAP diff, and seven commands in the palette. The browser is the same run with no install. These are design mockups drawn from the components that ship — every string is real, and the full-size set is in the shots folder if you want to read them."
+**Speaker note** — "One story, three doors. A two-file app returns `Infinity` when someone types `0` into an invoice. The test that names that bug is already in the repo, so nobody writes a ticket first. The terminal shows the whole run: three patches, two of them rejected by the critic, and only then the suite passes — 3 passed, exit 0. The editor shows the same fix as a side-by-side you read before you press Approve. The browser is that run in a tab, with the plan written in English. Same loop, three entry points. These are design mockups drawn from the components that ship — every string is real; the full set is in `pitch/shots.html`."
 
 **If challenged on honesty** — say it plainly: the surfaces ship, these frames are drawn from their source, and slide 12 lists what is verified versus claimed. Do not call them screenshots.
 

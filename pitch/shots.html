@@ -3,155 +3,139 @@
 <head>
 <meta charset="utf-8">
 <title>INDEX0 AI — surface shots</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --graphite:#07080b; --panel:#0d1015; --hair:#232a33;
-    --chalk:#e9ecf1; --dim:#8b93a0; --blue:#8fb0ff; --green:#4cd18e;
+  :root{
+    --paper:#ECECE5; --sheet:#F8F8F3; --ink:#141619; --ink-2:#4C5256;
+    --ink-3:#83898B; --rule:#CBCDC3; --oxide:#9E3527;
   }
-  * { box-sizing:border-box; }
-  body { margin:0; background:var(--graphite); color:var(--chalk);
-    font:400 15px/1.5 Inter,system-ui,sans-serif; -webkit-font-smoothing:antialiased; }
-  .wrap { max-width:1680px; margin:0 auto; padding:64px 48px 96px; }
-  header { border-bottom:1px solid var(--hair); padding-bottom:28px; }
-  .kicker { font:400 11px/1 "DejaVu Sans Mono",monospace; letter-spacing:.18em;
-    text-transform:uppercase; color:var(--dim); }
-  h1 { margin:18px 0 0; font-size:40px; font-weight:300; letter-spacing:-.02em; }
-  h1 b { color:var(--blue); font-weight:400; }
-  p.lede { margin:14px 0 0; max-width:70ch; color:var(--dim); }
-  p.lede b { color:var(--chalk); font-weight:500; }
-  section { margin-top:52px; }
-  .grid { display:grid; gap:24px; }
-  .grid.three { grid-template-columns:repeat(3,1fr); }
-  figure { margin:0; }
-  a.shot { display:block; border:1px solid var(--hair); border-radius:6px; overflow:hidden;
-    background:var(--panel); }
-  a.shot img { display:block; width:100%; height:auto; }
-  a.shot:hover { border-color:#3a4553; }
-  figcaption { margin-top:12px; }
-  .id { font:400 10px/1 "DejaVu Sans Mono",monospace; letter-spacing:.18em; color:var(--dim); }
-  .ttl { margin-top:7px; font-size:17px; font-weight:500; }
-  .why { margin-top:5px; font-size:13.5px; color:var(--dim); }
-  .src { margin-top:9px; font:400 10.5px/1.5 "DejaVu Sans Mono",monospace; color:#5f6773; }
-  .rules { display:grid; grid-template-columns:repeat(3,1fr); gap:32px; margin-top:24px;
-    border-top:1px solid var(--hair); padding-top:26px; }
-  .rules h3 { margin:0 0 10px; font-size:11px; font-weight:500; letter-spacing:.16em;
-    text-transform:uppercase; color:var(--dim); }
-  .rules ul { margin:0; padding-left:16px; color:var(--dim); font-size:13.5px; }
-  .rules li { margin-bottom:6px; }
-  .sw { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:14px; }
-  .sw span { font:400 10px/1 "DejaVu Sans Mono",monospace; padding:6px 8px; border-radius:3px;
-    border:1px solid var(--hair); color:var(--chalk); }
-  footer { margin-top:56px; padding-top:22px; border-top:1px solid var(--hair);
-    font:400 11px/1.6 "DejaVu Sans Mono",monospace; color:#5f6773; }
-  code { font-family:"DejaVu Sans Mono",monospace; font-size:.92em; color:var(--chalk); }
-  @media (max-width:1100px) { .grid.three, .rules { grid-template-columns:1fr; } }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);
+    font:400 16px/1.55 'IBM Plex Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:1520px;margin:0 auto;padding:72px 56px 96px;}
+  header{border-bottom:1px solid var(--rule);padding-bottom:28px;}
+  .kicker{font:400 13px/1 'IBM Plex Mono',ui-monospace,monospace;color:var(--ink-3);}
+  h1{margin:18px 0 0;font-size:44px;line-height:1.1;font-weight:400;letter-spacing:-.022em;}
+  h1 em{font-style:normal;color:var(--oxide);}
+  p.lede{margin:16px 0 0;max-width:66ch;color:var(--ink-2);}
+  p.lede b{color:var(--ink);font-weight:500;}
+  ol{margin:52px 0 0;padding:0;list-style:none;}
+  li{margin-bottom:52px;}
+  figure{margin:0;}
+  a.shot{display:block;border:1px solid var(--rule);background:var(--sheet);}
+  a.shot img{display:block;width:100%;height:auto;}
+  a.shot:hover{border-color:var(--ink-3);}
+  figcaption{display:grid;grid-template-columns:64px 1fr 460px;gap:0 28px;padding-top:14px;align-items:start;}
+  .id{font:400 13px/1.7 'IBM Plex Mono',ui-monospace,monospace;color:var(--ink-3);}
+  .ttl{font-size:19px;font-weight:500;}
+  .why{margin-top:4px;font-size:15px;color:var(--ink-2);}
+  .src{font:400 12.5px/1.65 'IBM Plex Mono',ui-monospace,monospace;color:var(--ink-3);}
+  .rules{display:grid;grid-template-columns:repeat(3,1fr);gap:36px;margin-top:8px;
+    border-top:1px solid var(--rule);padding-top:26px;}
+  .rules h3{margin:0 0 10px;font:500 12px/1 'IBM Plex Mono',ui-monospace,monospace;
+    letter-spacing:.06em;color:var(--ink-2);}
+  .rules ul{margin:0;padding-left:18px;color:var(--ink-2);font-size:14px;}
+  .rules li{margin-bottom:7px;}
+  .rules code{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:13px;}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
-    <div class="kicker">pitch/shots · five stills · 1600×1000</div>
-    <h1>Three surfaces. <b>One exit code.</b></h1>
-    <p class="lede">Design mockups of the CLI, the editor extension and the browser
-      workbench. Every string is drawn from source in this repository — <b>none of
-      these are screen captures</b>. Full rules and provenance: <code>shots/README.md</code>.</p>
+    <div class="kicker">pitch/shots · five stills · 1600 × 1000</div>
+    <h1>One bug, one run, three surfaces.</h1>
+    <p class="lede">A two-file app returns <b>Infinity</b> when a customer types <b>0</b>.
+      The test that names the bug is already in the repo. These five frames follow that one
+      run from the ask to the receipt. Every string is in the code; the frames are
+      <b>design mockups</b>, not screen captures.</p>
   </header>
 
-  <section class="grid three">
-    <figure>
-      <a class="shot" href="shots/01-cli.png"><img src="shots/01-cli.png" alt="Terminal: three review iterations, two rejections, VERIFIED, exit 0."></a>
-      <figcaption>
-        <div class="id">01 · TERMINAL</div>
-        <div class="ttl">Two rejections before the pass</div>
-        <div class="why">The loop is visible, not summarised. Failures stay on screen.</div>
-        <div class="src">demo/runs/example-3-iterations · packages/client-harness/src/ui.ts</div>
-      </figcaption>
-    </figure>
-    <figure>
-      <a class="shot" href="shots/02-editor.png"><img src="shots/02-editor.png" alt="VS Code: ghost text patch, GNAP diff, agent panel, seven commands."></a>
-      <figcaption>
-        <div class="id">02 · EDITOR</div>
-        <div class="ttl">Ghost text, then a diff you own</div>
-        <div class="why">Machine proposes; the merge button is human and stays human.</div>
-        <div class="src">apps/ide/web/src/components/{Editor,AgentPanel}.tsx · extension/package.json</div>
-      </figcaption>
-    </figure>
-    <figure>
-      <a class="shot" href="shots/03-browser.png"><img src="shots/03-browser.png" alt="Workbench: execution plan, tool calls, terminal, signed verdict."></a>
-      <figcaption>
-        <div class="id">03 · BROWSER</div>
-        <div class="ttl">Nothing to install</div>
-        <div class="why">Same run, same receipt, in a tab.</div>
-        <div class="src">apps/ide/web/src/workbench/Workbench.tsx · ExecutionResult.tsx</div>
-      </figcaption>
-    </figure>
-  </section>
-
-  <section class="grid">
-    <figure>
-      <a class="shot" href="shots/04-surfaces.png"><img src="shots/04-surfaces.png" alt="Three surfaces feeding one signed run receipt."></a>
-      <figcaption>
-        <div class="id">04 · SURFACES</div>
-        <div class="ttl">Ask anywhere. Prove it once.</div>
-        <div class="why">Deck hero: the receipt is the product, the surfaces are the doors.</div>
-        <div class="src">cycle 6ae0724a4b6d · 3 iterations · 3 passed / 0 failed · 1192 ms</div>
-      </figcaption>
-    </figure>
-  </section>
-
-  <section class="grid">
-    <figure>
-      <a class="shot" href="shots/05-loop.png"><img src="shots/05-loop.png" alt="Agent loop diagram: architect, developer, critic, QA, exit 0."></a>
-      <figcaption>
-        <div class="id">05 · THE LOOP</div>
-        <div class="ttl">Four agents. One exit code.</div>
-        <div class="why">The critic can reject; it cannot merge. QA runs the repo's own suite.</div>
-        <div class="src">services/agent-orchestrator (30 tests) · sandbox: --network none · read-only mount</div>
-      </figcaption>
-    </figure>
-  </section>
+  <ol>
+    <li>
+      <figure>
+        <a class="shot" href="shots/01-ask.png"><img src="shots/01-ask.png" alt="Paper-style frame: the failing test file, the one-line command, and three facts about the app."></a>
+        <figcaption>
+          <div class="id">01</div>
+          <div><div class="ttl">The ask</div>
+            <div class="why">The bug report is already an assertion. Nothing has to be written first.</div></div>
+          <div class="src">demo/workspace/test/math.test.js<br>packages/client-harness/src/cli.ts</div>
+        </figcaption>
+      </figure>
+    </li>
+    <li>
+      <figure>
+        <a class="shot" href="shots/02-terminal.png"><img src="shots/02-terminal.png" alt="Terminal frame: architect, three developer patches, two critic rejections, QA passed, VERIFIED stamp."></a>
+        <figcaption>
+          <div class="id">02</div>
+          <div><div class="ttl">The run</div>
+            <div class="why">Three patches, two rejections, then the app's own suite says 3 passed.</div></div>
+          <div class="src">demo/runs/example-3-iterations/cycle.json<br>demo/runs/example-3-iterations/summary.txt</div>
+        </figcaption>
+      </figure>
+    </li>
+    <li>
+      <figure>
+        <a class="shot" href="shots/03-editor.png"><img src="shots/03-editor.png" alt="Editor frame: Original Version beside Agent Proposed Changes, Tab hint, Approve button."></a>
+        <figcaption>
+          <div class="id">03</div>
+          <div><div class="ttl">The editor</div>
+            <div class="why">Both versions on screen. The agent proposes; a person approves.</div></div>
+          <div class="src">apps/ide/web/src/components/Editor.tsx<br>apps/ide/extension/package.json</div>
+        </figcaption>
+      </figure>
+    </li>
+    <li>
+      <figure>
+        <a class="shot" href="shots/04-browser.png"><img src="shots/04-browser.png" alt="Workbench frame: execution plan in English, sandbox terminal with four green checks, QA verified verdict."></a>
+        <figcaption>
+          <div class="id">04</div>
+          <div><div class="ttl">The browser</div>
+            <div class="why">Same loop, nothing to install. The plan is a sentence, not a graph.</div></div>
+          <div class="src">apps/ide/web/src/workbench/Workbench.tsx<br>apps/ide/web/src/components/AgentPanel.tsx</div>
+        </figcaption>
+      </figure>
+    </li>
+    <li>
+      <figure>
+        <a class="shot" href="shots/05-receipt.png"><img src="shots/05-receipt.png" alt="Receipt frame: cycle id, task, model route, iterations, tests, duration, sandbox, VERIFIED stamp."></a>
+        <figcaption>
+          <div class="id">05</div>
+          <div><div class="ttl">The receipt</div>
+            <div class="why">What survives the session: the suite, the pass count, the exit code, the hash.</div></div>
+          <div class="src">demo/runs/example-3-iterations/cycle.json<br>packages/client-harness/src/run-artifacts.ts</div>
+        </figcaption>
+      </figure>
+    </li>
+  </ol>
 
   <div class="rules">
     <div>
       <h3>Palette</h3>
-      <div class="sw">
-        <span style="background:#07080b">#07080b</span>
-        <span style="background:#0d1015">#0d1015</span>
-        <span style="background:#232a33">#232a33</span>
-        <span style="background:#e9ecf1;color:#07080b">#e9ecf1</span>
-        <span style="background:#8b93a0;color:#07080b">#8b93a0</span>
-      </div>
       <ul>
-        <li>Six values. Hairlines, never shadows.</li>
-        <li>No gradients, no glow, no purple.</li>
+        <li>Paper <code>#ECECE5</code>, sheet <code>#F8F8F3</code></li>
+        <li>Ink <code>#141619</code>, rules <code>#CBCDC3</code></li>
+        <li>One accent: oxide <code>#9E3527</code></li>
       </ul>
     </div>
     <div>
-      <h3>Colour means something</h3>
-      <div class="sw">
-        <span style="background:#8fb0ff;color:#07080b">#8fb0ff human</span>
-        <span style="background:#4cd18e;color:#07080b">#4cd18e proof</span>
-        <span style="background:#e0a958;color:#07080b">#e0a958 withheld</span>
-      </div>
+      <h3>What oxide means</h3>
       <ul>
-        <li>Blue: what a person decided.</li>
-        <li>Green: what a machine proved.</li>
+        <li>Something is still wrong: the bug, <code>request changes</code>, the stamp</li>
+        <li>Approval is ink, never green</li>
+        <li>No gradients, no glows, no shadows</li>
       </ul>
     </div>
     <div>
-      <h3>Type</h3>
+      <h3>Honesty</h3>
       <ul>
-        <li>Inter for prose, titles, numerals.</li>
-        <li>DejaVu Sans Mono for machine output only.</li>
-        <li>11px captions, 0.16em tracking.</li>
+        <li>Every string exists in source; no invented buttons</li>
+        <li>Mockups, not screenshots — say so out loud</li>
+        <li>Numbers match <code>demo/runs/</code> exactly</li>
       </ul>
     </div>
   </div>
-
-  <footer>
-    rebuild: <code>./shots/build-shots.sh</code> · gallery: <code>pitch/shots.html</code> · harness: <code>shots/shots.html?n=1..5</code><br>
-    mockups, not captures · every claim traceable to source · motto: People Over Tools. Work Verified. Time to Unplug.
-  </footer>
 </div>
 </body>
 </html>
