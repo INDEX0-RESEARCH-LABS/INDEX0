@@ -3,6 +3,14 @@ import { Explorer, type IWorkspaceFileNode } from '../components/Explorer.js';
 import { Editor, type IEditorTab } from '../components/Editor.js';
 import { AgentPanel, type IToolInvocation } from '../components/AgentPanel.js';
 import { TerminalViewer, type ITerminalLine } from '../terminal/TerminalViewer.js';
+import {
+  DEMO_FILES,
+  DEMO_TABS,
+  DEMO_TERMINAL_LINES,
+  DEMO_PLAN_STEPS,
+  DEMO_AGENT_MESSAGES,
+  DEMO_TOOL_CALLS
+} from './demoFixtures.js';
 import { UserNav } from '../components/UserNav.js';
 
 import { MCPToolsPanel } from '../components/MCPToolsPanel.js';
@@ -20,38 +28,23 @@ export interface IWorkbenchProps {
   workspaceId?: string;
   projectName?: string;
   className?: string;
+  // When true, the workbench renders the demo fixtures and simulates an agent.
+  // Production workbenches must leave this false (default): they start empty and
+  // never fabricate agent responses. See demoFixtures.ts.
+  demo?: boolean;
 }
 
-const DEFAULT_FILES: IWorkspaceFileNode[] = [
-  {
-    id: 'root-src',
-    name: 'src',
-    path: '/src',
-    type: 'directory',
-    children: [
-      { id: 'file-index', name: 'index.ts', path: '/src/index.ts', type: 'file' },
-      { id: 'file-math', name: 'math.ts', path: '/src/math.ts', type: 'file' }
-    ]
-  },
-  { id: 'file-pkg', name: 'package.json', path: '/package.json', type: 'file' },
-  { id: 'file-readme', name: 'README.md', path: '/README.md', type: 'file' }
-];
-
-const DEFAULT_TABS: IEditorTab[] = [
-  {
-    path: '/src/index.ts',
-    name: 'index.ts',
-    content: `import { add, multiply } from "./math.js";\n\nconsole.log("INDEX0 AI Workspace Online");\nconsole.log("add(2, 3) =", add(2, 3));\n`
-  }
-];
-
 export const Workbench: React.FC<IWorkbenchProps> = ({
-  initialFiles = DEFAULT_FILES,
-  initialTabs = DEFAULT_TABS,
+  initialFiles,
+  initialTabs,
   workspaceId = 'ws-main-dev',
   projectName = 'index0-core',
-  className = ''
+  className = '',
+  demo = false
 }) => {
+  // Production defaults are EMPTY. Demo fixtures are opt-in via `demo`.
+  const resolvedFiles = initialFiles ?? (demo ? DEMO_FILES : []);
+  const resolvedTabs = initialTabs ?? (demo ? DEMO_TABS : []);
 
   const [showMcpPanel, setShowMcpPanel] = useState(false);
   const [showTelemetryPanel, setShowTelemetryPanel] = useState(false);
@@ -70,49 +63,20 @@ export const Workbench: React.FC<IWorkbenchProps> = ({
     }
     return 'dark';
   });
-  const [files] = useState<IWorkspaceFileNode[]>(initialFiles);
-  const [tabs, setTabs] = useState<IEditorTab[]>(initialTabs);
-  const [activeTabPath, setActiveTabPath] = useState<string>(initialTabs[0]?.path || '');
+  const [files] = useState<IWorkspaceFileNode[]>(resolvedFiles);
+  const [tabs, setTabs] = useState<IEditorTab[]>(resolvedTabs);
+  const [activeTabPath, setActiveTabPath] = useState<string>(resolvedTabs[0]?.path || '');
   const [showDiff, setShowDiff] = useState(false);
 
-  // Terminal state
-  const [terminalLines, setTerminalLines] = useState<ITerminalLine[]>([
-    {
-      id: 'term-init',
-      timestamp: new Date().toLocaleTimeString(),
-      command: 'index0 runtime status',
-      output: 'Sovereign E2B MicroVM active on index0-net (Port 4001 via Gateway 8000)'
-    }
-  ]);
+  // Terminal state. Production starts empty; demo seeds a status line.
+  const [terminalLines, setTerminalLines] = useState<ITerminalLine[]>(demo ? DEMO_TERMINAL_LINES : []);
 
-  // Agent state
-  const [planSteps, setPlanSteps] = useState<IAgentPlanStep[]>([
-    { id: 'step-1', title: 'Inspect workspace and math specifications', status: 'completed' },
-    { id: 'step-2', title: 'Verify math utilities implementation in src/math.ts', status: 'in_progress' },
-    { id: 'step-3', title: 'Run sandbox verification test suite', status: 'pending' }
-  ]);
+  // Agent state. Production starts empty; no simulated plan/messages/tool calls.
+  const [planSteps, setPlanSteps] = useState<IAgentPlanStep[]>(demo ? DEMO_PLAN_STEPS : []);
+  const [agentMessages, setAgentMessages] = useState<IAgentMessagePayload[]>(demo ? DEMO_AGENT_MESSAGES : []);
+  const toolCalls: IToolInvocation[] = demo ? DEMO_TOOL_CALLS : [];
 
-  const [agentMessages, setAgentMessages] = useState<IAgentMessagePayload[]>([
-    {
-      role: 'system',
-      content: 'INDEX0 Autonomous Agent runtime initialized. Awaiting developer tasks.'
-    },
-    {
-      role: 'assistant',
-      content: 'I have analyzed the workspace structure. Let me know when to verify src/math.ts.'
-    }
-  ]);
-
-  const [toolCalls] = useState<IToolInvocation[]>([
-    {
-      callId: 'call-001',
-      tool: 'read_workspace_file',
-      parameters: { path: '/src/math.ts' },
-      result: { lines: 25, status: 'valid' }
-    }
-  ]);
-
-  const [agentStatus, setAgentStatus] = useState<AgentRunStatus>('running');
+  const [agentStatus, setAgentStatus] = useState<AgentRunStatus>(demo ? 'running' : 'pending');
 
   // File open handling
   const handleSelectFile = (path: string) => {
@@ -143,6 +107,22 @@ export const Workbench: React.FC<IWorkbenchProps> = ({
 
   const handleSendMessage = (text: string) => {
     setAgentMessages((prev) => [...prev, { role: 'user', content: text }]);
+    if (!demo) {
+      // Production: never fabricate an agent reply. Surface the missing runtime
+      // loudly instead of simulating one. (Wiring to the real orchestrator is
+      // Phase 4 of the stabilization plan.)
+      setTerminalLines((prev) => [
+        ...prev,
+        {
+          id: `term-${Date.now()}`,
+          timestamp: new Date().toLocaleTimeString(),
+          command: `agent execute --task "${text.slice(0, 20)}..."`,
+          output: `[ERROR] No agent runtime connected for workspace ${workspaceId}. Start the orchestrator or use demo mode.`
+        }
+      ]);
+      setAgentStatus('failed');
+      return;
+    }
     setTimeout(() => {
       setAgentMessages((prev) => [
         ...prev,

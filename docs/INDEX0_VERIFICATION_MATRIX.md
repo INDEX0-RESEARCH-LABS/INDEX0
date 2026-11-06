@@ -48,7 +48,9 @@ unproven. **In progress** = scaffolded. **Not verified** = claim only.
 | CLI cold-start <20ms | Not verified | in-process filter timing only | process startup measurement | n/a |
 | Human intervention rate 0.2/task | Not verified | no logged runs | intervention tracking | n/a |
 | \$0.00 cloud token COGS | Not verified | no cost accounting | cost accounting run | n/a |
-| Web workbench on real engine | Partial/broken | `apps/ide/web/src/workbench/Workbench.tsx` | uses `setTimeout` simulation; not on engine | n/a |
+| Web workbench demo/production boundary | Working (boundary) | `apps/ide/web/src/workbench/Workbench.tsx`, `apps/ide/web/src/workbench/demoFixtures.ts` | `demo` prop gates fixtures + simulation; production starts empty and surfaces `[ERROR]` instead of fabricating replies | 2026-11-06 |
+| Web workbench on real engine | Partial | `apps/ide/web/src/workbench/Workbench.tsx` | orchestrator wiring pending (Phase 4 of stabilization) | n/a |
+| CI web test failure (run 42205947793) | Not reproduced | commit `b148ba8`, `apps/ide/web` | 94/94 pass on node 22 (container) and node 26; failing run had 70 tests vs 94 now; logs require GitHub auth | 2026-11-06 |
 | Demo fixtures vs production | Not done | `DEFAULT_FILES`/`DEFAULT_TABS` baked into defaults | refactor | n/a |
 | Research subsystem | Not present | none | Phase 7 | n/a |
 | Evidence subsystem | Not present | none | Phase 8 | n/a |

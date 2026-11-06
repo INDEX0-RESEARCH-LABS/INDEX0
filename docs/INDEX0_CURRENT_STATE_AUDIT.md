@@ -79,7 +79,7 @@ pitch/, demo/                    investor deck + end-to-end demo
 
 | Location | What it actually is |
 |---|---|
-| `apps/ide/web/src/workbench/Workbench.tsx` | `DEFAULT_FILES` / `DEFAULT_TABS` are hardcoded (`src/`, `math.ts`, `index.ts`); `planSteps`, `agentMessages`, `toolCalls` are seeded literals; `handleSendMessage` does a `setTimeout` and replies with `"Acknowledged: ... Dispatching microVM execution workflow."` — **no call to the orchestrator**. `files` state is `const`. `toolCalls` is `const`. This is a demo surface, not a production workspace. |
+| `apps/ide/web/src/workbench/Workbench.tsx` | Phase 1 (2026-11-06): demo fixtures moved to `apps/ide/web/src/workbench/demoFixtures.ts`; `demo` prop gates them; production defaults are now empty; `handleSendMessage` in production appends `[ERROR] No agent runtime connected...` and sets status `failed` instead of fabricating a reply. Orchestrator wiring still pending (Phase 4). `files`/`toolCalls` no longer `const`-seeded in production. |
 | `apps/ide/web/src/workbench/Workbench.tsx` (diff) | `diffOriginalContent` is a hardcoded string |
 | `apps/ide/web/test/workbench.test.ts` | Only instantiates React elements with props; does not exercise the agent loop |
 | `packages/client-harness/src/benchmark.ts` (Exercism smoke) | Hand-authored implementations, not agent output — now labeled `SMOKE CHECK ONLY` |
