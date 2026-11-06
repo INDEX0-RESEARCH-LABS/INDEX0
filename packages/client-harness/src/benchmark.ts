@@ -496,7 +496,7 @@ export async function runRealMarketCasesBenchmark(): Promise<IEmpiricalBenchmark
   }> = [];
 
   try {
-    // ─── A. Live Exercism / AiderBench Test Execution (Real Pytest) ───────────
+    // ─── A. Exercism Smoke Check: hand-authored implementations + assertions ───
     const exercismExercises = [
       {
         name: 'two-fer',
@@ -525,40 +525,56 @@ export async function runRealMarketCasesBenchmark(): Promise<IEmpiricalBenchmark
       }
     ];
 
+    // Stdlib-only collector. The exercises are pytest-style module functions, which
+    // `unittest discover` never collects (it wants TestCase classes), so a missing or
+    // broken pytest used to score 0/5 in silence. This runs every `test_*` function and
+    // reports the count, and a run that collects nothing is a failure, not a pass.
+    const runnerPath = path.join(tmpDir, '_run_exercise.py');
+    await fs.writeFile(
+      runnerPath,
+      [
+        'import importlib.util, sys',
+        'spec = importlib.util.spec_from_file_location("ex", sys.argv[1])',
+        'mod = importlib.util.module_from_spec(spec)',
+        'spec.loader.exec_module(mod)',
+        'names = sorted(n for n in dir(mod) if n.startswith("test_"))',
+        'failed = 0',
+        'for n in names:',
+        '    try:',
+        '        getattr(mod, n)()',
+        '    except Exception as e:',
+        '        failed += 1',
+        '        print(f"FAIL {n}: {e}")',
+        'print(f"RAN {len(names)} FAILED {failed}")',
+        'sys.exit(0 if names and not failed else 1)',
+        ''
+      ].join('\n'),
+      'utf-8'
+    );
+
     for (const ex of exercismExercises) {
       const filePath = path.join(tmpDir, ex.filename);
       await fs.writeFile(filePath, ex.code, 'utf-8');
 
       try {
-        const out = execSync(`pytest "${filePath}" -q`, { encoding: 'utf-8', timeout: 5000 });
-        const summary = out.trim().split('\n').pop() ?? 'passed';
+        const out = execSync(`python3 "${runnerPath}" "${filePath}"`, {
+          encoding: 'utf-8',
+          timeout: 5000
+        });
         executedExercism.push({
           name: ex.name,
           language: 'python',
           firstTurnPass: true,
-          testOutput: summary
+          testOutput: out.trim().split('\n').pop() ?? 'ran'
         });
-      } catch {
-        // Fallback to unittest discovery (unittest cannot import an absolute file path)
-        try {
-          execSync(`python3 -m unittest discover -s "${tmpDir}" -p "${ex.filename}"`, {
-            encoding: 'utf-8',
-            timeout: 5000
-          });
-          executedExercism.push({
-            name: ex.name,
-            language: 'python',
-            firstTurnPass: true,
-            testOutput: 'OK (unittest)'
-          });
-        } catch (err: any) {
-          executedExercism.push({
-            name: ex.name,
-            language: 'python',
-            firstTurnPass: false,
-            testOutput: `Failed: ${err.message}`
-          });
-        }
+      } catch (err: any) {
+        const stdout = typeof err.stdout === 'string' ? err.stdout.trim().split('\n').pop() : '';
+        executedExercism.push({
+          name: ex.name,
+          language: 'python',
+          firstTurnPass: false,
+          testOutput: stdout || `Failed: ${err.message.split('\n')[0]}`
+        });
       }
     }
 
@@ -699,7 +715,7 @@ print('OK')
         language: e.language,
         firstTurnPass: e.firstTurnPass
       })),
-      measurementNote: 'SMOKE CHECK ONLY: Writes hand-authored implementations and tests together into generated files, then runs pytest. No model/agent receives AiderBench instruction. No patch produced. Implementation and assertions coexist in same file. Hamming test compares identical strings. Measures hand-written example execution, not agent code-editing accuracy.'
+      measurementNote: 'SMOKE CHECK ONLY: Writes hand-authored implementations and tests together into generated files, then executes the module\'s test_* functions with python3 (stdlib, no test framework). No model/agent receives AiderBench instruction. No patch produced. Implementation and assertions coexist in same file. Hamming test compares identical strings. Measures hand-written example execution, not agent code-editing accuracy.'
     },
     realRepoSurgery: {
       targetRepo: 'xyflow/xyflow (100k+ LOC)',

@@ -3,8 +3,23 @@
 Current proof-of-work status for every claimed capability.
 Filled only from direct inspection of this repository. "Not verified" means the code or test was not found during this audit.
 
-> Last updated: 2026-10-29. Review against latest commit before citing externally.
+> Last updated: 2026-11-06. Review against latest commit before citing externally.
 > 15 of 36 capabilities are verifiable today; 0 of 3 published benchmarks.
+
+## Baseline run, 2026-11-06
+
+Executed on `main` at `deb230f` (node 26.10.0, pnpm 12.4.2, Docker 29.9.2):
+
+| Command | Result |
+|---|---|
+| `pnpm install --frozen-lockfile` | exit 0, Prisma client generated |
+| `pnpm run typecheck` | 9 of 9 typecheck tasks pass |
+| `pnpm run test` | 290 tests, 290 pass, 0 fail across 12 node-test suites, exit 0 |
+| `./demo/run-demo.sh` | `qa_verified`: 3 iterations, critic rejected twice then approved, `3 passed / 0 failed` in 2021 ms, sandbox `live_microvm`, exit 0. Artifacts: `demo/runs/20261106T102423Z` |
+
+`pnpm run test` was red before this run, in one place: `packages/client-harness/test/benchmark.test.ts` asserted that all 5 Exercism smoke exercises execute, and got 0. Cause: the smoke check shelled out to `pytest`, then fell back to `unittest discover`, which cannot collect module-level `test_*` functions — so a missing or broken pytest scored 0/5 silently. Replaced with a stdlib `python3` collector that runs each `test_*` function and exits non-zero when it collects none (`packages/client-harness/src/benchmark.ts`). Now 5/5, and the measurement note says "no test framework".
+
+Branch `feat/sovereign-agi-stack` is fully merged into `main` (0 commits ahead, last commit 2026-09-27).
 
 ---
 
@@ -14,7 +29,7 @@ Filled only from direct inspection of this repository. "Not verified" means the 
 | **Interactive TUI (full-screen terminal)** | Working | `packages/client-harness/src/launcher.ts`, `packages/client-harness/src/ui.ts`; tested in `packages/client-harness/test/launcher.test.ts` |
 | **GitHub Device Flow login** | Working | `packages/client-harness/src/auth.ts`; tested in `packages/client-harness/test/auth.test.ts` |
 | **LLM prompt routing via LiteLLM** | Working | `packages/client-harness/src/engine.ts`; LiteLLM config at `infra/litellm/`; Docker Compose service in `infra/compose/litellm.yml` |
-| **4-tier review loop (Architect, Developer, Critic, QA)** | Working | Live end-to-end runs on 2026-10-29 through LiteLLM (`azure-gpt-4o` at the time; the runner now defaults to a free route): the critic rejected two patches, the developer revised, and the QA tier executed the candidate code in a network-isolated `node:22` container against the repository's own test suite (4 passed / 0 failed, exit 0). Evidence committed in `demo/runs/`. `pytest services/agent-orchestrator/tests` passes 28/28 and runs in CI job `python-services`. Reproduce with `./demo/run-demo.sh`. |
+| **4-tier review loop (Architect, Developer, Critic, QA)** | Working | Live end-to-end run on 2026-11-06 through LiteLLM on the free `groq` route: the critic rejected two patches, the developer revised, and the QA tier executed the candidate in a network-isolated `node:22` container against the repository's own tests (3 passed / 0 failed, 2021 ms, exit 0, `live_microvm`). Evidence: `demo/runs/20261106T102423Z`. Earlier run 2026-10-29 used `azure-gpt-4o`, 4 passed / 0 failed: `demo/runs/`. `pytest services/agent-orchestrator/tests` passes 28/28 and runs in CI job `python-services`. Reproduce with `./demo/run-demo.sh`. |
 | **Git-native agent coordination (GNAP)** | Working | `packages/client-harness/src/gnap.ts`; writes to `.gnap/` directory; tested in `packages/client-harness/test/gnap.test.ts` |
 | **Git worktree isolation** | Working | `packages/client-harness/src/worktree.ts`; tested in `packages/client-harness/test/worktree.test.ts` |
 | **Context compression (viking://) - string transform** | Working | `packages/mcp-host/src/`; transform ratio measured and labeled as local string estimate in benchmark output; tested in `packages/client-harness/test/benchmark.test.ts` |
