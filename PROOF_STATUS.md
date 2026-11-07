@@ -3,8 +3,33 @@
 Current proof-of-work status for every claimed capability.
 Filled only from direct inspection of this repository. "Not verified" means the code or test was not found during this audit.
 
-> Last updated: 2026-11-06. Review against latest commit before citing externally.
+> Last updated: 2026-11-07. Review against latest commit before citing externally.
 > 15 of 36 capabilities are verifiable today; 0 of 3 published benchmarks.
+
+## Re-verification, 2026-11-07
+
+Executed on `main` at `73a4a0e` (node 26.10.0, pnpm 12.4.2):
+
+| Command | Result |
+|---|---|
+| `pnpm run typecheck` | 9 of 9 tasks pass |
+| `pnpm run test` | 290 tests, 290 pass, 0 fail across 12 node-test suites, exit 0 |
+| `pnpm run build` | 8 of 8 tasks, exit 0 |
+| `.venv-demo/bin/python -m pytest services/agent-orchestrator/tests` | 30 passed |
+| `.venv-demo/bin/python -m pytest services/voice-agent/tests` | 3 passed |
+| `node packages/client-harness/dist/cli.js --help` | command surface printed |
+| `demo/runs/20261106T102423Z` | `qa_verified`, 3 iterations, 3 passed / 0 failed in 2021 ms, exit 0 |
+
+Nothing regressed against 2026-11-06. Two integrity defects were found in the same
+pass and are recorded below; they do not change any row in the table, but they
+weaken two rows that are currently marked Working.
+
+## Known integrity defects (open, 2026-11-07)
+
+1. **Default sandbox is `mock`, and the mock passes anything.** `infra/compose/sandbox-manager.yml` defaults `SANDBOX_PROVIDER` to `mock`; `resolveProvider()` in `services/sandbox-manager/src/config.ts` also falls back to `mock`; `MockSandboxSession.execute()` returns `exitCode: 0` with fabricated stdout for unrecognised input. Any deployment without `E2B_API_KEY` and without an explicit `SANDBOX_PROVIDER=docker` has a QA gate that approves everything. The recorded demo is unaffected because `demo/run-demo.sh` sets `SANDBOX_PROVIDER=docker` explicitly.
+2. **`sandboxMode` is hardcoded.** `services/agent-orchestrator/src/graph/nodes/qa.py:211` writes `"sandboxMode": "live_microvm"` for any successful sandbox call, regardless of the provider that ran. The provider name exists only in sandbox-manager telemetry, not in the execute response, so the label cannot be verified downstream.
+
+Reproduce both by reading the four files named above; no runtime setup required.
 
 ## Baseline run, 2026-11-06
 

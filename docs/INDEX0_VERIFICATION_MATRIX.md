@@ -51,7 +51,7 @@ unproven. **In progress** = scaffolded. **Not verified** = claim only.
 | Web workbench demo/production boundary | Working (boundary) | `apps/ide/web/src/workbench/Workbench.tsx`, `apps/ide/web/src/workbench/demoFixtures.ts` | `demo` prop gates fixtures + simulation; production starts empty and surfaces `[ERROR]` instead of fabricating replies | 2026-11-06 |
 | Web workbench on real engine | Partial | `apps/ide/web/src/workbench/Workbench.tsx` | orchestrator wiring pending (Phase 4 of stabilization) | n/a |
 | CI web test failure (run 42205947793) | Not reproduced | commit `b148ba8`, `apps/ide/web` | 94/94 pass on node 22 (container) and node 26; failing run had 70 tests vs 94 now; logs require GitHub auth | 2026-11-06 |
-| Demo fixtures vs production | Not done | `DEFAULT_FILES`/`DEFAULT_TABS` baked into defaults | refactor | n/a |
+| Demo fixtures vs production | Working (boundary) | `apps/ide/web/src/workbench/demoFixtures.ts` gated behind the `demo` prop; production starts empty and surfaces `[ERROR]` | inspect `Workbench.tsx`, run `apps/ide/web` tests | 2026-11-06 |
 | Research subsystem | Not present | none | Phase 7 | n/a |
 | Evidence subsystem | Not present | none | Phase 8 | n/a |
 | Project intelligence | Not present | none | Phase 9 | n/a |
@@ -65,3 +65,18 @@ unproven. **In progress** = scaffolded. **Not verified** = claim only.
 
 Each link must be an ID in `packages/contracts` and a row in `traceability_link`
 (see `INDEX0_TARGET_ARCHITECTURE.md` §4). Not yet implemented.
+
+## Known integrity defects (open, 2026-11-07)
+
+- **Mock is the default sandbox.** `infra/compose/sandbox-manager.yml` and
+  `resolveProvider()` in `services/sandbox-manager/src/config.ts` both fall back
+  to `mock`; `MockSandboxSession.execute()` returns exit 0 with fabricated stdout
+  for unrecognised input. Any path without `E2B_API_KEY` or an explicit
+  `SANDBOX_PROVIDER=docker` has a gate that cannot fail. `demo/run-demo.sh` sets
+  Docker explicitly, so the recorded demo is unaffected.
+- **`sandboxMode` is hardcoded.** `services/agent-orchestrator/src/graph/nodes/qa.py:211`
+  writes `live_microvm` for any successful sandbox call; the real provider name is
+  only in sandbox-manager telemetry, not in the execute response. The label is
+  therefore an assertion, not a measurement.
+
+Recorded here rather than fixed; see `docs/INDEX0_START_TO_RESULTS.md` §5.
