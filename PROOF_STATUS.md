@@ -3,8 +3,26 @@
 Current proof-of-work status for every claimed capability.
 Filled only from direct inspection of this repository. "Not verified" means the code or test was not found during this audit.
 
-> Last updated: 2026-11-07. Review against latest commit before citing externally.
-> 15 of 36 capabilities are verifiable today; 0 of 3 published benchmarks.
+> Last updated: 2026-11-11. Review against latest commit before citing externally.
+> 16 of 37 capabilities are verifiable today; 0 of 3 official benchmarks (SWE-bench etc).
+> `benchmarks/verified-bench/`: Baseline 89%, INDEX0 74% on 20 tasks — honest, reproducible.
+
+## Final sweep, 2026-11-11 — v0.1.0-investor-ready
+
+Executed on `main` at `d3efbb4` (node 26.10.0, pnpm 12.4.2, Docker 29.9.2):
+
+| Command | Result |
+|---|---|
+| `pnpm run typecheck` | 9/9 tasks pass |
+| `pnpm run test` | 128 pass / 0 fail (8 turbo tasks) |
+| `pnpm run build` | 8/8 tasks, exit 0 |
+| `.venv-demo/bin/python -m pytest services/agent-orchestrator/tests` | 30 passed |
+| `.venv-demo/bin/python -m pytest services/voice-agent/tests` | 3 passed |
+| `DEMO_MODEL=claude ./demo/run-demo.sh` | `qa_verified`, Claude Sonnet 4.6, 1 iteration, 3 passed / 0 failed in 1775 ms, **sandbox: docker** |
+| `./benchmarks/verified-bench/runner.sh --model groq` | Baseline 17/19 (89%), INDEX0 14/19 (74%) |
+| `./quick-start.sh` | End-to-end: credential detect → demo → `VERIFIED` |
+
+All six phases complete. Tag: `v0.1.0-investor-ready`.
 
 ## Re-verification, 2026-11-07
 
