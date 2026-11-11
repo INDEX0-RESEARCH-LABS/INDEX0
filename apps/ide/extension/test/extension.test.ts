@@ -16,16 +16,24 @@ describe('VS Code Extension Scaffolding (@index0/ide-extension)', () => {
     assert.equal(config.modelPreference, 'claude-3-5-sonnet-20241022');
   });
 
-  it('should update extension configuration', () => {
+  it('should expose orchestratorUrl defaulting to localhost:8000', () => {
+    const manager = new Index0ExtensionManager();
+    const config = manager.getConfig();
+    assert.equal(config.orchestratorUrl, 'http://localhost:8000');
+  });
+
+  it('should update extension configuration including orchestratorUrl', () => {
     const manager = new Index0ExtensionManager();
     manager.updateConfig({
       gatewayUrl: 'https://gateway.index0.ai',
-      modelPreference: 'gpt-4o'
+      orchestratorUrl: 'https://orch.index0.ai',
+      modelPreference: 'claude'
     });
 
     const config = manager.getConfig();
     assert.equal(config.gatewayUrl, 'https://gateway.index0.ai');
-    assert.equal(config.modelPreference, 'gpt-4o');
+    assert.equal(config.orchestratorUrl, 'https://orch.index0.ai');
+    assert.equal(config.modelPreference, 'claude');
   });
 
   it('should construct correct workbench and telemetry routing URLs', () => {
@@ -39,6 +47,14 @@ describe('VS Code Extension Scaffolding (@index0/ide-extension)', () => {
 
     const telemetryUrlRoot = manager.getTelemetryUrl();
     assert.equal(telemetryUrlRoot, 'http://localhost:8080/telemetry');
+  });
+
+  it('runCycle returns offline failure when orchestrator is unreachable', async () => {
+    const manager = new Index0ExtensionManager({ orchestratorUrl: 'http://localhost:19999' });
+    const result = await manager.runCycle('fix the divide-by-zero bug');
+    assert.equal(result.cycleId, 'offline');
+    assert.equal(result.passed, false);
+    assert.ok(result.testOutput.includes('[Offline]'));
   });
 
   it('should activate extension and register disposable subscriptions', () => {

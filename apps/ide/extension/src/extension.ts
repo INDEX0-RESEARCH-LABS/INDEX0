@@ -37,6 +37,8 @@ export interface IExtensionConfig {
   modelPreference: string;
   tabbyEndpoint: string;
   litellmEndpoint: string;
+  /** Direct orchestrator URL for the review-loop cycle endpoint. */
+  orchestratorUrl: string;
   /** Gateway master key; empty means send no Authorization header. */
   apiKey?: string;
 }
@@ -54,6 +56,7 @@ const DEFAULT_CONFIG: IExtensionConfig = {
   modelPreference: 'claude-3-5-sonnet-20241022',
   tabbyEndpoint: 'http://localhost:8080',
   litellmEndpoint: 'http://localhost:4000/v1',
+  orchestratorUrl: process.env.INDEX0_ORCHESTRATOR_URL ?? 'http://localhost:8000',
   apiKey: process.env.INDEX0_API_KEY ?? '',
 };
 
@@ -96,6 +99,61 @@ export class Index0ExtensionManager {
     });
 
     return (await response.json()) as IApiResponse<IAgentRun>;
+  }
+
+  // ── Review Loop Cycle (direct orchestrator) ────────────────────
+
+  /**
+   * Run the full 4-tier review loop via the agent-orchestrator.
+   * Returns the cycle result or an offline-failure object.
+   * Same contract as callOrchestratorCycle() in packages/client-harness/src/engine.ts.
+   */
+  async runCycle(
+    task: string,
+    contextFiles: string[] = [],
+    maxIterations = 3,
+  ): Promise<{
+    cycleId: string;
+    status: string;
+    iteration: number;
+    passed: boolean;
+    testOutput: string;
+    diff: string;
+  }> {
+    try {
+      const res = await fetch(`${this.config.orchestratorUrl}/cycles/start`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Client': 'index0-vscode',
+        },
+        body: JSON.stringify({
+          taskId: `vscode-${Date.now().toString(36)}`,
+          userPrompt: task,
+          repositoryRoot: '.',
+          contextFiles,
+          maxIterations,
+        }),
+        signal: AbortSignal.timeout(180_000),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const c = await res.json() as {
+        cycleId: string; status: string; iteration: number;
+        qaResults?: { passed: boolean; testOutput?: string };
+        implementationDiff?: string;
+      };
+      return {
+        cycleId: c.cycleId,
+        status: c.status,
+        iteration: c.iteration,
+        passed: c.qaResults?.passed ?? false,
+        testOutput: c.qaResults?.testOutput ?? '',
+        diff: c.implementationDiff ?? '',
+      };
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+      return { cycleId: 'offline', status: 'failed', iteration: 0, passed: false, testOutput: `[Offline] ${msg}`, diff: '' };
+    }
   }
 
   // ── GhostText / Inline Completions ─────────────────────────────
@@ -208,8 +266,17 @@ export function formatStatusBarText(state: IStatusBarState): string {
 export function activate(context: IExtensionContext): Index0ExtensionManager {
   const commands: IExtensionCommandDisposable[] = [
     {
+      // index0.startAgentRun — runs the 4-tier review loop via the orchestrator
       dispose: () => {
-        // index0.startAgentRun
+        // In a real VS Code extension this would call:
+        //   vscode.commands.registerCommand('index0.startAgentRun', async () => {
+        //     const task = await vscode.window.showInputBox({ prompt: 'Enter task' });
+        //     if (!task) return;
+        //     const result = await extensionManager.runCycle(task);
+        //     vscode.window.showInformationMessage(
+        //       result.passed ? `✅ ${result.cycleId}: tests passed` : `⚠️ ${result.cycleId}: ${result.status}`
+        //     );
+        //   })
       },
     },
     {

@@ -18,6 +18,10 @@ import { TelemetryUsagePanel } from '../components/TelemetryUsagePanel.js';
 import { SubscriptionPlanModal } from '../components/SubscriptionPlanModal.js';
 import { VoiceAgentModal } from '../components/VoiceAgentModal.js';
 import { PhoneVerificationModal } from '../components/PhoneVerificationModal.js';
+
+// Orchestrator URL — set VITE_ORCHESTRATOR_URL to override in dev or production.
+const ORCHESTRATOR_URL = (typeof import.meta !== 'undefined' && (import.meta as any).env?.VITE_ORCHESTRATOR_URL)
+  || 'http://localhost:8000';
 import type { IAgentPlanStep, IAgentMessagePayload, AgentRunStatus } from '@index0/contracts';
 import { GitBranch, Layers, ShieldCheck, Play, Wrench, Activity, CreditCard, Mic, Smartphone } from 'lucide-react';
 
@@ -108,19 +112,89 @@ export const Workbench: React.FC<IWorkbenchProps> = ({
   const handleSendMessage = (text: string) => {
     setAgentMessages((prev) => [...prev, { role: 'user', content: text }]);
     if (!demo) {
-      // Production: never fabricate an agent reply. Surface the missing runtime
-      // loudly instead of simulating one. (Wiring to the real orchestrator is
-      // Phase 4 of the stabilization plan.)
+      // Production: call the real orchestrator. Fail visibly if unreachable.
+      setAgentStatus('running');
       setTerminalLines((prev) => [
         ...prev,
         {
           id: `term-${Date.now()}`,
           timestamp: new Date().toLocaleTimeString(),
-          command: `agent execute --task "${text.slice(0, 20)}..."`,
-          output: `[ERROR] No agent runtime connected for workspace ${workspaceId}. Start the orchestrator or use demo mode.`
+          command: `agent run --task "${text.slice(0, 40)}..."`,
+          output: `[INDEX0] Dispatching to orchestrator at ${ORCHESTRATOR_URL} …`
         }
       ]);
-      setAgentStatus('failed');
+
+      fetch(`${ORCHESTRATOR_URL}/cycles/start`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          taskId: `web-${Date.now().toString(36)}`,
+          userPrompt: text,
+          repositoryRoot: workspaceId,
+          contextFiles: [],
+          maxIterations: 3
+        }),
+        signal: AbortSignal.timeout(180_000)
+      })
+        .then((res) => {
+          if (!res.ok) throw new Error(`Orchestrator HTTP ${res.status}`);
+          return res.json() as Promise<{
+            cycleId: string;
+            status: string;
+            iteration: number;
+            criticVerdict?: { decision: string; comments: string };
+            qaResults?: { passed: boolean; testOutput?: string };
+            history: Array<{ role: string; action?: string; decision?: string }>;
+            implementationDiff?: string;
+          }>;
+        })
+        .then((cycle) => {
+          const passed = cycle.qaResults?.passed ?? false;
+          const verdict = cycle.criticVerdict?.decision ?? cycle.status;
+          const output = [
+            `[INDEX0] Cycle ${cycle.cycleId} complete — ${cycle.status} (${cycle.iteration} iteration${cycle.iteration === 1 ? '' : 's'})`,
+            `[INDEX0] Critic: ${verdict}`,
+            cycle.qaResults?.testOutput
+              ? `[QA] ${cycle.qaResults.testOutput.split('\n').slice(0, 3).join(' | ')}`
+              : '[QA] No test output',
+          ].join('\n');
+
+          setTerminalLines((prev) => [
+            ...prev,
+            {
+              id: `term-${Date.now()}`,
+              timestamp: new Date().toLocaleTimeString(),
+              command: 'cycle complete',
+              output
+            }
+          ]);
+          setAgentMessages((prev) => [
+            ...prev,
+            {
+              role: 'assistant' as const,
+              content: passed
+                ? `✅ Cycle complete — tests passed (${cycle.iteration} iteration${cycle.iteration === 1 ? '' : 's'}).\n\n${cycle.implementationDiff ? `Diff applied:\n\`\`\`\n${cycle.implementationDiff.slice(0, 400)}\n\`\`\`` : ''}`
+                : `⚠️ Cycle finished but QA did not pass. Status: ${cycle.status}.\n${cycle.qaResults?.testOutput ?? ''}`
+            }
+          ]);
+          setAgentStatus(passed ? 'completed' : 'failed');
+        })
+        .catch((err: Error) => {
+          const msg = err.name === 'TimeoutError'
+            ? `[ERROR] Orchestrator timed out after 3 minutes.`
+            : `[ERROR] Orchestrator unreachable at ${ORCHESTRATOR_URL}: ${err.message}.\nStart it with: ./demo/run-demo.sh --no-start`;
+          setTerminalLines((prev) => [
+            ...prev,
+            {
+              id: `term-${Date.now()}`,
+              timestamp: new Date().toLocaleTimeString(),
+              command: 'cycle error',
+              output: msg
+            }
+          ]);
+          setAgentMessages((prev) => [...prev, { role: 'assistant' as const, content: msg }]);
+          setAgentStatus('failed');
+        });
       return;
     }
     setTimeout(() => {
