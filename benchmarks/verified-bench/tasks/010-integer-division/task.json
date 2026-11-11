@@ -1,0 +1,1 @@
+{"id":"010-integer-division","description":"percentage(part,total) uses integer division // losing precision. Fix to use float division.","file_to_fix":"src/index.py","test_command":"python -m pytest tests/ -q"}

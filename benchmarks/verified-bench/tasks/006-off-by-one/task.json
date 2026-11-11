@@ -1,0 +1,1 @@
+{"id":"006-off-by-one","description":"range_sum(n) returns sum of 1..n but uses range(n) missing n itself. Fix to include n.","file_to_fix":"src/index.py","test_command":"python -m pytest tests/ -q"}

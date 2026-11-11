@@ -1,0 +1,7 @@
+{
+  "id": "004-negative-sqrt",
+  "description": "safeSqrt(n) returns NaN for negative n. Throw RangeError('negative input') instead.",
+  "file_to_fix": "src/index.js",
+  "test_command": "node --test",
+  "hint": "Add: if (n < 0) throw new RangeError('negative input');"
+}

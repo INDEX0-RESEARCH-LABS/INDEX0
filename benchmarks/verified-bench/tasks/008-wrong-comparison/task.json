@@ -1,0 +1,1 @@
+{"id":"008-wrong-comparison","description":"clamp(val,lo,hi) uses > instead of < for the low bound check. Fix it.","file_to_fix":"src/index.py","test_command":"python -m pytest tests/ -q"}

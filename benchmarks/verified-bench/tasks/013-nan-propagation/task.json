@@ -1,0 +1,1 @@
+{"id":"013-nan-propagation","description":"safeParseInt(s) returns NaN for non-numeric strings. Return 0 instead of NaN.","file_to_fix":"src/index.js","test_command":"node --test"}

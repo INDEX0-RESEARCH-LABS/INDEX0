@@ -1,0 +1,7 @@
+{
+  "id": "002-null-check",
+  "description": "greet(name) crashes with TypeError when name is null. Return 'Hello, Guest!' for null/undefined.",
+  "file_to_fix": "src/index.js",
+  "test_command": "node --test",
+  "hint": "Add: if (!name) return 'Hello, Guest!';"
+}

@@ -1,0 +1,1 @@
+{"id":"017-callback-error","description":"parseJSON(str) swallows JSON.parse errors and returns undefined. Return null on parse failure instead.","file_to_fix":"src/index.js","test_command":"node --test"}

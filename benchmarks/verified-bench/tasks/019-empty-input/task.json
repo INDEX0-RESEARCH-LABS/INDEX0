@@ -1,0 +1,1 @@
+{"id":"019-empty-input","description":"mean(lst) crashes with ZeroDivisionError on empty list. Return None for empty input.","file_to_fix":"src/index.py","test_command":"python -m pytest tests/ -q"}

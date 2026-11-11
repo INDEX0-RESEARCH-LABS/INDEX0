@@ -1,0 +1,1 @@
+{"id":"016-promise-not-awaited","description":"fetchValue() returns a Promise but the caller in getValue() doesn't await it. Fix getValue to be async and await the result.","file_to_fix":"src/index.js","test_command":"node --test"}

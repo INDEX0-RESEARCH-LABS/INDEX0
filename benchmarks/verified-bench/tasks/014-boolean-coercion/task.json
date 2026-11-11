@@ -1,0 +1,1 @@
+{"id":"014-boolean-coercion","description":"isTruthy(val) returns true for empty string because Boolean constructor is called with new. Remove new keyword.","file_to_fix":"src/index.js","test_command":"node --test"}

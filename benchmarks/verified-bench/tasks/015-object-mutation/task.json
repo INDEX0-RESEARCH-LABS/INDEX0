@@ -1,0 +1,1 @@
+{"id":"015-object-mutation","description":"setName(obj,name) mutates the original object. Return a new object instead.","file_to_fix":"src/index.js","test_command":"node --test"}

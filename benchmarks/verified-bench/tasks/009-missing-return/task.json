@@ -1,0 +1,1 @@
+{"id":"009-missing-return","description":"double_list(lst) modifies lst in place but returns None. Fix it to return the modified list.","file_to_fix":"src/index.py","test_command":"python -m pytest tests/ -q"}

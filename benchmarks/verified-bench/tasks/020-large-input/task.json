@@ -1,0 +1,1 @@
+{"id":"020-large-input","description":"find_max(lst) uses recursive approach that hits Python recursion limit for large lists. Rewrite iteratively.","file_to_fix":"src/index.py","test_command":"python -m pytest tests/ -q"}

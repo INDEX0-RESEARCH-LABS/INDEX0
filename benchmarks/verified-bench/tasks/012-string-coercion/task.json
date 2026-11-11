@@ -1,0 +1,1 @@
+{"id":"012-string-coercion","description":"add(a,b) concatenates when inputs are strings. Parse both to Number before adding.","file_to_fix":"src/index.js","test_command":"node --test"}

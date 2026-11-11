@@ -1,0 +1,1 @@
+{"id":"018-race-condition","description":"inc() reads count before prior async op completes causing stale reads. Fix by incrementing count synchronously before any await.","file_to_fix":"src/index.js","test_command":"node --test"}

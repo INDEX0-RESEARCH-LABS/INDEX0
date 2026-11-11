@@ -1,0 +1,7 @@
+{
+  "id": "003-array-bounds",
+  "description": "last(arr) throws when arr is empty. Return undefined for empty arrays.",
+  "file_to_fix": "src/index.js",
+  "test_command": "node --test",
+  "hint": "Add: if (arr.length === 0) return undefined;"
+}

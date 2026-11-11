@@ -1,0 +1,7 @@
+{
+  "id": "001-divide-zero",
+  "description": "divide(a,b) returns Infinity when b=0. Make it throw RangeError('division by zero').",
+  "file_to_fix": "src/index.js",
+  "test_command": "node --test",
+  "hint": "Add: if (denominator === 0) throw new RangeError('division by zero');"
+}

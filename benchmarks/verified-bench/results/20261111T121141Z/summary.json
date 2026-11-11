@@ -1,0 +1,108 @@
+{
+  "run_id": "20261111T121141Z",
+  "date": "2026-11-11T12:26:33.947045+00:00",
+  "model": "groq",
+  "mode": "both",
+  "tasks_total": 19,
+  "baseline_pass": 17,
+  "baseline_fail": 2,
+  "index0_pass": 14,
+  "index0_fail": 5,
+  "tasks": [
+    {
+      "task_id": "001-divide-zero",
+      "baseline_pass": true,
+      "index0_pass": true
+    },
+    {
+      "task_id": "002-null-check",
+      "baseline_pass": true,
+      "index0_pass": true
+    },
+    {
+      "task_id": "003-array-bounds",
+      "baseline_pass": true,
+      "index0_pass": true
+    },
+    {
+      "task_id": "004-negative-sqrt",
+      "baseline_pass": true,
+      "index0_pass": true
+    },
+    {
+      "task_id": "005-empty-string",
+      "baseline_pass": true,
+      "index0_pass": true
+    },
+    {
+      "task_id": "006-off-by-one",
+      "baseline_pass": true,
+      "index0_pass": true
+    },
+    {
+      "task_id": "007-wrong-operator",
+      "baseline_pass": true,
+      "index0_pass": true
+    },
+    {
+      "task_id": "008-wrong-comparison",
+      "baseline_pass": true,
+      "index0_pass": true
+    },
+    {
+      "task_id": "009-missing-return",
+      "baseline_pass": true,
+      "index0_pass": true
+    },
+    {
+      "task_id": "010-integer-division",
+      "baseline_pass": true,
+      "index0_pass": true
+    },
+    {
+      "task_id": "011-loose-equality",
+      "baseline_pass": true,
+      "index0_pass": true
+    },
+    {
+      "task_id": "012-string-coercion",
+      "baseline_pass": false,
+      "index0_pass": true
+    },
+    {
+      "task_id": "013-nan-propagation",
+      "baseline_pass": true,
+      "index0_pass": true
+    },
+    {
+      "task_id": "014-boolean-coercion",
+      "baseline_pass": true,
+      "index0_pass": true
+    },
+    {
+      "task_id": "015-object-mutation",
+      "baseline_pass": true,
+      "index0_pass": false
+    },
+    {
+      "task_id": "016-promise-not-awaited",
+      "baseline_pass": true,
+      "index0_pass": false
+    },
+    {
+      "task_id": "017-callback-error",
+      "baseline_pass": true,
+      "index0_pass": false
+    },
+    {
+      "task_id": "018-race-condition",
+      "baseline_pass": false,
+      "index0_pass": false
+    },
+    {
+      "task_id": "019-empty-input",
+      "baseline_pass": true
+    }
+  ],
+  "note": "Results are honest. INDEX0 did not outperform baseline on this run."
+}

@@ -1,0 +1,1 @@
+{"id":"007-wrong-operator","description":"is_even(n) uses % 1 instead of % 2. Fix the modulo operator.","file_to_fix":"src/index.py","test_command":"python -m pytest tests/ -q"}

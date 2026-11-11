@@ -37,7 +37,23 @@ Both defects below were fixed in commit `day1-defect-fixes` and re-verified by
    `provider: this.provider.name` in the result. `qa.py:211` reads
    `sandbox_res.get("provider", "unknown")` — never hardcodes.
 
-Re-verification, 2026-11-11 at `main`:
+Re-verification, 2026-11-11 at `main` — Day 2 benchmarks:
+
+| Command | Result |
+|---|---|
+| `pnpm run typecheck` | 9/9 pass |
+| `pnpm run test` | 290 pass / 0 fail (8 turbo tasks) |
+| `pnpm run build` | 8/8 pass |
+| `./demo/run-demo.sh` | `qa_verified`, sandbox: docker (exit 0) |
+| `./benchmarks/verified-bench/runner.sh --model groq` | Baseline 17/19 (89%), INDEX0 14/19 (74%) |
+
+**Benchmark (honest):** INDEX0 did not outperform baseline. INDEX0 won on 012
+(string coercion — critic caught missing `Number()` cast). Failed on 5 tasks
+due to orchestrator timeout / iteration limit. Full details: `benchmarks/verified-bench/RESULTS.md`.
+
+| Capability | Status | Evidence |
+|---|---|---|
+| **`benchmarks/verified-bench/` suite** | Working | 20 tasks, hidden tests, `runner.sh --model groq` reproducible; `results/20261111T121141Z/summary.json` |
 
 | Command | Result |
 |---|---|

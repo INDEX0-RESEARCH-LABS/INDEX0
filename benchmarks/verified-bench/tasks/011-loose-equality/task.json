@@ -1,0 +1,1 @@
+{"id":"011-loose-equality","description":"isEmpty(val) uses == null but also returns true for 0 and false. Fix to use strict === null || === undefined check only.","file_to_fix":"src/index.js","test_command":"node --test"}

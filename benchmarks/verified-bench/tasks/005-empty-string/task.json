@@ -1,0 +1,7 @@
+{
+  "id": "005-empty-string",
+  "description": "firstChar(s) crashes on empty string. Return null for empty string.",
+  "file_to_fix": "src/index.js",
+  "test_command": "node --test",
+  "hint": "Add: if (s.length === 0) return null;"
+}
