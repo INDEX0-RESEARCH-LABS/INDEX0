@@ -45,9 +45,9 @@ die() { echo "error: $*" >&2; exit 1; }
 set -a; . "$ROOT/.env"; set +a
 : "${LITELLM_MASTER_KEY:?LITELLM_MASTER_KEY must be set in .env}"
 
-key_for() { case "$1" in groq) echo GROQ_API_KEY;; gemini) echo GEMINI_API_KEY;; openrouter) echo OPENROUTER_API_KEY;; esac; }
+key_for() { case "$1" in groq) echo GROQ_API_KEY;; gemini) echo GEMINI_API_KEY;; openrouter) echo OPENROUTER_API_KEY;; claude|claude-haiku) echo AWS_PROFILE;; esac; }
 KEY_VAR="$(key_for "$MODEL")"
-[[ -n "${!KEY_VAR:-}" ]] || die "$MODEL needs $KEY_VAR in .env"
+[[ -n "${KEY_VAR:-}" && -n "${!KEY_VAR:-}" ]] || die "$MODEL needs $KEY_VAR in .env"
 
 command -v docker >/dev/null || die "docker required"
 docker info >/dev/null 2>&1 || die "docker daemon not running"
@@ -80,12 +80,26 @@ trap cleanup EXIT
 # ── start services ───────────────────────────────────────────────────────────
 echo "==> starting LiteLLM (model=$MODEL)"
 docker rm -f "$GATEWAY_CONTAINER" >/dev/null 2>&1 || true
+
+# Resolve Bedrock credentials for Claude routes
+AWS_DOCKER_ENV=()
+if [[ "$MODEL" == claude* ]]; then
+  creds="$(aws --profile "${AWS_PROFILE:-index0}" configure export-credentials --format env-no-export 2>/dev/null || true)"
+  [[ -n "$creds" ]] || die "Could not resolve AWS credentials. Run: aws login --profile index0"
+  while IFS= read -r line; do
+    [[ "$line" =~ ^(AWS_[A-Z_]+)=(.*)$ ]] && AWS_DOCKER_ENV+=(-e "${BASH_REMATCH[1]}=${BASH_REMATCH[2]}")
+  done <<< "$creds"
+  AWS_DOCKER_ENV+=(-e "AWS_DEFAULT_REGION=ap-southeast-2")
+fi
+
 docker run -d --rm --name "$GATEWAY_CONTAINER" \
   -p "${LITELLM_PORT}:4000" \
   -e LITELLM_MASTER_KEY="$LITELLM_MASTER_KEY" \
   -e GROQ_API_KEY="${GROQ_API_KEY:-}" \
   -e GEMINI_API_KEY="${GEMINI_API_KEY:-}" \
   -e OPENROUTER_API_KEY="${OPENROUTER_API_KEY:-}" \
+  -e AWS_PROFILE="${AWS_PROFILE:-}" \
+  "${AWS_DOCKER_ENV[@]}" \
   -v "$ROOT/infra/litellm/config.yaml:/app/config.yaml:ro" \
   ghcr.io/berriai/litellm:main-latest --config /app/config.yaml >/dev/null
 wait_for "$LITELLM_URL/health/liveliness" "LiteLLM" 90

@@ -43,29 +43,33 @@ key_for() {
     groq) echo GROQ_API_KEY ;;
     gemini) echo GEMINI_API_KEY ;;
     openrouter) echo OPENROUTER_API_KEY ;;
+    claude|claude-haiku) echo AWS_PROFILE ;;
   esac
 }
 
 if [[ "$DEMO_MODEL" == auto ]]; then
   DEMO_MODEL=""
-  for candidate in groq gemini openrouter; do
+  for candidate in claude groq gemini openrouter; do
     kv="$(key_for "$candidate")"
     if [[ -n "${!kv:-}" ]]; then DEMO_MODEL="$candidate"; break; fi
   done
-  [[ -n "$DEMO_MODEL" ]] || die "no model route available. Add one free key to $ROOT/.env:
-  GROQ_API_KEY=...       https://console.groq.com/keys      (free, no card)
-  GEMINI_API_KEY=...     https://aistudio.google.com/apikey (free, no card)
-  OPENROUTER_API_KEY=... https://openrouter.ai/keys"
+  [[ -n "$DEMO_MODEL" ]] || die "no model route available. Add one key to $ROOT/.env:
+  AWS_PROFILE=index0        (uses ~/.aws credentials — Claude Sonnet 4.6 via Bedrock)
+  GROQ_API_KEY=...          https://console.groq.com/keys      (free, no card)
+  GEMINI_API_KEY=...        https://aistudio.google.com/apikey (free, no card)
+  OPENROUTER_API_KEY=...    https://openrouter.ai/keys"
   echo "    using route: $DEMO_MODEL"
 fi
 
 case "$DEMO_MODEL" in
-  groq)       KEY_VAR=GROQ_API_KEY;       KEY_URL="https://console.groq.com/keys" ;;
-  gemini)     KEY_VAR=GEMINI_API_KEY;     KEY_URL="https://aistudio.google.com/apikey" ;;
-  openrouter) KEY_VAR=OPENROUTER_API_KEY; KEY_URL="https://openrouter.ai/keys" ;;
-  *) die "DEMO_MODEL=$DEMO_MODEL is not a route in infra/litellm/config.yaml (groq|gemini|openrouter|auto)" ;;
+  claude)       KEY_VAR=AWS_PROFILE;        KEY_URL="aws login --profile index0" ;;
+  claude-haiku) KEY_VAR=AWS_PROFILE;        KEY_URL="aws login --profile index0" ;;
+  groq)         KEY_VAR=GROQ_API_KEY;       KEY_URL="https://console.groq.com/keys" ;;
+  gemini)       KEY_VAR=GEMINI_API_KEY;     KEY_URL="https://aistudio.google.com/apikey" ;;
+  openrouter)   KEY_VAR=OPENROUTER_API_KEY; KEY_URL="https://openrouter.ai/keys" ;;
+  *) die "DEMO_MODEL=$DEMO_MODEL is not a route in infra/litellm/config.yaml (claude|claude-haiku|groq|gemini|openrouter|auto)" ;;
 esac
-[[ -n "${!KEY_VAR:-}" ]] || die "DEMO_MODEL=$DEMO_MODEL needs $KEY_VAR in $ROOT/.env — free key: $KEY_URL"
+[[ -n "${!KEY_VAR:-}" ]] || die "DEMO_MODEL=$DEMO_MODEL needs $KEY_VAR in $ROOT/.env — set it with: $KEY_URL"
 
 # Every agent uses the chosen route; no Azure aliases left in the demo path.
 export ORCHESTRATOR_ARCHITECT_MODEL="$DEMO_MODEL"
@@ -115,12 +119,30 @@ if [[ "$START_SERVICES" == 1 ]]; then
 
   echo "==> starting LiteLLM gateway (route=$DEMO_MODEL, no database needed)"
   docker rm -f "$GATEWAY_CONTAINER" >/dev/null 2>&1 || true
+
+  # For Bedrock routes, resolve credentials from the AWS profile and pass them
+  # as env vars into the LiteLLM container (containers can't read ~/.aws directly).
+  AWS_DOCKER_ENV=()
+  if [[ "$DEMO_MODEL" == claude* ]]; then
+    creds="$(aws --profile "${AWS_PROFILE:-index0}" configure export-credentials --format env-no-export 2>/dev/null || true)"
+    if [[ -n "$creds" ]]; then
+      while IFS= read -r line; do
+        [[ "$line" =~ ^(AWS_[A-Z_]+)=(.*)$ ]] && AWS_DOCKER_ENV+=(-e "${BASH_REMATCH[1]}=${BASH_REMATCH[2]}")
+      done <<< "$creds"
+      AWS_DOCKER_ENV+=(-e "AWS_DEFAULT_REGION=ap-southeast-2")
+    else
+      die "Could not resolve AWS credentials for profile ${AWS_PROFILE:-index0}. Run: aws login --profile index0"
+    fi
+  fi
+
   docker run -d --rm --name "$GATEWAY_CONTAINER" \
     -p "$(sed -E 's#.*:([0-9]+)$#\1#' <<<"$LITELLM_URL"):4000" \
     -e LITELLM_MASTER_KEY="$LITELLM_MASTER_KEY" \
     -e GROQ_API_KEY="${GROQ_API_KEY:-}" \
     -e GEMINI_API_KEY="${GEMINI_API_KEY:-}" \
     -e OPENROUTER_API_KEY="${OPENROUTER_API_KEY:-}" \
+    -e AWS_PROFILE="${AWS_PROFILE:-}" \
+    "${AWS_DOCKER_ENV[@]}" \
     -v "$ROOT/infra/litellm/config.yaml:/app/config.yaml:ro" \
     ghcr.io/berriai/litellm:main-latest --config /app/config.yaml >/dev/null
   wait_for "$LITELLM_URL/health/liveliness" "LiteLLM" 90

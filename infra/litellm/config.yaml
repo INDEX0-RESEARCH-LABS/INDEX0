@@ -72,6 +72,27 @@ model_list:
   # Each needs only its own key; no Azure subscription required.
   # ---------------------------------------------------------------------------
 
+  # Amazon Bedrock — Claude Sonnet 4.6 via AWS inference profile.
+  # Requires: AWS_PROFILE=index0 (or AWS_ACCESS_KEY_ID + AWS_SECRET_ACCESS_KEY
+  # + AWS_SESSION_TOKEN). Region: ap-southeast-2. No per-token billing on
+  # the free-tier account; credits cover it.
+  - model_name: "claude"
+    litellm_params:
+      model: "bedrock/global.anthropic.claude-sonnet-4-6"
+      aws_region_name: "ap-southeast-2"
+    model_info:
+      input_cost_per_token: 0.000003
+      output_cost_per_token: 0.000015
+
+  # Bedrock Haiku 4.5 — faster, cheaper for QA/critic tiers.
+  - model_name: "claude-haiku"
+    litellm_params:
+      model: "bedrock/au.anthropic.claude-haiku-4-5-20251001-v1:0"
+      aws_region_name: "ap-southeast-2"
+    model_info:
+      input_cost_per_token: 0.0000008
+      output_cost_per_token: 0.000001
+
   # Groq free tier — no credit card, fastest option. gpt-oss-120b is the
   # strongest model on the free catalog (Groq retired llama-3.3-70b in 2026).
   - model_name: "groq"
