@@ -1,14 +1,12 @@
 /**
  * E2B Desktop Sandbox Provider — @index0/sandbox-manager
  *
- * Provides desktop automation capabilities via the @e2b/desktop SDK.
- * Enables agents to control browsers, test frontends visually, and
- * execute desktop interactions inside isolated cloud microVMs.
+ * Structural scaffold for future E2B desktop automation support.
+ * NOT reachable from the provider factory (ExecutionService.createProvider).
+ * NOT registered in the SANDBOX_PROVIDER env var switch.
  *
- * NOTE: This provider requires the @e2b/desktop package to be installed.
- * It is currently a structural scaffold — the actual @e2b/desktop SDK
- * calls are commented with implementation notes for when the package
- * is added as a dependency.
+ * roadmap: wire to provider factory when @e2b/desktop is added as a dependency
+ * and E2B_API_KEY grants desktop access. Until then this file is inert.
  */
 
 import type { SandboxLanguage } from "@index0/contracts";

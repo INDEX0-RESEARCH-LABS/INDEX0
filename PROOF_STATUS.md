@@ -111,9 +111,9 @@ Branch `feat/sovereign-agi-stack` is fully merged into `main` (0 commits ahead, 
 | **MCTS multiverse search engine** | Partial | `services/agent-orchestrator/src/graph/mcts/engine.py` and `tree.py` exist; integration with review loop not demonstrated; no benchmark result |
 | **TextGrad backpropagation loop** | Partial | `services/agent-orchestrator/src/textgrad/` directory exists; integration not tested end-to-end |
 | **Autonomous re-engineering (`index0 re-engineer`)** | Partial | CLI command wired in `packages/client-harness/src/cli.ts`; `services/agent-orchestrator/src/reengineering/` exists; smoke test in `packages/client-harness/test/reengineer.test.ts`; no production run verified |
-| **Voice pipeline (LiveKit + Pipecat)** | In progress | `services/voice-agent/` directory exists with Python service; `pytest services/voice-agent/tests` passes 3/3 and now runs in CI (`.github/workflows/ci.yml` job `python-services`); Docker Compose overlay at `infra/compose/livekit.yml`; latency figures are UNVERIFIED |
-| **Edge autocomplete (TabbyML)** | In progress | `infra/tabby/` config exists; Docker Compose overlay at `infra/compose/tabby.yml`; latency figures are UNVERIFIED |
-| **Web IDE (code-server)** | In progress | `infra/code-server/` Dockerfile and config exist; Docker Compose overlay at `infra/compose/code-server.yml`; live URL not confirmed |
+| **Voice pipeline (LiveKit + Pipecat)** | Roadmap | `services/voice-agent/` exists; `pytest services/voice-agent/tests` passes 3/3; Docker Compose overlay at `infra/compose/livekit.yml`; no E2E run, latency figures unverified — scaffolded, not production-proven |
+| **Edge autocomplete (TabbyML)** | Roadmap | `infra/tabby/` config exists; Docker Compose overlay at `infra/compose/tabby.yml`; latency figures unverified — scaffolded, not production-proven |
+| **Web IDE (code-server)** | Roadmap | `infra/code-server/` Dockerfile and config exist; Docker Compose overlay at `infra/compose/code-server.yml`; live URL not confirmed — scaffolded, not production-proven |
 | **Semgrep / Trivy security gates** | Partial | Referenced in `scripts/license-check.sh` and Docker Compose; not run as CI gate in this repo |
 | **ClickHouse telemetry** | Partial | Schema at `infra/clickhouse/`; Docker Compose service defined; tested in `tests/telemetry/`; requires running ClickHouse instance |
 | **OpenMeter metering** | Partial | Config at `infra/openmeter/`; tested in `tests/billing/`; requires running OpenMeter instance |

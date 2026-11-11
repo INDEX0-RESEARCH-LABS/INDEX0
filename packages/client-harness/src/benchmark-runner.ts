@@ -118,15 +118,16 @@ export async function runOfficialBenchmarks(
 
   // Collect all task IDs for manifest
   const allTaskIds: string[] = [];
-  
+
   if (config.sweBench?.enabled) {
-    // For SWE-bench, we'd ideally fetch the dataset to get task IDs
-    // For now, use a placeholder - in practice this would load from dataset
-    allTaskIds.push('swe-bench-tasks-placeholder');
+    // roadmap: official SWE-bench eval requires the OpenHands harness (agent-canvas/)
+    // which was removed in dfeccfc. Reinstate when harness is available.
+    throw new Error('SWE-bench eval is roadmap. Use benchmarks/verified-bench/runner.sh for the current benchmark suite.');
   }
-  
+
   if (config.aiderBench?.enabled) {
-    allTaskIds.push('aider-bench-tasks-placeholder');
+    // roadmap: AiderBench eval requires the Aider harness. Not yet wired.
+    throw new Error('AiderBench eval is roadmap. Use benchmarks/verified-bench/runner.sh for the current benchmark suite.');
   }
 
   // Create and freeze task manifest BEFORE any execution

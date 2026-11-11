@@ -340,8 +340,8 @@ timeline
 
 ### Layer 2: Edge GhostText Autocomplete (TabbyML + vLLM)
 - **Service**: `infra/tabby` and [tabbyClient.ts](file:///home/darion-dev/Dev/Incubator/INDEX0/apps/ide/web/src/services/tabbyClient.ts).
-- **Latency**: Sub-20ms inline code completion triggered on every keystroke.
-- **Economics**: 100% on-device or edge GPU inference (**$0.00 cloud token COGS**), preserving codebase confidentiality and eliminating cloud round-trips.
+- **Status**: **[roadmap]** — config scaffolded, latency and COGS figures unverified.
+- **Target**: Sub-20ms inline completion with on-device GPU inference; COGS unverified pending a production run.
 
 ### Layer 3: MicroVM Execution Sandbox & Empirical Probes (E2B Cloud + Firecracker + Perf/TSan)
 - **Service**: `services/sandbox-manager` (Node.js/Express).

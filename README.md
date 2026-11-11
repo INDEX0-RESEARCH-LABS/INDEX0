@@ -46,21 +46,25 @@ What actually works today, and what doesn't: [`PROOF_STATUS.md`](PROOF_STATUS.md
 ┌────────────────────────────────────────────────────────────────────────────────────────┐
 │                           INDEX0 PLATFORM ARCHITECTURE                                 │
 ├────────────────────────────────────────────────────────────────────────────────────────┤
-│ 1. Voice & Multimodal Layer    → LiveKit Agents + Pipecat (WebRTC)   [in progress]    │
-│ 2. Edge Autocomplete Layer     → TabbyML + vLLM (local inference)    [in progress]    │
-│ 3. MicroVM Sandbox & Probes    → Firecracker + E2B + perf/TSan       [partial]        │
-│ 4. Git-Native Agent Protocol   → GNAP + Postcard (Git-native state)  [working]        │
-│ 5. Context Compression         → OpenViking (viking://) + LiteLLM    [working]        │
-│ 6. Review Loop & MCTS Search   → LangGraph 4-Tier + MCTS + TextGrad  [partial]        │
-│ 7. Autonomous Reverse-Engineer → Crown Jewel Extractor               [in progress]    │
+│ 1. Voice & Multimodal Layer    → LiveKit Agents + Pipecat (WebRTC)   [roadmap]        │
+│ 2. Edge Autocomplete Layer     → TabbyML + vLLM (local inference)    [roadmap]        │
+│ 3. MicroVM Sandbox & Probes    → Docker (working) + E2B/Firecracker  [partial]        │
+│ 4. Git-Native Agent Protocol   → GNAP + worktree isolation           [working]        │
+│ 5. Context Compression         → viking:// L0/L1/L2 + LiteLLM       [working]        │
+│ 6. 4-Tier Review Loop          → LangGraph Architect/Dev/Critic/QA   [working]        │
+│ 7. MCTS + TextGrad             → code scaffolded, not E2E proven     [roadmap]        │
 ├────────────────────────────────────────────────────────────────────────────────────────┤
-│                             PLATFORM PILLARS                                           │
-│  BUILD: Cloud IDE (code-server) & Agent Canvas (ACI)                                  │
-│  SHIP:  Temporal.io Workflows + ClickHouse Telemetry + Semgrep/Trivy Gates            │
-│  SELL:  OpenMeter Token Metering + Lago Usage-Based Subscriptions + Razorpay/Stripe   │
-│  GROW:  PostHog Analytics + Twenty CRM                                                │
+│                             PLATFORM PILLARS (target infrastructure)                   │
+│  BUILD: Web IDE workbench (working) + VS Code extension (working)                     │
+│  SHIP:  Temporal + ClickHouse telemetry + Semgrep/Trivy           [roadmap]           │
+│  SELL:  OpenMeter metering + Lago billing + Razorpay/Stripe       [roadmap]           │
+│  GROW:  PostHog + Twenty CRM                                      [roadmap]           │
 └────────────────────────────────────────────────────────────────────────────────────────┘
 ```
+
+> **Legend:** `[working]` = proven by a command in this repo.
+> `[partial]` = code exists, integration not E2E proven.
+> `[roadmap]` = scaffolded, not production-proven. See `PROOF_STATUS.md`.
 
 ---
 
@@ -72,25 +76,28 @@ What actually works today, and what doesn't: [`PROOF_STATUS.md`](PROOF_STATUS.md
 - Python 3.11+
 - Docker and Docker Compose
 
-### 1. Install the CLI
+### 1. One-command demo (fastest path)
 
 ```bash
-# Linux & macOS (unverified — install.sh at this URL has not been confirmed live)
-curl -fsSL https://ai.index0.in/install.sh | bash
+# Auto-detects AWS/Groq/Gemini credentials and runs a full proven cycle
+./quick-start.sh
 
-# Windows PowerShell (unverified)
-irm https://ai.index0.in/install.ps1 | iex
+# Or specify a model explicitly:
+DEMO_MODEL=claude ./quick-start.sh   # Claude Sonnet 4.6 via AWS Bedrock
+DEMO_MODEL=groq   ./quick-start.sh   # Groq free tier (https://console.groq.com/keys)
+DEMO_MODEL=gemini ./quick-start.sh   # Google AI Studio free tier
 ```
 
-Alternatively, build from source (verified):
+### 2. Build the CLI from source
+
 ```bash
 pnpm install
 pnpm --filter @index0/client-harness build
-# binary is now at packages/client-harness/dist/cli.js
+# binary is at packages/client-harness/dist/cli.js
 node packages/client-harness/dist/cli.js --help
 ```
 
-### 2. Authenticate
+### 3. Authenticate
 
 ```bash
 # GitHub Device Flow login
@@ -198,13 +205,35 @@ cd packages/client-harness && pnpm test
 
 ## Benchmarks
 
-Official SWE-bench, Terminal-Bench, and AiderBench evaluation runs are **in progress**. No results have been published yet.
+### `benchmarks/verified-bench/` — reproducible results
 
-The only measured value published at this time is the context compression transform ratio: **34.3% to 91.0% measured transform ratio on local string transforms, not end-to-end task results**.
+Run 2026-11-11, model: Groq free tier, 20 hand-written tasks with hidden tests.
 
-For the full claim disposition and what would be required before any result is published, see:
-- [`benchmarks/CLAIM_AUDIT.md`](benchmarks/CLAIM_AUDIT.md)
-- [`benchmarks/REPRODUCIBILITY.md`](benchmarks/REPRODUCIBILITY.md)
+| Mode | Passed | Total | Pass rate |
+|---|---|---|---|
+| Baseline (plain LLM one-shot) | 17 | 19 | **89%** |
+| INDEX0 (4-tier review loop) | 14 | 19 | **74%** |
+
+> INDEX0 did not outperform the baseline on this run. Reported honestly.
+> The review loop added value on task 012 (string coercion — the critic caught a
+> missing `Number()` cast that the one-shot missed). It timed out on 5 tasks.
+> Task 020 excluded (sandbox timeout on 2000-element recursion).
+
+```bash
+# Reproduce with one command:
+./benchmarks/verified-bench/runner.sh --model groq
+# or with Claude via AWS Bedrock:
+./benchmarks/verified-bench/runner.sh --model claude
+```
+
+Full results: [`benchmarks/verified-bench/RESULTS.md`](benchmarks/verified-bench/RESULTS.md)
+
+### Official evaluations
+
+SWE-bench, Terminal-Bench, and AiderBench have **not been run**. No scores published.
+Running official SWE-bench requires the OpenHands harness and is on the roadmap.
+
+For the full claim disposition see [`benchmarks/CLAIM_AUDIT.md`](benchmarks/CLAIM_AUDIT.md).
 
 ---
 
