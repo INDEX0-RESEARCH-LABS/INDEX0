@@ -41,10 +41,17 @@ ok "Docker is running ($(docker info --format '{{.ServerVersion}}' 2>/dev/null))
 
 # ── 2. Node >= 22 ────────────────────────────────────────────────────────────
 info "Checking Node.js"
-# Try mise-managed node 26 first
-MISE_NODE="$HOME/.local/share/mise/installs/node/26.10.0/bin/node"
-if [[ -x "$MISE_NODE" ]]; then
-  export PATH="$(dirname "$MISE_NODE"):$PATH"
+# Auto-detect node 22+ from mise or nvm before checking version
+_cur_node() { node -p 'process.versions.node.split(".")[0]' 2>/dev/null || echo 0; }
+if [[ "$(_cur_node)" -lt 22 ]]; then
+  _mise_bin="$HOME/.local/share/mise/installs/node/26.10.0/bin"
+  if [[ -d "$_mise_bin" ]]; then
+    export PATH="$_mise_bin:$PATH"
+  else
+    _nvm="${NVM_DIR:-$HOME/.config/nvm}"
+    _best=$(ls "$_nvm/versions/node/" 2>/dev/null | sort -V | awk -F'v' '$2+0>=22{v=$2} END{if(v)print "v"v}')
+    [[ -n "$_best" ]] && export PATH="$_nvm/versions/node/$_best/bin:$PATH"
+  fi
 fi
 
 if ! command -v node >/dev/null; then

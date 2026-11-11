@@ -6,10 +6,33 @@
 #   DEMO_MODEL=gemini ./demo/run-demo.sh
 #
 # Requires: docker, node >= 22, and one free model key in .env (no Azure, no spend).
-# DEMO_MODEL picks the LiteLLM route: auto (default) | groq | gemini | openrouter.
+# DEMO_MODEL picks the LiteLLM route: auto (default) | claude | claude-haiku | groq | gemini | openrouter.
+
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
+# ── Auto-activate node 22+ from mise or nvm if the system node is too old ────
+_ensure_node22() {
+  local cur
+  cur="$(node -p 'process.versions.node.split(".")[0]' 2>/dev/null || echo 0)"
+  [[ "$cur" -ge 22 ]] && return 0
+  # mise
+  local mise_node="$HOME/.local/share/mise/installs/node/26.10.0/bin"
+  if [[ -d "$mise_node" ]]; then export PATH="$mise_node:$PATH"; return 0; fi
+  # nvm: pick the highest installed version >= 22
+  local nvm_root="${NVM_DIR:-$HOME/.config/nvm}"
+  if [[ -d "$nvm_root/versions/node" ]]; then
+    local best
+    best=$(ls "$nvm_root/versions/node/" | sort -V | awk -F'v' '$2+0>=22{v=$2} END{if(v)print "v"v}')
+    if [[ -n "$best" ]]; then export PATH="$nvm_root/versions/node/$best/bin:$PATH"; return 0; fi
+  fi
+  return 1
+}
+_ensure_node22 || true
+# mise shims (pnpm, etc.) — add if not already on PATH
+[[ ":$PATH:" != *":$HOME/.local/share/mise/shims:"* ]] && \
+  export PATH="$HOME/.local/share/mise/shims:$PATH"
 WORKSPACE="${DEMO_WORKSPACE:-$ROOT/demo/workspace}"
 PYTHON="${DEMO_PYTHON:-$ROOT/.venv-demo/bin/python}"
 START_SERVICES=1
