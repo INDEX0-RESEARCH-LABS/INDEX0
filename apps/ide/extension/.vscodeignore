@@ -1,0 +1,7 @@
+**/.turbo/**
+**/node_modules/**
+src/**
+test/**
+build.mjs
+tsconfig.json
+*.map

@@ -1,323 +1,270 @@
-/**
- * INDEX0 IDE Extension — @index0/ide-extension
- *
- * Unified VS Code extension for the INDEX0 Sovereign AI IDE.
- * Works identically in desktop (Electron) and cloud (code-server) modes.
- *
- * Provides:
- *  - Agent Execution Pane (sidebar webview)
- *  - GhostText Inline Completions (TabbyML backend)
- *  - AI Chat Participant (LiteLLM gateway + ZDR)
- *  - MCP Tools Inspector (webview panel)
- *  - Telemetry Dashboard (webview panel)
- *  - Voice Agent (webview panel, LiveKit WebRTC)
- *  - GNAP Diff Review (native diff editor)
- *  - Status Bar Widget (credits, GPU, execution state)
- */
+import * as vscode from 'vscode';
+import * as path from 'path';
+import * as fs from 'fs';
 
-import type {
-  IAgentRunRequest,
-  IApiResponse,
-  IAgentRun,
-} from '@index0/contracts';
+// ─── Message types (extension ↔ webview) ───────────────────────────────────
 
-// ─── Types ──────────────────────────────────────────────────────────
-
-export interface IExtensionCommandDisposable {
-  dispose(): void;
+export interface ToWebview {
+  type: 'cycleStart' | 'cycleProgress' | 'cycleDone' | 'cycleError' | 'init';
+  payload?: unknown;
 }
 
-export interface IExtensionContext {
-  subscriptions: IExtensionCommandDisposable[];
-  extensionUri?: { fsPath: string };
+export interface FromWebview {
+  type: 'runTask' | 'applyDiff' | 'ready';
+  payload?: unknown;
 }
 
-export interface IExtensionConfig {
-  gatewayUrl: string;
-  modelPreference: string;
-  tabbyEndpoint: string;
-  litellmEndpoint: string;
-  /** Direct orchestrator URL for the review-loop cycle endpoint. */
-  orchestratorUrl: string;
-  /** Gateway master key; empty means send no Authorization header. */
-  apiKey?: string;
+// ─── Orchestrator client ────────────────────────────────────────────────────
+
+function orchUrl(): string {
+  return vscode.workspace.getConfiguration('index0').get<string>('orchestratorUrl', 'http://localhost:8000');
 }
 
-export type PanelId =
-  | 'index0.agentPanel'
-  | 'index0.mcpTools'
-  | 'index0.telemetry'
-  | 'index0.voiceAgent';
+async function runCycle(
+  task: string,
+  contextFiles: string[],
+  repoRoot: string,
+  onProgress: (msg: string) => void
+): Promise<{
+  status: string; iteration: number; passed: boolean;
+  testOutput: string; diff: string; criticComments: string;
+  history: Array<{ role: string; action: string; summary?: string; decision?: string }>;
+}> {
+  const controller = new AbortController();
+  const tid = setTimeout(() => controller.abort(), 180_000);
 
-// ─── Configuration ──────────────────────────────────────────────────
-
-const DEFAULT_CONFIG: IExtensionConfig = {
-  gatewayUrl: 'http://localhost:8080',
-  modelPreference: 'claude-3-5-sonnet-20241022',
-  tabbyEndpoint: 'http://localhost:8080',
-  litellmEndpoint: 'http://localhost:4000/v1',
-  orchestratorUrl: process.env.INDEX0_ORCHESTRATOR_URL ?? 'http://localhost:8000',
-  apiKey: process.env.INDEX0_API_KEY ?? '',
-};
-
-// ─── Extension Manager ─────────────────────────────────────────────
-
-export class Index0ExtensionManager {
-  private config: IExtensionConfig;
-
-  constructor(config?: Partial<IExtensionConfig>) {
-    this.config = { ...DEFAULT_CONFIG, ...config };
-  }
-
-  getConfig(): Readonly<IExtensionConfig> {
-    return { ...this.config };
-  }
-
-  updateConfig(updates: Partial<IExtensionConfig>): void {
-    this.config = { ...this.config, ...updates };
-  }
-
-  // ── Agent Runs ──────────────────────────────────────────────────
-
-  /**
-   * Dispatch an autonomous agent run to the API Gateway.
-   */
-  async startAgentRun(
-    request: IAgentRunRequest,
-  ): Promise<IApiResponse<IAgentRun>> {
-    const url = `${this.config.gatewayUrl}/api/v1/agents/runs`;
-    const response = await fetch(url, {
+  try {
+    const res = await fetch(`${orchUrl()}/cycles/start`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Client-Type': 'vscode-extension',
-      },
+      headers: { 'Content-Type': 'application/json', 'X-Client': 'index0-vscode' },
       body: JSON.stringify({
-        ...request,
-        model: request.model || this.config.modelPreference,
+        taskId: `vscode-${Date.now().toString(36)}`,
+        userPrompt: task,
+        repositoryRoot: repoRoot,
+        contextFiles,
+        maxIterations: 5,
       }),
+      signal: controller.signal,
     });
 
-    return (await response.json()) as IApiResponse<IAgentRun>;
+    if (!res.ok) throw new Error(`Orchestrator HTTP ${res.status}: ${res.statusText}`);
+    const c = await res.json() as {
+      status: string; iteration: number;
+      architecturePlan?: string;
+      implementationDiff?: string;
+      criticVerdict?: { decision: string; comments: string; findings?: unknown[] };
+      qaResults?: { passed: boolean; testOutput?: string; tests_passed?: number; tests_failed?: number; duration_ms?: number; sandboxMode?: string };
+      history?: Array<{ role: string; action: string; summary?: string; decision?: string }>;
+    };
+
+    return {
+      status: c.status,
+      iteration: c.iteration,
+      passed: c.qaResults?.passed ?? false,
+      testOutput: c.qaResults?.testOutput ?? '',
+      diff: c.implementationDiff ?? '',
+      criticComments: c.criticVerdict?.comments ?? '',
+      history: c.history ?? [],
+    };
+  } finally {
+    clearTimeout(tid);
+  }
+}
+
+// ─── Webview HTML factory ───────────────────────────────────────────────────
+
+function getWebviewHtml(webview: vscode.Webview, extensionUri: vscode.Uri): string {
+  const scriptUri = webview.asWebviewUri(
+    vscode.Uri.joinPath(extensionUri, 'dist', 'webview.js')
+  );
+  const nonce = crypto.randomUUID().replace(/-/g, '');
+  return /* html */`<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta http-equiv="Content-Security-Policy"
+  content="default-src 'none';
+           script-src 'nonce-${nonce}';
+           style-src ${webview.cspSource} 'unsafe-inline';
+           img-src ${webview.cspSource} data:;
+           connect-src http://localhost:* https:;"/>
+<title>INDEX0</title>
+</head>
+<body>
+<div id="root"></div>
+<script nonce="${nonce}" src="${scriptUri}"></script>
+</body>
+</html>`;
+}
+
+// ─── Sidebar panel provider ─────────────────────────────────────────────────
+
+class Index0SidebarProvider implements vscode.WebviewViewProvider {
+  private _view?: vscode.WebviewView;
+
+  constructor(private readonly _extensionUri: vscode.Uri) {}
+
+  resolveWebviewView(
+    webviewView: vscode.WebviewView,
+    _context: vscode.WebviewViewResolveContext,
+    _token: vscode.CancellationToken
+  ) {
+    this._view = webviewView;
+    webviewView.webview.options = {
+      enableScripts: true,
+      localResourceRoots: [vscode.Uri.joinPath(this._extensionUri, 'dist')],
+    };
+    webviewView.webview.html = getWebviewHtml(webviewView.webview, this._extensionUri);
+
+    webviewView.webview.onDidReceiveMessage(async (msg: FromWebview) => {
+      if (msg.type === 'ready') {
+        this._send({ type: 'init', payload: { orchestratorUrl: orchUrl() } });
+      }
+      if (msg.type === 'runTask') {
+        const { task, contextFiles } = msg.payload as { task: string; contextFiles: string[] };
+        await this._runTask(task, contextFiles);
+      }
+      if (msg.type === 'applyDiff') {
+        const { diff } = msg.payload as { diff: string };
+        await applyDiff(diff);
+      }
+    });
   }
 
-  // ── Review Loop Cycle (direct orchestrator) ────────────────────
+  async runTaskFromCommand(task: string) {
+    const contextFiles = getOpenFiles();
+    await this._runTask(task, contextFiles);
+    this._view?.show?.(true);
+  }
 
-  /**
-   * Run the full 4-tier review loop via the agent-orchestrator.
-   * Returns the cycle result or an offline-failure object.
-   * Same contract as callOrchestratorCycle() in packages/client-harness/src/engine.ts.
-   */
-  async runCycle(
-    task: string,
-    contextFiles: string[] = [],
-    maxIterations = 3,
-  ): Promise<{
-    cycleId: string;
-    status: string;
-    iteration: number;
-    passed: boolean;
-    testOutput: string;
-    diff: string;
-  }> {
+  private async _runTask(task: string, contextFiles: string[]) {
+    const repoRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath ?? '.';
+    this._send({ type: 'cycleStart', payload: { task, contextFiles, repoRoot } });
+
     try {
-      const res = await fetch(`${this.config.orchestratorUrl}/cycles/start`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Client': 'index0-vscode',
-        },
-        body: JSON.stringify({
-          taskId: `vscode-${Date.now().toString(36)}`,
-          userPrompt: task,
-          repositoryRoot: '.',
-          contextFiles,
-          maxIterations,
-        }),
-        signal: AbortSignal.timeout(180_000),
+      const result = await runCycle(task, contextFiles, repoRoot, (msg) => {
+        this._send({ type: 'cycleProgress', payload: { message: msg } });
       });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const c = await res.json() as {
-        cycleId: string; status: string; iteration: number;
-        qaResults?: { passed: boolean; testOutput?: string };
-        implementationDiff?: string;
-      };
-      return {
-        cycleId: c.cycleId,
-        status: c.status,
-        iteration: c.iteration,
-        passed: c.qaResults?.passed ?? false,
-        testOutput: c.qaResults?.testOutput ?? '',
-        diff: c.implementationDiff ?? '',
-      };
+      this._send({ type: 'cycleDone', payload: result });
+
+      if (result.passed) {
+        const action = await vscode.window.showInformationMessage(
+          `✅ INDEX0: Tests passed (${result.iteration} iteration${result.iteration === 1 ? '' : 's'})`,
+          'Apply Diff', 'Dismiss'
+        );
+        if (action === 'Apply Diff' && result.diff) {
+          await applyDiff(result.diff);
+        }
+      } else {
+        vscode.window.showWarningMessage(`⚠️ INDEX0: Cycle finished — status: ${result.status}`);
+      }
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
-      return { cycleId: 'offline', status: 'failed', iteration: 0, passed: false, testOutput: `[Offline] ${msg}`, diff: '' };
+      this._send({ type: 'cycleError', payload: { message: msg } });
+      vscode.window.showErrorMessage(`INDEX0: ${msg}`);
     }
   }
 
-  // ── GhostText / Inline Completions ─────────────────────────────
+  private _send(msg: ToWebview) {
+    this._view?.webview.postMessage(msg);
+  }
+}
 
-  /**
-   * Request an inline code completion from the TabbyML edge engine.
-   * Sub-20ms latency, $0 cloud cost (fully on-device).
-   */
-  async getInlineCompletion(
-    prefix: string,
-    suffix: string,
-    language: string,
-    filepath: string,
-  ): Promise<string | null> {
-    try {
-      const url = `${this.config.tabbyEndpoint}/v1/completions`;
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          language,
-          segments: {
-            prefix,
-            suffix,
-            filepath,
-          },
-        }),
+// ─── Helpers ────────────────────────────────────────────────────────────────
+
+function getOpenFiles(): string[] {
+  const root = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
+  if (!root) return [];
+  return vscode.workspace.textDocuments
+    .filter(d => !d.isUntitled && d.uri.scheme === 'file' && d.uri.fsPath.startsWith(root))
+    .map(d => path.relative(root, d.uri.fsPath))
+    .slice(0, 10);
+}
+
+async function applyDiff(diff: string) {
+  const root = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
+  if (!root || !diff.trim()) return;
+
+  // Parse unified diff and apply changes file by file
+  const fileBlocks = diff.split(/^diff --git /m).filter(Boolean);
+  for (const block of fileBlocks) {
+    const toMatch = block.match(/^\+\+\+ b\/(.+)$/m);
+    if (!toMatch) continue;
+    const relPath = toMatch[1];
+    const absPath = path.join(root, relPath);
+    const doc = await vscode.workspace.openTextDocument(vscode.Uri.file(absPath)).catch(() => null);
+    if (!doc) continue;
+
+    // Extract added lines from the diff hunk (simple apply: replace file content)
+    const lines = block.split('\n');
+    const newLines: string[] = [];
+    let inHunk = false;
+    for (const line of lines) {
+      if (line.startsWith('@@')) { inHunk = true; continue; }
+      if (!inHunk) continue;
+      if (line.startsWith('+')) { newLines.push(line.slice(1)); continue; }
+      if (line.startsWith('-')) continue;
+      newLines.push(line.slice(1));
+    }
+
+    const edit = new vscode.WorkspaceEdit();
+    edit.replace(doc.uri, new vscode.Range(0, 0, doc.lineCount, 0), newLines.join('\n'));
+    await vscode.workspace.applyEdit(edit);
+    await vscode.window.showTextDocument(doc, { preview: false });
+  }
+  vscode.window.showInformationMessage('INDEX0: Diff applied to workspace.');
+}
+
+// ─── Activation ─────────────────────────────────────────────────────────────
+
+export function activate(context: vscode.ExtensionContext) {
+  const provider = new Index0SidebarProvider(context.extensionUri);
+
+  context.subscriptions.push(
+    vscode.window.registerWebviewViewProvider('index0.agentPanel', provider, {
+      webviewOptions: { retainContextWhenHidden: true },
+    })
+  );
+
+  // Command: run on selected text / input box
+  context.subscriptions.push(
+    vscode.commands.registerCommand('index0.startAgentRun', async () => {
+      const editor = vscode.window.activeTextEditor;
+      const selected = editor?.document.getText(editor.selection).trim();
+      const task = await vscode.window.showInputBox({
+        prompt: 'What should INDEX0 fix or build?',
+        value: selected || '',
+        placeHolder: 'e.g. Fix divide(a,b) to throw RangeError when b is 0',
       });
+      if (!task) return;
+      await provider.runTaskFromCommand(task);
+    })
+  );
 
-      if (!response.ok) return null;
+  // Command: run on current file with quick description
+  context.subscriptions.push(
+    vscode.commands.registerCommand('index0.runOnCurrentFile', async () => {
+      const editor = vscode.window.activeTextEditor;
+      if (!editor) return vscode.window.showWarningMessage('Open a file first.');
+      const root = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath ?? '.';
+      const rel = path.relative(root, editor.document.uri.fsPath);
+      const task = await vscode.window.showInputBox({
+        prompt: `Task for ${rel}`,
+        placeHolder: 'Describe what to fix or implement',
+      });
+      if (!task) return;
+      await provider.runTaskFromCommand(task);
+    })
+  );
 
-      const data = (await response.json()) as {
-        choices?: Array<{ text: string }>;
-      };
-      return data.choices?.[0]?.text ?? null;
-    } catch {
-      return null;
-    }
-  }
-
-  // ── Chat / LLM Gateway ─────────────────────────────────────────
-
-  /**
-   * Send a chat message through the LiteLLM gateway with ZDR guarantees.
-   */
-  async chatCompletion(
-    messages: Array<{ role: string; content: string }>,
-    model?: string,
-  ): Promise<string> {
-    const url = `${this.config.litellmEndpoint}/chat/completions`;
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(this.config.apiKey ? { Authorization: `Bearer ${this.config.apiKey}` } : {}),
-      },
-      body: JSON.stringify({
-        model: model || this.config.modelPreference,
-        messages,
-        stream: false,
-      }),
-    });
-
-    const data = (await response.json()) as {
-      choices?: Array<{ message?: { content?: string } }>;
-    };
-    return data.choices?.[0]?.message?.content ?? '';
-  }
-
-  // ── URL Resolvers ──────────────────────────────────────────────
-
-  getWorkbenchUrl(workspaceId: string = 'ws-main-dev'): string {
-    return `${this.config.gatewayUrl}/workbench?workspace=${encodeURIComponent(workspaceId)}`;
-  }
-
-  getTelemetryUrl(runId?: string): string {
-    return runId
-      ? `${this.config.gatewayUrl}/telemetry/runs/${encodeURIComponent(runId)}`
-      : `${this.config.gatewayUrl}/telemetry`;
-  }
+  // Status bar
+  const statusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
+  statusBar.text = '$(sparkle) INDEX0';
+  statusBar.tooltip = 'Run INDEX0 Agent (Ctrl+Shift+I)';
+  statusBar.command = 'index0.startAgentRun';
+  statusBar.show();
+  context.subscriptions.push(statusBar);
 }
 
-// ─── Global instance ────────────────────────────────────────────────
-
-export const extensionManager = new Index0ExtensionManager();
-
-// ─── Status Bar ─────────────────────────────────────────────────────
-
-export interface IStatusBarState {
-  credits: number;
-  maxCredits: number;
-  gpuAvailable: boolean;
-  agentRunning: boolean;
-  currentModel: string;
-}
-
-export function formatStatusBarText(state: IStatusBarState): string {
-  const creditPct = Math.round((state.credits / state.maxCredits) * 100);
-  const gpuIcon = state.gpuAvailable ? '⚡' : '💤';
-  const agentIcon = state.agentRunning ? '$(sync~spin)' : '$(check)';
-  return `${agentIcon} INDEX0 | ${gpuIcon} ${creditPct}% credits | ${state.currentModel}`;
-}
-
-// ─── VS Code Lifecycle ──────────────────────────────────────────────
-
-/**
- * VS Code Extension Activation Lifecycle Hook.
- * Called when one of the activation events triggers.
- */
-export function activate(context: IExtensionContext): Index0ExtensionManager {
-  const commands: IExtensionCommandDisposable[] = [
-    {
-      // index0.startAgentRun — runs the 4-tier review loop via the orchestrator
-      dispose: () => {
-        // In a real VS Code extension this would call:
-        //   vscode.commands.registerCommand('index0.startAgentRun', async () => {
-        //     const task = await vscode.window.showInputBox({ prompt: 'Enter task' });
-        //     if (!task) return;
-        //     const result = await extensionManager.runCycle(task);
-        //     vscode.window.showInformationMessage(
-        //       result.passed ? `✅ ${result.cycleId}: tests passed` : `⚠️ ${result.cycleId}: ${result.status}`
-        //     );
-        //   })
-      },
-    },
-    {
-      dispose: () => {
-        // index0.openAgentPanel
-      },
-    },
-    {
-      dispose: () => {
-        // index0.openMcpTools
-      },
-    },
-    {
-      dispose: () => {
-        // index0.openTelemetry
-      },
-    },
-    {
-      dispose: () => {
-        // index0.openVoiceAgent
-      },
-    },
-    {
-      dispose: () => {
-        // index0.toggleGhostText
-      },
-    },
-    {
-      dispose: () => {
-        // index0.reviewGnapDiff
-      },
-    },
-  ];
-
-  context.subscriptions.push(...commands);
-  return extensionManager;
-}
-
-/**
- * VS Code Extension Deactivation Lifecycle Hook.
- */
-export function deactivate(): void {
-  // Teardown long-lived resources (SSE connections, WebRTC sessions, etc.)
-}
+export function deactivate() {}
