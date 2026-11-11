@@ -46,10 +46,11 @@
 
   <h2>Proof (we audited ourselves first)</h2>
   <ul>
-    <li><b>15 of 36</b> claimed capabilities verifiable today — listed line by line in <code>PROOF_STATUS.md</code>, shipped in the repo.</li>
-    <li><b>0 of 3</b> published benchmarks. The old 96.2% SWE-bench / 92% AiderBench numbers were unverified and removed.</li>
-    <li><b>30/30</b> orchestrator tests, 14 sandbox-manager, full monorepo build, all green in CI.</li>
-    <li>Six committed end-to-end runs: <code>qa_verified</code>, exit 0. Three on a free model route, 1.2–1.7 s each.</li>
+    <li><b>16 of 37</b> claimed capabilities verifiable today — listed line by line in <code>PROOF_STATUS.md</code>, shipped in the repo.</li>
+    <li><b>Benchmark (2026-11-11):</b> 20 tasks, hidden tests, same model (Groq). Baseline one-shot: 17/19 (89%). INDEX0 review loop: 14/19 (74%). Reported honestly — INDEX0 did not win. Reproduce: <code>./benchmarks/verified-bench/runner.sh --model groq</code></li>
+    <li><b>0 of 3</b> official benchmarks (SWE-bench, AiderBench, Terminal-Bench). The old 96.2% / 92% numbers were unverified and removed.</li>
+    <li><b>290/290</b> node tests, <b>30/30</b> orchestrator pytest, full monorepo build green. <code>sandbox: docker (exit 0)</code>.</li>
+    <li>Recorded end-to-end runs in <code>demo/runs/</code>: <code>qa_verified</code>, exit 0. Claude Sonnet 4.6 via AWS Bedrock, 33 s.</li>
   </ul>
 
   <h2>Market</h2>

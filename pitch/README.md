@@ -15,7 +15,8 @@ Nothing in this pack cites a benchmark score, a customer, or a revenue figure.
 | `shots.html` | Gallery of the six surface stills (the app, the bug, the run, the patch, the workbench, the receipt) — a food-delivery checkout followed from a wrong total to `exit 1`. Every string traceable to source; **mockups, not screen captures** — the gallery and slide 6 say so. Design rules and provenance in `shots/README.md`. |
 | `../demo/run-demo.sh` | The live demo. One command, real model, real sandbox, real test run. |
 | `../demo/runs/` | Six recorded runs with request, transcript and diff. |
-| `../PROOF_STATUS.md` | 15 of 36 capabilities verifiable; 0 of 3 benchmark scores. Hand this over. |
+| `../PROOF_STATUS.md` | **16 of 37** capabilities verifiable; 0 of 3 official benchmark scores (SWE-bench etc. not run). Hand this over. |
+| `../benchmarks/verified-bench/RESULTS.md` | **Real benchmark numbers**: Baseline 89%, INDEX0 74% on 20 tasks. Honest — INDEX0 did not win. Reproduce: `./benchmarks/verified-bench/runner.sh --model groq` |
 | `../benchmarks/CLAIM_AUDIT.md` | The audit that deleted the unverifiable claims. Hand this over too. |
 
 ---

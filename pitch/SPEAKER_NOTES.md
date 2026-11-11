@@ -118,7 +118,7 @@ Image: `shots/04-patch.png`, captioned `04 · The patch — Two lines: read the 
 
 Line under the row: `Design mockups from the shipped components, not screen captures · all six frames in pitch/shots.html`
 
-**Background / layout** — dark, 1.34 / 1 split, image left, no bullet glyphs. Page note stays: `37 CLI tests · 94 web-workbench tests · 4 extension tests · 15 of 36 capabilities verifiable (PROOF_STATUS.md)`.
+**Background / layout** — dark, 1.34 / 1 split, image left, no bullet glyphs. Page note stays: `37 CLI tests · 94 web-workbench tests · 6 extension tests · 16 of 37 capabilities verifiable (PROOF_STATUS.md)`.
 
 **Speaker note** — "This is Banchan, a Korean food-delivery app — the kind of thing a customer would actually order from. Three screens: menu, cart, tracking. The cart module is real code with four tests, and one of them fails: a $5 promo drops the subtotal to $21.65, below the $25 free-delivery minimum, and the app still says free delivery. Three dollars ninety lost on every discounted order, and nobody filed a ticket. The agent fixes the fee — reads the subtotal after the promo — and the critic approves it. QA refuses: `25.549999999999997 !== 25.55`. The fee was right, the cent was not. The second pass adds the rounding, and then the suite goes 4 and 0. In the editor you read both versions before you press Approve; in the browser it is the same run in a tab, plan in English, terminal in the open. Same loop, three entry points. These are design mockups drawn from the components that ship — every price and millisecond is from the fixture or from `demo/runs/20261104T090956Z`; the full set is in `pitch/shots.html`."
 
@@ -236,14 +236,14 @@ Sub: `Everything below is in the repository, with the commit that produced it.`
 Timeline (chronological):
 1. `Oct 2026` — **License audit** passes; proprietary tree clean.
 2. `Oct 2026` — **Four-tier loop** ships, 30/30 tests green.
-3. `31 Oct 2026` — **Six verified runs**, three on a free route.
-4. `Nov 2026` — **Pricing set**; demo and proof pack shipped.
+3. `Nov 2026` — **Benchmark run.** 20 tasks, hidden tests. Baseline 89%, INDEX0 74%. Honest.
+4. `Nov 2026` — **Claude via Bedrock.** One-command demo, 33 s. `sandbox: docker (exit 0)`.
 
-Footer: `Raising $750K · 18 months · three paid pilots · PROOF_STATUS.md lists 15 of 36 capabilities as verifiable`
+Footer: `Raising $750K · 18 months · three paid pilots · PROOF_STATUS.md lists 16 of 37 capabilities as verifiable`
 
 **Background / layout** — light, horizontal timeline, 4 milestones, dots on a single rule.
 
-**Speaker note** — "Four months from a license audit to six committed end-to-end runs, three of them on a free inference route so the cost of a demo is zero. The last item is the honest one: 15 of 36 claimed capabilities are verifiable, the other 21 are not, and that gap is what the 750 thousand buys — 18 months and three paid pilots to close it."
+**Speaker note** — "Four months from a license audit to a reproducible benchmark that shows INDEX0 at 74% versus a one-shot baseline at 89% — and we're shipping that number anyway, because the story is not 'we always win'; it's 'we always measure'. The benchmark runner is in the repo. The 750 thousand buys 18 months and three paid pilots to close the 16-of-37 gap."
 
 ---
 
@@ -252,16 +252,17 @@ Footer: `Raising $750K · 18 months · three paid pilots · PROOF_STATUS.md list
 | Claim on slide | Source in repo / citation |
 |---|---|
 | Test suite passes in 1.6 s | `demo/runs/20261031T041126Z` — `3 passed / 0 failed in 1664 ms` |
-| Warm cycle ≈ 7 s | same run, cycle wall clock |
+| Warm cycle ≈ 33 s (Claude) | `demo/runs/20261111T123429Z` — Claude Sonnet 4.6 via Bedrock |
 | 30/30 orchestrator tests | `services/agent-orchestrator` test run; 14/14 sandbox-manager |
 | Test-edit guard | `services/agent-orchestrator/src/graph/nodes/qa.py`, commit `5b7fff3` |
 | Sealed sandbox, no egress | `--network none`, read-only source mount in `services/sandbox-manager/src/services/execution.service.ts` |
-| Six verified runs | `demo/runs/` — six committed, three on the Groq free route |
-| 15 of 36 capabilities | `PROOF_STATUS.md` (0 of 3 benchmarks verified) |
+| `sandbox: docker (exit 0)` | `demo/runs/20261111T123429Z/summary.txt` — real provider label, not hardcoded |
+| Benchmark Baseline 89% INDEX0 74% | `benchmarks/verified-bench/results/20261111T121141Z/summary.json` — reproduce: `./benchmarks/verified-bench/runner.sh --model groq` |
+| 16 of 37 capabilities | `PROOF_STATUS.md` (0 of 3 official benchmarks run) |
 | Market anchors 1.22 → 2.44 | Mordor Intelligence, Secure Code Review Platforms Market (page updated Sep 2026); 14.88% CAGR published |
 | $300M serviceable | 2,500 × 500 × $240, bottom-up; = 3% of the $9.8B 2026 category (deck-simple, one-pager) |
 | $120k ACV | $20/dev/month × 500 developers (matches `docs/ROADMAP_AND_UNIT_ECONOMICS.md`) |
-| Three surfaces | CLI 37 tests, web workbench 94 tests, VS Code extension 4 tests — run them yourself |
+| Three surfaces | CLI 37 tests, web workbench 94 tests, VS Code extension 6 tests — run them yourself |
 | Market $9.8B → $26.0B | Grand View Research, AI Code Tools Market, 27.1% CAGR, updated Jun 2026 |
 
 ---
