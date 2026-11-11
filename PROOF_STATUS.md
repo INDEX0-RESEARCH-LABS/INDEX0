@@ -24,6 +24,28 @@ Nothing regressed against 2026-11-06. Two integrity defects were found in the sa
 pass and are recorded below; they do not change any row in the table, but they
 weaken two rows that are currently marked Working.
 
+## Known integrity defects — CLOSED 2026-11-11
+
+Both defects below were fixed in commit `day1-defect-fixes` and re-verified by
+`./demo/run-demo.sh` on 2026-11-11: `sandbox: docker (exit 0)`.
+
+1. ~~**Default sandbox is `mock`**~~ — **FIXED.** `infra/compose/sandbox-manager.yml`
+   now defaults to `docker`. `resolveProvider()` in `config.ts` defaults to `docker`
+   with an explicit warning if mock is forced. `MockSandboxProvider` constructor
+   logs a loud warning on startup.
+2. ~~**`sandboxMode` is hardcoded**~~ — **FIXED.** `execution.service.ts` now returns
+   `provider: this.provider.name` in the result. `qa.py:211` reads
+   `sandbox_res.get("provider", "unknown")` — never hardcodes.
+
+Re-verification, 2026-11-11 at `main`:
+
+| Command | Result |
+|---|---|
+| `pnpm run typecheck` | 9/9 pass |
+| `pnpm run test` | 290 pass / 0 fail (8 turbo tasks) |
+| `pnpm run build` | 8/8 pass |
+| `./demo/run-demo.sh` | `qa_verified`, 1 iteration, 3 passed / 0 failed in 1750 ms, **sandbox: docker** |
+
 ## Known integrity defects (open, 2026-11-07)
 
 1. **Default sandbox is `mock`, and the mock passes anything.** `infra/compose/sandbox-manager.yml` defaults `SANDBOX_PROVIDER` to `mock`; `resolveProvider()` in `services/sandbox-manager/src/config.ts` also falls back to `mock`; `MockSandboxSession.execute()` returns `exitCode: 0` with fabricated stdout for unrecognised input. Any deployment without `E2B_API_KEY` and without an explicit `SANDBOX_PROVIDER=docker` has a QA gate that approves everything. The recorded demo is unaffected because `demo/run-demo.sh` sets `SANDBOX_PROVIDER=docker` explicitly.

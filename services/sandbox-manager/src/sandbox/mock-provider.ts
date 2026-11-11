@@ -118,6 +118,15 @@ export class MockSandboxProvider implements ISandboxProvider {
   public readonly supportsDesktop = false;
   public readonly sessions: MockSandboxSession[] = [];
 
+  constructor() {
+    // ponytail: startup-only warn, not per-execute
+    console.warn(
+      "[SandboxManager] MOCK provider active — the QA gate cannot fail. " +
+      "Every execution returns exit 0 with fabricated output. " +
+      "Set SANDBOX_PROVIDER=docker for real verification."
+    );
+  }
+
   async createSession(options: {
     sessionId: string;
     timeoutMs: number;

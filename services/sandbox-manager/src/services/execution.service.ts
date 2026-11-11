@@ -15,6 +15,7 @@ import type { ISandboxProvider, ISandboxSession } from "../sandbox/types.js";
 import { MockSandboxProvider } from "../sandbox/mock-provider.js";
 import { E2BSandboxProvider } from "../sandbox/e2b-provider.js";
 import { FirecrackerSandboxProvider } from "../sandbox/firecracker-provider.js";
+import { DockerSandboxProvider } from "../sandbox/docker-provider.js";
 import { ProbeManager } from "../sandbox/probes/index.js";
 import { config } from "../config.js";
 
@@ -53,9 +54,7 @@ export class ExecutionService {
         });
 
       case "docker":
-        // Docker provider is not yet implemented; fall back to mock
-        console.warn("[SandboxManager] Docker provider not yet implemented. Falling back to mock.");
-        return new MockSandboxProvider();
+        return new DockerSandboxProvider(config.maxMemoryMb, config.defaultCpuCount);
 
       case "mock":
       default:
@@ -140,6 +139,7 @@ export class ExecutionService {
           stdout: output.stdout,
           stderr: output.stderr,
           durationMs,
+          provider: this.provider.name,
           error: output.error,
           timedOut: output.timedOut || false
         };

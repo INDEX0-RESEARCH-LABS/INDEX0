@@ -21,6 +21,7 @@ export interface ISandboxExecutionResult {
   stdout: string;
   stderr: string;
   durationMs: number;
+  provider?: string;
   error?: string;
   timedOut?: boolean;
 }

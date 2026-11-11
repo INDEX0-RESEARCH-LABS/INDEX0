@@ -208,7 +208,7 @@ async def qa_node(state: ReviewLoopState) -> Dict[str, Any]:
             "candidateFiles": sorted(files),
             # No SAST tool is wired into this node; unknown is not zero.
             "sastFindings": None,
-            "sandboxMode": "live_microvm",
+            "sandboxMode": sandbox_res.get("provider", "unknown"),
         }
     except Exception as e:
         logger.info(f"Sandbox manager unavailable at {settings.sandbox_manager_url} ({e}); no tests executed.")

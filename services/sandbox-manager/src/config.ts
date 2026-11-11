@@ -41,13 +41,19 @@ function resolveProvider(): SandboxProviderType {
     return explicit;
   }
 
-  // Auto-detect: if E2B API key is configured, use E2B; otherwise fall back to mock
+  // Auto-detect: E2B if key present, Docker if daemon reachable, otherwise mock with loud warning.
   const e2bKey = process.env.E2B_API_KEY;
   if (e2bKey && e2bKey !== "e2b_api_key_placeholder" && e2bKey !== "YOUR_E2B_API_KEY") {
     return "e2b";
   }
 
-  return "mock";
+  // Default to docker — the QA gate must be able to fail.
+  // Fall back to mock only when explicitly forced via SANDBOX_PROVIDER=mock.
+  console.warn(
+    "[SandboxManager] No E2B key found; defaulting to docker provider. " +
+    "Set SANDBOX_PROVIDER=mock to override (WARNING: mock cannot fail — QA gate will approve anything)."
+  );
+  return "docker";
 }
 
 export const config: Readonly<ISandboxConfig> = {
