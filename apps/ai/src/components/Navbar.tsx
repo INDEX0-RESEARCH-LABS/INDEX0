@@ -29,6 +29,8 @@ interface NavbarProps {
 }
 
 const NAV_LINKS = [
+  { href: "/chat", label: "Chat" },
+  { href: "/groundwork", label: "GROUNDWORK" },
   { href: "/marketplace", label: "Marketplace" },
   { href: "/features", label: "Features" },
   { href: "/pricing", label: "Pricing" },

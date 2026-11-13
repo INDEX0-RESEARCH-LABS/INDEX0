@@ -13,12 +13,20 @@
     "test:license": "node scripts/verify-license.mjs"
   },
   "dependencies": {
+    "@ai-sdk/amazon-bedrock": "^0.0.36",
+    "@ai-sdk/react": "^0.0.70",
+    "@assistant-ui/react": "^0.15.36",
+    "@assistant-ui/react-ai-sdk": "^1.4.23",
+    "@assistant-ui/react-markdown": "^0.14.26",
     "@tabler/icons-react": "^3.29.0",
+    "ai": "^3.4.33",
     "clsx": "^2.1.1",
     "motion": "^12.4.7",
     "next": "^15.2.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-markdown": "^10.1.0",
+    "remark-gfm": "^4.0.1",
     "tailwind-merge": "^2.6.0",
     "three": "^0.170.0"
   },
