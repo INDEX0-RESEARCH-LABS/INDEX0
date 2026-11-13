@@ -65,6 +65,9 @@ class MCTSEngine:
     async def execute_mcts(self, initial_state: ReviewLoopState) -> Dict[str, Any]:
         """Execute full MCTS multiverse exploration across all hypotheses."""
         task_id = initial_state.get("task_id", "task-mcts")
+        # Respect per-task rollout budget if provided
+        if initial_state.get("mcts_max_rollouts"):
+            self.max_rollouts = int(initial_state["mcts_max_rollouts"])
         root = MCTSNode(
             hypothesis_id="root",
             hypothesis_name="Problem Specification",

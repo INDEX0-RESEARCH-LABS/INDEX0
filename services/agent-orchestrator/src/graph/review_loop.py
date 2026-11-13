@@ -68,7 +68,15 @@ class ReviewLoopEngine:
             logger.info("LangGraph not installed. Native asynchronous state runner will be used.")
 
     async def execute_cycle(self, initial_state: ReviewLoopState) -> ReviewLoopState:
-        """Execute a full review cycle until completion or max iterations."""
+        """Execute a full review cycle until completion or max iterations.
+
+        If mcts_enabled is True in the initial state, delegates to MCTS multiverse
+        search and returns the winning branch's final state.
+        """
+        if initial_state.get("mcts_enabled"):
+            mcts_result = await self.execute_mcts_cycle(initial_state)
+            return mcts_result.get("finalState", initial_state)
+
         if self._langgraph_app is not None:
             result = await self._langgraph_app.ainvoke(initial_state)
             return result

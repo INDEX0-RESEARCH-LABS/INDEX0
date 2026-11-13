@@ -75,6 +75,8 @@ async def start_cycle(req: CycleStartRequest) -> Dict[str, Any]:
         "context_files": req.context_files,
         "iteration": 0,
         "max_iterations": req.max_iterations,
+        "mcts_enabled": req.mcts_enabled,
+        "mcts_max_rollouts": req.mcts_max_rollouts,
         "status": "started",
         "is_complete": False,
         "history": []

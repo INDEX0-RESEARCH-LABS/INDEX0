@@ -28,6 +28,10 @@ class ReviewLoopState(TypedDict, total=False):
     textgrad_loss: float
     textgrad_prompt: Optional[str]
 
+    # MCTS
+    mcts_enabled: bool
+    mcts_max_rollouts: int
+
     # Status tracking & Circuit Breakers
     current_role: str
     status: str

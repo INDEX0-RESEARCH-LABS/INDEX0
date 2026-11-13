@@ -104,6 +104,8 @@ class CycleStartRequest(BaseModel):
     repository_root: Optional[str] = Field(".", alias="repositoryRoot")
     max_iterations: int = Field(5, alias="maxIterations")
     context_files: List[str] = Field(default_factory=list, alias="contextFiles")
+    mcts_enabled: bool = Field(False, alias="mctsEnabled")
+    mcts_max_rollouts: int = Field(2, alias="mctsMaxRollouts")
 
 
 class CycleStatusResponse(BaseModel):
